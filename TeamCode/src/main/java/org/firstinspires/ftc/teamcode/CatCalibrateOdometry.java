@@ -15,7 +15,7 @@ import java.io.File;
  * The Global Positioning Algorithm will not function and will throw an error if this program is not run first
  */
 @TeleOp(name = "Cat Odometry Calibrate", group = "Calibration")
-public class CatOdometryCal extends LinearOpMode {
+public class CatCalibrateOdometry extends LinearOpMode {
     /* Declare OpMode members. */
     private ElapsedTime elapsedGameTime = new ElapsedTime();
     private ElapsedTime elapsedTime = new ElapsedTime();

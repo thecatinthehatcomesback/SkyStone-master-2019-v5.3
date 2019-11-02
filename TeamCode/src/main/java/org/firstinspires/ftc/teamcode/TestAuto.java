@@ -131,5 +131,7 @@ public class TestAuto extends LinearOpMode {
 
         /* Go! */
 
+        // Testing the new mecTurn
+        robot.drive.mecTurn(CatDriveHW.TURN_SPEED, 170, 3.0);
     }
 }

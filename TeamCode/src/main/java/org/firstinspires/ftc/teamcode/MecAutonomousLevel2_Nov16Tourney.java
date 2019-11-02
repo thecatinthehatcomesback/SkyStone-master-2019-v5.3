@@ -28,7 +28,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="Strafe Autonomous", group="CatAuto")
-public class MecAutonomousLevel2_strafe extends LinearOpMode {
+public class MecAutonomousLevel2_Nov16Tourney extends LinearOpMode {
 
     /* Declare OpMode members. */
     CatAsyncHW robot  = new CatAsyncHW();    // All the hardwares init here
@@ -168,20 +168,7 @@ public class MecAutonomousLevel2_strafe extends LinearOpMode {
     }
     public void driveLoadingZone() throws InterruptedException {
 
-       // robot.drive.strafeDrive(0,0,1,90, 1, 5);
-        robot.drive.mecTurn(1,170,3);
-        robot.drive.waitUntilDone();
-/*
-        robot.drive.strafeDrive(72,94,.60,166,.8,4);
-        robot.drive.waitUntilDone();
+       // Do stuff for Loading Zone:
 
-        robot.drive.strafeDrive(72,0,.60,249,.8,5);
-        robot.drive.waitUntilDone();
-
-        robot.drive.strafeDrive(0,0,.60,332,.8,4);
-        robot.drive.waitUntilDone();
-
-
- */
     }
 }
