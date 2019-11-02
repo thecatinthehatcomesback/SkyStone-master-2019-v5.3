@@ -49,46 +49,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * Motor channel:  Right drive motor:        "right_rear" & "right_front"
  * And so on...
  */
-public class CatHW_DriveClassic extends CatHW_Subsystem
+public class CatHW_DriveClassic extends CatHW_DriveBase
 {
-    /* Wheel measurements */
-    static final double     COUNTS_PER_MOTOR_REV    = 537.6;    // Accurate for a NeveRest Orbital 20
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     ODO_COUNTS_PER_REV        = 1440;     // 1440 for E4T from Andymark
-    static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
-    static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * 3.1415);
-
-    /* Autonomous Drive Speeds */
-    static final double     HYPER_SPEED             = 0.95;
-    static final double     DRIVE_SPEED             = 0.7;
-    static final double     CHILL_SPEED             = 0.4;
-    static final double     CREEP_SPEED             = 0.25;
-    static final double     TURN_SPEED              = 0.6;
-
-
-    ElapsedTime runTime = new ElapsedTime();
-    double      timeout = 0;
-
-    double          targetX;
-    double          targetY;
-    double          strafePower;
-    double          strafeAngle;
-    double          strafeTurnPower;
-
-    int             targetAngleZ;
-    int             baseDelta;
-    boolean         clockwiseTurn;
-    ColorSensor     leftColSen;
-    ColorSensor     rightColSen;
-    static boolean  isDone;
-
     /* Enums */
     enum DRIVE_METHOD {
         vertical,
         horizontal,
-        turn,
-        strafe
+        turn
     }
 
     enum DRIVE_MODE {
@@ -103,14 +70,6 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
         TANK
     }
 
-
-    // The IMU sensor object
-    BNO055IMU imu;
-
-    // State used for updating telemetry
-    Orientation angles;
-    Acceleration gravity;
-
     private DRIVE_METHOD currentMethod;
     private DRIVE_MODE currentMode;
 
@@ -120,19 +79,11 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
     public DcMotor  rightFrontMotor = null;
     public DcMotor  leftRearMotor   = null;
     public DcMotor  rightRearMotor  = null;
-    public DcMotor  rightOdometry  = null;
-    public DcMotor  leftOdometry = null;
-    public DcMotor backOdometry = null;
-
-    CatOdoPositionUpdate globalPositionUpdate;
-
-    /* LED stuff */
-    public RevBlinkinLedDriver lights   = null;
-    public RevBlinkinLedDriver.BlinkinPattern pattern;
 
 
     /* local OpMode members. */
     LinearOpMode opMode = null;
+
     /* Constructor */
     public CatHW_DriveClassic(CatHW_Async mainHardware){
         super(mainHardware);
@@ -147,15 +98,6 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
         rightFrontMotor  = hwMap.dcMotor.get("right_front_motor");
         leftRearMotor    = hwMap.dcMotor.get("left_rear_motor");
         rightRearMotor   = hwMap.dcMotor.get("right_rear_motor");
-        leftOdometry     = hwMap.dcMotor.get("left_odometry");
-        rightOdometry    = hwMap.dcMotor.get("right_odometry");
-        backOdometry     = hwMap.dcMotor.get("back_odometry");
-
-
-        // Blinkin LED stuff //
-        lights           = hwMap.get(RevBlinkinLedDriver.class, "blinky");
-        pattern          = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
-        lights.setPattern(pattern);
 
 
         // Define motor directions //
@@ -170,19 +112,13 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
         leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftOdometry.setDirection(DcMotor.Direction.FORWARD);
-        rightOdometry.setDirection(DcMotor.Direction.FORWARD);
-        backOdometry.setDirection(DcMotor.Direction.FORWARD);
-
-
         // Set motor modes //
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         runNoEncoders();
-        leftOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         // Set all motors to run at no power so that the robot doesn't move during init //
         leftFrontMotor.setPower(0);
@@ -192,13 +128,8 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
 
 
         // Sets enums to a default value
-        currentMode = DRIVE_MODE.driveTilDistance;
+        currentMode   = DRIVE_MODE.driveTilDistance;
         currentMethod = DRIVE_METHOD.vertical;
-
-        //odomentry setup
-        globalPositionUpdate = new CatOdoPositionUpdate(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH, 25);
-        Thread positionThread = new Thread(globalPositionUpdate);
-        positionThread.start();
     }
 
 
@@ -220,80 +151,42 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
         Log.d("catbot", String.format("Drive Power  LF: %.2f, RF: %.2f, LB: %.2f, RB: %.2f", leftFront, rightFront, leftBack, rightBack));
     }
     public void resetEncoders(){
-
+        /**
+         * Set all motors to STOP_AND_RESET_ENCODER
+         */
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     public void runUsingEncoders(){
-
+        /**
+         * Set all motors to RUN_USING_ENCODER
+         */
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void runNoEncoders(){
-
+        /**
+         * Set all motors to RUN_WITHOUT_ENCODER
+         */
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void runToPosition(){
-
+        /**
+         * Set all motors to RUN_TO_POSITION
+         */
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftRearMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     // Driving Methods:
-    public double findScalor(double leftFrontValue, double rightFrontValue,
-                             double leftBackValue, double rightBackValue) {
-        /**
-         * Will scale down our power numbers if they are
-         * greater than 1.0 so that we continue the set
-         * course and don't just limit to the highest
-         * possible value...
-         */
-
-        /**
-         * Look at all motor values
-         * Find the highest absolute value (the "scalor")
-         * If the highest value is not more than 1.0, we don't need to change the values
-         * But if it is higher than 1.0, we need to find the scale to get that value down to 1.0
-         * Finally, we pass out the scale factor so that we can scale each motor down
-         */
-        double scalor = 0;
-        double scaleFactor;
-
-        double[] values;
-        values = new double[4];
-        values[0] = Math.abs(leftFrontValue);
-        values[1] = Math.abs(rightFrontValue);
-        values[2] = Math.abs(leftBackValue);
-        values[3] = Math.abs(rightBackValue);
-
-        // Find highest value
-        for(int i = 0; i+1 < values.length; i++){
-            if(values[i] > scalor){
-                scalor = values[i];
-            }
-        }
-
-        // If the highest absolute value is over 1.0, we need to get to work!  Otherwise, we done here...
-        if (scalor > 1.0) {
-            // Get the reciprocal
-            scaleFactor = 1.0 / scalor;
-        } else {
-            // Set to 1 so that we don't change anything we don'thave to...
-            scaleFactor = 1.0;
-        }
-
-        // Now we have the scale factor!
-        return scaleFactor;
-        // After finding scale factor, we need to scale each motor power down by the same amount...
-    }
     public void mecDriveVertical(double power,
                                  double distance,
                                  double timeoutS)  throws InterruptedException {
@@ -308,7 +201,7 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
          * line.
          */
 
-        Log.d("catbot", String.format(" Started drive vert pow: %.2f, dist: %.2f, time:%.2f ",power,distance, timeoutS));
+        Log.d("catbot", String.format(" Started drive vert pow: %.2f, dist: %.2f, time:%.2f ", power, distance, timeoutS));
         currentMethod = DRIVE_METHOD.vertical;
         currentMode = driveMode;
         timeout = timeoutS;
@@ -416,10 +309,10 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
          * for the / side of motors.
          */
 
-        double leftFrontMod  = Math.sin(Math.toRadians(vectorAng))  + Math.cos(Math.toRadians(vectorAng));
-        double rightFrontMod = -Math.sin(Math.toRadians(vectorAng)) + Math.cos(Math.toRadians(vectorAng));
-        double leftBackMod   = -Math.sin(Math.toRadians(vectorAng)) + Math.cos(Math.toRadians(vectorAng));
-        double rightBackMod  = Math.sin(Math.toRadians(vectorAng))  + Math.cos(Math.toRadians(vectorAng));
+        double leftFrontMod  = Math.cos(Math.toRadians(vectorAng)) + Math.sin(Math.toRadians(vectorAng));
+        double rightFrontMod = Math.cos(Math.toRadians(vectorAng)) - Math.sin(Math.toRadians(vectorAng));
+        double leftBackMod   = Math.cos(Math.toRadians(vectorAng)) - Math.sin(Math.toRadians(vectorAng));
+        double rightBackMod  = Math.cos(Math.toRadians(vectorAng)) + Math.sin(Math.toRadians(vectorAng));
 
 
         int newLeftFrontTarget;
@@ -498,8 +391,8 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
     }
     public void mecTurn(double power, int degrees, double timeoutS, TURN_MODE turnMode) throws InterruptedException {
         /**
-         * Turns counterclockwise with a positive Z angle
-         * Turns clockwise with a negative Z angle
+         * Turns counterclockwise with a negative Z angle
+         * Turns clockwise with a positive Z angle
          */
 
         currentMethod = DRIVE_METHOD.turn;
@@ -508,8 +401,8 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
 
         // Ensure that the opMode is still active
         if (mainHW.opMode.opModeIsActive()) {
-            targetAngleZ  = -degrees;
-            clockwiseTurn = (getCurrentAngle() > targetAngleZ);
+            targetAngleZ  = degrees;
+            clockwiseTurn = (getCurrentAngle() < targetAngleZ);
 
             // Don't use encoders.  We only use the gyro angle to turn
             runNoEncoders();
@@ -533,61 +426,14 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
                 if (turnMode == TURN_MODE.SPIN) {
                     leftFrontMotor.setPower(-power);
                     leftRearMotor.setPower(-power);
-                }  else {
+                } else {
                     leftFrontMotor.setPower(-power/3);
                     leftRearMotor.setPower(-power/3);
                 }
                 rightFrontMotor.setPower(power);
                 rightRearMotor.setPower(power);
             }
-
-         }
-    }
-
-    public void strafeDrive(double x, double y, double power, double angle, double turnSpeed, double timeoutS){
-
-        currentMethod = DRIVE_METHOD.strafe;
-        timeout = timeoutS;
-        isDone = false;
-        targetX = x;
-        targetY = y;
-        strafePower = power;
-        strafeAngle = angle;
-        strafeTurnPower = turnSpeed;
-
-
-
-        runTime.reset();
-    }
-
-    /**
-     * ---   ___________   ---
-     * ---   IMU Methods   ---
-     * ---   \/ \/ \/ \/   ---
-     */
-    public void IMUinit () {
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opMode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hwMap.get(BNO055IMU.class, "imu");
-        //the initialize method is taking a whole second
-        imu.initialize(parameters);
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 250);
-    }
-    public int getCurrentAngle() {
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return (int)angles.firstAngle;
+        }
     }
 
     /**
@@ -670,103 +516,6 @@ public class CatHW_DriveClassic extends CatHW_Subsystem
                 if ((zVal <= targetAngleZ) && (clockwiseTurn)) {
                     keepDriving = false;
                 }
-                break;
-
-            case strafe:
-
-                double getY = globalPositionUpdate.returnYInches();
-                double getX = globalPositionUpdate.returnXInches();
-                double getTheta = globalPositionUpdate.returnOrientation();
-
-                // if is good to end
-                if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  && ( Math.abs(getTheta - strafeAngle) < 5|| (Math.abs(getTheta - (strafeAngle + 360)) < 5))) {
-
-                    keepDriving = false;
-                }
-
-                //calc angle  - globalPositionUpdate.returnOrientation()
-                double ang = (Math.atan2(targetX - getX, targetY - getY));
-                double ang2 = ang - Math.toRadians(getTheta);
-                //double ang = 0.785398;
-
-                double lFrontPower = (Math.cos(ang2)  + Math.sin(ang2));
-                double rFrontPower = (Math.cos(ang2) - Math.sin(ang2));
-                double lBackPower;
-                double rBackPower;
-
-
-/*
-                if ( Math.abs(lFrontPower) > Math.abs(rFrontPower)){
-                    //if lFrontPower is greater than right
-                    lFrontPower = (1 / Math.abs(lFrontPower)) * lFrontPower;
-                    rFrontPower = (1 / Math.abs(lFrontPower)) * rFrontPower;
-                }
-                else {
-                    //if rFrontPower is greater than left
-                    lFrontPower = (1 / Math.abs(rFrontPower)) * lFrontPower;
-                    rFrontPower = (1 / Math.abs(rFrontPower)) * rFrontPower;
-                }
-
-
- */
-                lBackPower = rFrontPower;
-                rBackPower = lFrontPower;
-
-                //add turn here
-                if (Math.abs((getTheta - strafeAngle)) < Math.abs((getTheta - (strafeAngle + 360)))) {
-                    if ((getTheta - strafeAngle) < 0) {
-                        //turn right
-                        if (Math.abs(getTheta - strafeAngle) > 4) {
-                            rFrontPower = rFrontPower - strafeTurnPower;
-                            rBackPower = rBackPower - strafeTurnPower;
-                            lFrontPower = lFrontPower + strafeTurnPower;
-                            lBackPower = lBackPower + strafeTurnPower;
-                        }
-                    }
-                    else {
-                        //turn left
-                        if (Math.abs(getTheta - strafeAngle) > 4) {
-                            rFrontPower = rFrontPower + strafeTurnPower;
-                            rBackPower = rBackPower + strafeTurnPower;
-                            lFrontPower = lFrontPower - strafeTurnPower;
-                            lBackPower = lBackPower - strafeTurnPower;
-                        }
-                        }
-                }
-                else {
-                    if ((getTheta - (strafeAngle + 360)) < 0) {
-                        //turn right
-                        if (Math.abs(getTheta - (strafeAngle + 360)) > 4) {
-                            rFrontPower = rFrontPower - strafeTurnPower;
-                            rBackPower = rBackPower - strafeTurnPower;
-                            lFrontPower = lFrontPower + strafeTurnPower;
-                            lBackPower = lBackPower + strafeTurnPower;
-                        }
-                    }
-                    else {
-                        //turn left
-                            if (Math.abs(getTheta - (strafeAngle + 360)) > 4) {
-                                rFrontPower = rFrontPower + strafeTurnPower;
-                                rBackPower = rBackPower + strafeTurnPower;
-                                lFrontPower = lFrontPower - strafeTurnPower;
-                                lBackPower = lBackPower - strafeTurnPower;
-                            }
-                    }
-                }
-                double scale = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
-
-
-
-
-                leftFrontMotor.setPower(lFrontPower  * strafePower * scale);
-                rightFrontMotor.setPower(rFrontPower * strafePower * scale);
-                leftRearMotor.setPower(lBackPower    * strafePower * scale);
-                rightRearMotor.setPower(rBackPower   * strafePower * scale);
-
-                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle: %.1f %.1f %.1f",
-                        leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
-                        targetX, targetY, getX, getY, Math.toDegrees(ang), Math.toDegrees(ang2), getTheta));
-
                 break;
         }
 

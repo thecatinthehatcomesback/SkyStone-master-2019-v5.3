@@ -1,5 +1,5 @@
 /**
- MecAutonomousLevel1_Ri2W.java
+ Mec_AutonomousLevel1_Ri2W.java
 
  A Linear OpMode class to be an autonomous method for both Blue & Red where
  we pick which side of the lander we are hanging off of with gamepad1 and
@@ -24,16 +24,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.CatHW_Intake.MOUTH_CLOSE;
-import static org.firstinspires.ftc.teamcode.CatHW_Intake.MOUTH_OPEN;
-import static org.firstinspires.ftc.teamcode.CatHW_Intake.MOUTH_RELEASE;
 
-
-@Autonomous(name="Ri2W Autonomous", group="CatAuto")
-public class MecAutonomousLevel1_Ri2W extends LinearOpMode {
+@Autonomous(name="Strafe Autonomous", group="CatAuto")
+public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
 
     /* Declare OpMode members. */
     CatHW_Async robot  = new CatHW_Async();    // All the hardwares init here
@@ -169,100 +164,11 @@ public class MecAutonomousLevel1_Ri2W extends LinearOpMode {
         robot.drive.IMUinit();
 
         /* Go! */
-        if (isBuildZone) {
-            driveBuildZone();
-        } else {
-            driveLoadingZone();
-        }
+        driveLoadingZone();
     }
     public void driveLoadingZone() throws InterruptedException {
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // Open intake and start driving forwards towards stone
-        robot.intake.runtime.reset();
-        robot.intake.intakeMotor.setTargetPosition(MOUTH_OPEN);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.intake.intakeMotor.setPower(0.5);
-        robot.intake.waitUntilDone();
-        robot.intake.intakeMotor.setPower(0);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 25, 2);
-        robot.drive.waitUntilDone();
-        // Drive forward a bit more but slower
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED, 10, 3);
-        robot.drive.waitUntilDone();
+       // Do stuff for Loading Zone:
 
-        // Close intake
-        robot.intake.runtime.reset();
-        robot.intake.intakeMotor.setTargetPosition(MOUTH_CLOSE);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.intake.intakeMotor.setPower(0.5);
-        robot.intake.waitUntilDone();
-        robot.intake.intakeMotor.setPower(0.1);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //back up from stones
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -14, 2);
-        robot.drive.waitUntilDone();
-        // Drive completely across the taped line
-        robot.drive.mecDriveHorizontal(CatHW_DriveClassic.DRIVE_SPEED, (isRedAlliance) ? -40 : 40, 6);
-        robot.drive.waitUntilDone();
-
-        // Spit block out
-        robot.intake.runtime.reset();
-        robot.intake.intakeMotor.setTargetPosition(MOUTH_RELEASE);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.intake.intakeMotor.setPower(0.5);
-        robot.intake.waitUntilDone();
-        robot.intake.intakeMotor.setPower(0);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED,10, 4);
-        robot.drive.waitUntilDone();
-        //back up from stone
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED, -6, 1);
-        robot.drive.waitUntilDone();
-        // Navigate (Park over taped line)
-        robot.drive.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? 15 : -15, 3);
-        robot.drive.waitUntilDone();
-
-
-
-    }
-    public void driveBuildZone() throws InterruptedException {
-        // Drive to Foundation
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -30, 3.0);
-        robot.drive.waitUntilDone();
-        //robot.robotWait(1);
-        // Latch on
-        robot.tail.grabFoundationFingers();
-        robot.tail.waitUntilDone();
-        robot.robotWait(0.3);
-        // Drive back to Building Zone
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 30, 3.0);
-        robot.drive.waitUntilDone();
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 7, 1.25);
-        robot.drive.waitUntilDone();
-        robot.robotWait(.1);
-        robot.tail.releaseFoundationFingers();
-        robot.robotWait(.2);
-        // Slide out to towards the line
-        robot.drive.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? -22 : 22, 5.0);
-        robot.drive.waitUntilDone();
-        // Drive ahead and line up with the foundation
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -18, 2);
-        robot.drive.waitUntilDone();
-        // Push the foundation further into the building zone
-        robot.drive.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? 8 : -8, 1);
-        robot.drive.waitUntilDone();
-        // Back up and navigate (park on the taped line)
-        if (isParkAtWall) {
-            robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -5, 1);
-        } else {
-            robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 25, 1);
-        }
-        robot.drive.waitUntilDone();
-        robot.drive.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? -20 : 20, 2);
-        robot.drive.waitUntilDone();
     }
 }

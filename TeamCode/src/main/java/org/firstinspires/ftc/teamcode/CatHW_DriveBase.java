@@ -69,6 +69,9 @@ public class CatHW_DriveBase extends CatHW_Subsystem
     ElapsedTime runTime = new ElapsedTime();
     double      timeout = 0;
 
+    int             targetAngleZ;
+    int             baseDelta;
+    boolean         clockwiseTurn;
     ColorSensor     leftColSen;
     ColorSensor     rightColSen;
     static boolean  isDone;

@@ -1,5 +1,5 @@
 /*
-        MecTeleOpLevel1_Ri2W.java
+        Mec_TeleOpLevel1_Ri2W.java
 
     A Linear opmode class that is used as our
     TeleOp method for the driver controlled period.
@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @TeleOp(name="Motor Test TeleOp", group="CatTeleOp")
-public class TeleOpMotorTest extends LinearOpMode {
+public class TestMotorTeleOp extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime elapsedGameTime = new ElapsedTime();
@@ -28,7 +28,7 @@ public class TeleOpMotorTest extends LinearOpMode {
     DcMotor testMotor = null;
 
     // Our constructor for this class
-    public TeleOpMotorTest() {
+    public TestMotorTeleOp() {
     }
 
     @Override

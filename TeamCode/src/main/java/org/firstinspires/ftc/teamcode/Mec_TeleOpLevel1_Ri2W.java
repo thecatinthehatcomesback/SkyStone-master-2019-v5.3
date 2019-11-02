@@ -1,5 +1,5 @@
 /*
-        MecTeleOpLevel1_Ri2W.java
+        Mec_TeleOpLevel1_Ri2W.java
 
     A Linear opmode class that is used as our
     TeleOp method for the driver controlled period.
@@ -19,8 +19,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static org.firstinspires.ftc.teamcode.CatHW_DriveClassic.CHILL_SPEED;
 
 
-@TeleOp(name="TeleOp", group="CatTeleOp")
-public class MecTeleOpLevel2_Nov16Tourney extends LinearOpMode {
+@TeleOp(name="Ri2W TeleOp", group="CatTeleOp")
+public class Mec_TeleOpLevel1_Ri2W extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime elapsedGameTime = new ElapsedTime();
@@ -31,7 +31,7 @@ public class MecTeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
 
     // Our constructor for this class
-    public MecTeleOpLevel2_Nov16Tourney() {
+    public Mec_TeleOpLevel1_Ri2W() {
         robot = new CatHW_Async();
     }
 
@@ -130,9 +130,9 @@ public class MecTeleOpLevel2_Nov16Tourney extends LinearOpMode {
             if (gamepad2.left_bumper) {
                 intakeSpeed = 1;
             } else if (gamepad2.right_bumper) {
-                intakeSpeed = 0.6;
+                intakeSpeed = 0.7;
             } else {
-                intakeSpeed = 0.3;
+                intakeSpeed = 0.4;
             }
 
             if (gamepad2.right_stick_button) {

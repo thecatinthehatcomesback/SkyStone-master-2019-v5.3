@@ -47,7 +47,7 @@ import java.io.File;
 import java.util.Locale;
 
 /**
- * {@link IMUCalibrate} calibrates the IMU accelerometer per
+ * {@link IMU_Calibrate} calibrates the IMU accelerometer per
  * "Section 3.11 Calibration" of the BNO055 specification.
  *
  * <p>Manual calibration of the IMU is definitely NOT necessary: except for the magnetometer
@@ -101,7 +101,7 @@ import java.util.Locale;
 @Disabled
 @TeleOp(name = "Sensor: BNO055 IMU Calibration", group = "Sensor")
                             // Uncomment this to add to the opmode list
-public class IMUCalibrate extends LinearOpMode
+public class IMU_Calibrate extends LinearOpMode
     {
     //----------------------------------------------------------------------------------------------
     // State
