@@ -1,5 +1,5 @@
 /*
-        CatDriveHW.java
+        CatHW_DriveClassic.java
 
     A "hardware" class containing common code accessing hardware specific
     to the movement and rotation of the drive train.  This is a modified
@@ -49,7 +49,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * Motor channel:  Right drive motor:        "right_rear" & "right_front"
  * And so on...
  */
-public class CatDriveHW extends CatSubsystemHW
+public class CatHW_DriveClassic extends CatHW_Subsystem
 {
     /* Wheel measurements */
     static final double     COUNTS_PER_MOTOR_REV    = 537.6;    // Accurate for a NeveRest Orbital 20
@@ -124,7 +124,7 @@ public class CatDriveHW extends CatSubsystemHW
     public DcMotor  leftOdometry = null;
     public DcMotor backOdometry = null;
 
-    CatPositionUpdate globalPositionUpdate;
+    CatOdoPositionUpdate globalPositionUpdate;
 
     /* LED stuff */
     public RevBlinkinLedDriver lights   = null;
@@ -134,7 +134,7 @@ public class CatDriveHW extends CatSubsystemHW
     /* local OpMode members. */
     LinearOpMode opMode = null;
     /* Constructor */
-    public CatDriveHW(CatAsyncHW mainHardware){
+    public CatHW_DriveClassic(CatHW_Async mainHardware){
         super(mainHardware);
 
     }
@@ -196,7 +196,7 @@ public class CatDriveHW extends CatSubsystemHW
         currentMethod = DRIVE_METHOD.vertical;
 
         //odomentry setup
-        globalPositionUpdate = new CatPositionUpdate(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH, 25);
+        globalPositionUpdate = new CatOdoPositionUpdate(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH, 25);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
     }
@@ -358,7 +358,7 @@ public class CatDriveHW extends CatSubsystemHW
     public void mecDriveHorizontal(double power, double distance, double timeoutS) {
         /**
          * This is a simpler mecanum drive method that drives blindly
-         * straight horizontally (positive numbers should strafe left)
+         * straight horizontally (positive numbers should translate left)
          */
         Log.d("catbot", String.format(" Started drive horizontal pow: %.2f, dist: %.2f, time:%.2f ",power,distance, timeoutS));
 
@@ -758,12 +758,12 @@ public class CatDriveHW extends CatSubsystemHW
 
 
 
-                leftFrontMotor.setPower(lFrontPower * strafePower * scale);
+                leftFrontMotor.setPower(lFrontPower  * strafePower * scale);
                 rightFrontMotor.setPower(rFrontPower * strafePower * scale);
-                leftRearMotor.setPower(lBackPower * strafePower * scale);
-                rightRearMotor.setPower(rBackPower * strafePower * scale);
+                leftRearMotor.setPower(lBackPower    * strafePower * scale);
+                rightRearMotor.setPower(rBackPower   * strafePower * scale);
 
-                Log.d("catbot", String.format("strafe LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle: %.1f %.1f %.1f",
+                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle: %.1f %.1f %.1f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
                         targetX, targetY, getX, getY, Math.toDegrees(ang), Math.toDegrees(ang2), getTheta));
 

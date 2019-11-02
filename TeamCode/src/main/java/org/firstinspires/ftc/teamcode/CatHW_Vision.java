@@ -1,5 +1,5 @@
 /*
-        CatVisionHW.java
+        CatHW_Vision.java
 
     A "hardware" class intended to contain common code for accessing
     camera and vision related situations.  While previous versions were
@@ -40,7 +40,7 @@ import static org.firstinspires.ftc.robotcore.external.tfod.TfodRoverRuckus.TFOD
  * This class can be used to define all vision coding we use.
  *
  */
-public class CatVisionHW
+public class CatHW_Vision
 {
     private static final float mmPerInch        = 25.4f;
     private static final float mmFTCFieldWidth  = (12*6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)

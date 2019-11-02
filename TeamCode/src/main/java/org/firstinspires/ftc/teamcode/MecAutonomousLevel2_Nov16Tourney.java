@@ -31,15 +31,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class MecAutonomousLevel2_Nov16Tourney extends LinearOpMode {
 
     /* Declare OpMode members. */
-    CatAsyncHW robot  = new CatAsyncHW();    // All the hardwares init here
-    CatVisionHW eyes  = new CatVisionHW();   // Vision init
+    CatHW_Async robot  = new CatHW_Async();    // All the hardwares init here
+    CatHW_Vision eyes  = new CatHW_Vision();   // Vision init
     private ElapsedTime delayTimer = new ElapsedTime();
     private double timeDelay;
     private boolean isRedAlliance = true;
     private boolean isBuildZone = true;
     private boolean isParkAtWall = false;
 
-    private CatVisionHW.samplingPos samplingPos = CatVisionHW.samplingPos.RIGHT;
+    private CatHW_Vision.samplingPos samplingPos = CatHW_Vision.samplingPos.RIGHT;
 
     @Override
     public void runOpMode() throws InterruptedException {

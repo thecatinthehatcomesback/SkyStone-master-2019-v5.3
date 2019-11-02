@@ -24,7 +24,7 @@ public class TeleOpMotorTest extends LinearOpMode {
     private ElapsedTime elapsedTime = new ElapsedTime();
 
     /* Declare OpMode members. */
-    CatAsyncHW robot = new CatAsyncHW();  // Use our new mecanum async hardware
+    CatHW_Async robot = new CatHW_Async();  // Use our new mecanum async hardware
     DcMotor testMotor = null;
 
     // Our constructor for this class

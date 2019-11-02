@@ -1,5 +1,5 @@
 /*
-        CatTailHW.java
+        CatHW_Tail.java
 
     A "hardware" class containing common code accessing hardware specific
     to the movement and extension of the tail.  This is a modified and
@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * And so on...
  */
 
-public class CatTailHW extends CatSubsystemHW
+public class CatHW_Tail extends CatHW_Subsystem
 {
 
 
@@ -47,7 +47,7 @@ public class CatTailHW extends CatSubsystemHW
     LinearOpMode opMode         = null;
 
     /* Constructor */
-    public CatTailHW(CatAsyncHW mainHardware){
+    public CatHW_Tail(CatHW_Async mainHardware){
 
     super(mainHardware);
 

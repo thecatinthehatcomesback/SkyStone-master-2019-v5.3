@@ -1,10 +1,10 @@
 /*
-        CatSubsystemHW.java
+        CatHW_Subsystem.java
 
     A "hardware" class containing common code accessing hardware objects
     and processes.  It detects if the subclasses are busy and can/should
     continue to the next step/segment of code.  This file is used by
-    CatAsyncHW to run multiple processes at once.
+    CatHW_Async to run multiple processes at once.
 
 
     This file is a modified version from the FTC SDK.
@@ -20,17 +20,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  *
  * This class is used to detect the different subclasses business and
  * whether they can/should continue to the next step/segment of code.
- * This file is used by CatAsyncHW to run multiple processes at once.
+ * This file is used by CatHW_Async to run multiple processes at once.
  */
-public class CatSubsystemHW
+public class CatHW_Subsystem
 {
 
     /* local OpMode members. */
     public HardwareMap hwMap        = null;
-    public CatAsyncHW mainHW        = null;
+    public CatHW_Async mainHW        = null;
 
     /* Constructor */
-    public CatSubsystemHW(CatAsyncHW mainHardware){
+    public CatHW_Subsystem(CatHW_Async mainHardware){
 
         mainHW = mainHardware;
         hwMap  = mainHW.hwMap;
@@ -59,7 +59,7 @@ public class CatSubsystemHW
     }
 
 
-    public static void waitUntilDone(CatSubsystemHW subOne, CatSubsystemHW subTwo){
+    public static void waitUntilDone(CatHW_Subsystem subOne, CatHW_Subsystem subTwo){
         boolean subOneBusy = subOne.isBusy();
         boolean subTwoBusy = subTwo.isBusy();
         while (subOneBusy || subTwoBusy) {
@@ -71,7 +71,7 @@ public class CatSubsystemHW
         }
     }
 
-    public static void waitUntilDone(CatSubsystemHW subOne, CatSubsystemHW subTwo, CatSubsystemHW subThree){
+    public static void waitUntilDone(CatHW_Subsystem subOne, CatHW_Subsystem subTwo, CatHW_Subsystem subThree){
         boolean subOneBusy = subOne.isBusy();
         boolean subTwoBusy = subTwo.isBusy();
         boolean subThreeBusy = subThree.isBusy();

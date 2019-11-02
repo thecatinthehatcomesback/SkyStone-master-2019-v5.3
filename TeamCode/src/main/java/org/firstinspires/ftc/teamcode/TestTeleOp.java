@@ -25,13 +25,13 @@ public class TestTeleOp extends LinearOpMode {
     private ElapsedTime elapsedGameTime = new ElapsedTime();
 
     /* Declare OpMode members. */
-    CatAsyncHW robot;
+    CatHW_Async robot;
 
     boolean inReverse = true;
 
     /* constructor for class */
     public TestTeleOp() {
-        robot = new CatAsyncHW();
+        robot = new CatHW_Async();
     }
 
     @Override

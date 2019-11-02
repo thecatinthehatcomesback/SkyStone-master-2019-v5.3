@@ -1,5 +1,5 @@
 /*
-        CatIntakeHW.java
+        CatHW_Intake.java
 
     A "hardware" class containing common code accessing hardware specific
     to the movement and rotation of the intake.  This is a modified and
@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Motor channel:  Right drive motor:        "right_rear" & "right_front"
  * And so on...
  */
-public class CatIntakeHW extends CatSubsystemHW
+public class CatHW_Intake extends CatHW_Subsystem
 {
 
     /* Public OpMode members. */
@@ -57,7 +57,7 @@ public class CatIntakeHW extends CatSubsystemHW
 
 
     /* Constructor */
-    public CatIntakeHW(CatAsyncHW mainHardware){
+    public CatHW_Intake(CatHW_Async mainHardware){
         super(mainHardware);
 
     }

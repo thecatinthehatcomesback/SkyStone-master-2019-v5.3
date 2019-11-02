@@ -16,10 +16,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.CatDriveHW.CHILL_SPEED;
+import static org.firstinspires.ftc.teamcode.CatHW_DriveClassic.CHILL_SPEED;
 
 
-@TeleOp(name="Ri2W TeleOp", group="CatTeleOp")
+@TeleOp(name="TeleOp", group="CatTeleOp")
 public class MecTeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -27,12 +27,12 @@ public class MecTeleOpLevel2_Nov16Tourney extends LinearOpMode {
     private ElapsedTime elapsedTime = new ElapsedTime();
 
     /* Declare OpMode members. */
-    CatAsyncHW robot = new CatAsyncHW();  // Use our new mecanum async hardware
+    CatHW_Async robot = new CatHW_Async();  // Use our new mecanum async hardware
 
 
     // Our constructor for this class
     public MecTeleOpLevel2_Nov16Tourney() {
-        robot = new CatAsyncHW();
+        robot = new CatHW_Async();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class MecTeleOpLevel2_Nov16Tourney extends LinearOpMode {
         double intakeSpeed;
         boolean autoIntake = false;
 
-        CatPositionUpdate globalPositionUpdate = new CatPositionUpdate(robot.drive.leftOdometry, robot.drive.rightOdometry, robot.drive.backOdometry, robot.drive.ODO_COUNTS_PER_INCH, 75);
+        CatOdoPositionUpdate globalPositionUpdate = new CatOdoPositionUpdate(robot.drive.leftOdometry, robot.drive.rightOdometry, robot.drive.backOdometry, robot.drive.ODO_COUNTS_PER_INCH, 75);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
@@ -130,9 +130,9 @@ public class MecTeleOpLevel2_Nov16Tourney extends LinearOpMode {
             if (gamepad2.left_bumper) {
                 intakeSpeed = 1;
             } else if (gamepad2.right_bumper) {
-                intakeSpeed = 0.7;
+                intakeSpeed = 0.6;
             } else {
-                intakeSpeed = 0.4;
+                intakeSpeed = 0.3;
             }
 
             if (gamepad2.right_stick_button) {

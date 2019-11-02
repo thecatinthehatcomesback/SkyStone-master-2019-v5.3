@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.CatDriveHW.CHILL_SPEED;
+import static org.firstinspires.ftc.teamcode.CatHW_DriveClassic.CHILL_SPEED;
 
 
 @TeleOp(name="Ri2W TeleOp", group="CatTeleOp")
@@ -27,12 +27,12 @@ public class MecTeleOpLevel1_Ri2W extends LinearOpMode {
     private ElapsedTime elapsedTime = new ElapsedTime();
 
     /* Declare OpMode members. */
-    CatAsyncHW robot = new CatAsyncHW();  // Use our new mecanum async hardware
+    CatHW_Async robot = new CatHW_Async();  // Use our new mecanum async hardware
 
 
     // Our constructor for this class
     public MecTeleOpLevel1_Ri2W() {
-        robot = new CatAsyncHW();
+        robot = new CatHW_Async();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class MecTeleOpLevel1_Ri2W extends LinearOpMode {
         double intakeSpeed;
         boolean autoIntake = false;
 
-        CatPositionUpdate globalPositionUpdate = new CatPositionUpdate(robot.drive.leftOdometry, robot.drive.rightOdometry, robot.drive.backOdometry, robot.drive.ODO_COUNTS_PER_INCH, 75);
+        CatOdoPositionUpdate globalPositionUpdate = new CatOdoPositionUpdate(robot.drive.leftOdometry, robot.drive.rightOdometry, robot.drive.backOdometry, robot.drive.ODO_COUNTS_PER_INCH, 75);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 

@@ -1,5 +1,5 @@
 /*
-        CatAsyncHW.java
+        CatHW_Async.java
 
     An "hardware" class that acts as the master in which all the other
     "hardwares" run through.
@@ -31,7 +31,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Motor channel:  Right drive motor:        "right_rear" & "right_front"
  * And so on...
  */
-public class CatAsyncHW
+public class CatHW_Async
 {
     /* Public OpMode members. */
 
@@ -49,13 +49,13 @@ public class CatAsyncHW
 
 
     /* Other Hardware subSystems */
-    CatIntakeHW intake  = null;
-    CatDriveHW drive    = null;
-    CatTailHW tail      = null;
+    CatHW_Intake intake  = null;
+    CatHW_DriveClassic drive    = null;
+    CatHW_Tail tail      = null;
 
 
     /* Constructor */
-    public CatAsyncHW(){
+    public CatHW_Async(){
 
     }
 
@@ -70,15 +70,15 @@ public class CatAsyncHW
         // Give Telemetry for each system we begin to init:
         opMode.telemetry.addData("Initialize","Intake...");
         opMode.telemetry.update();
-        intake = new CatIntakeHW(this);
+        intake = new CatHW_Intake(this);
         intake.init();
         opMode.telemetry.addData("Initialize","Drive...");
         opMode.telemetry.update();
-        drive = new CatDriveHW(this);
+        drive = new CatHW_DriveClassic(this);
         drive.init();
         opMode.telemetry.addData("Initialize","Tail...");
         opMode.telemetry.update();
-        tail = new CatTailHW(this);
+        tail = new CatHW_Tail(this);
         tail.init();opMode.telemetry.addData("Initialize","All Done...  BOOM!");
         opMode.telemetry.update();
 
@@ -98,8 +98,8 @@ public class CatAsyncHW
      * ---   Common Miscellaneous Methods   ---
      * ---  \/ \/ \/ \/ \/ \/ \/ \/ \/ \/   ---
      */
-    public void spawnWait(CatSubsystemHW subsystem) {
-        CatAsyncThread theThread = new CatAsyncThread(subsystem);
+    public void spawnWait(CatHW_Subsystem subsystem) {
+        CatThreadAsync theThread = new CatThreadAsync(subsystem);
         theThread.start();
     }
     public void robotWait(double seconds) {
