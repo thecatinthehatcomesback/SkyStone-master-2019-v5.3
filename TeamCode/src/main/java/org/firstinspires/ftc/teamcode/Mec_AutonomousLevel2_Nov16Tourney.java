@@ -63,10 +63,10 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
         //robot.setDrivePowers.setDriveRunToPosition();
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Starting at :%7d  :%7d  :%7d  :%7d",
-                robot.drive.leftFrontMotor.getCurrentPosition(),
-                robot.drive.rightFrontMotor.getCurrentPosition(),
-                robot.drive.leftRearMotor.getCurrentPosition(),
-                robot.drive.rightRearMotor.getCurrentPosition());
+                robot.driveClassic.leftFrontMotor.getCurrentPosition(),
+                robot.driveClassic.rightFrontMotor.getCurrentPosition(),
+                robot.driveClassic.leftRearMotor.getCurrentPosition(),
+                robot.driveClassic.rightRearMotor.getCurrentPosition());
         telemetry.update();
 
         /**
@@ -161,7 +161,7 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
          * Init the IMU after play so that it is not offset after
          * remaining idle for a minute or two...
          */
-        robot.drive.IMUinit();
+        robot.driveClassic.IMU_Init();
 
         /* Go! */
         driveLoadingZone();

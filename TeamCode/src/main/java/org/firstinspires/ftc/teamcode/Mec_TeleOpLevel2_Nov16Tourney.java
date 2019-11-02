@@ -70,7 +70,7 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
         double intakeSpeed;
         boolean autoIntake = false;
 
-        CatOdoPositionUpdate globalPositionUpdate = new CatOdoPositionUpdate(robot.drive.leftOdometry, robot.drive.rightOdometry, robot.drive.backOdometry, robot.drive.ODO_COUNTS_PER_INCH, 75);
+        CatOdoPositionUpdate globalPositionUpdate = new CatOdoPositionUpdate(robot.driveOdo.leftOdometry, robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, robot.driveOdo.ODO_COUNTS_PER_INCH, 75);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
@@ -108,14 +108,14 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
                     gamepad1.left_stick_x;
 
             // Calculate the scale factor:
-            SF = robot.drive.findScalor(leftFront, rightFront, leftBack, rightBack);
+            SF = robot.driveClassic.findScalor(leftFront, rightFront, leftBack, rightBack);
             // Set powers to each setDrivePowers motor:
             leftFront  = leftFront  * SF * driveSpeed;
             rightFront = rightFront * SF * driveSpeed;
             leftBack   = leftBack   * SF * driveSpeed;
             rightBack  = rightBack  * SF * driveSpeed;
             // DRIVE!!!
-            robot.drive.drive(leftFront, rightFront, leftBack, rightBack);
+            robot.driveClassic.setDrivePowers(leftFront, rightFront, leftBack, rightBack);
 
 
 
@@ -173,14 +173,14 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
             telemetry.addData("Right Back Power:", "%.2f", rightBack);
             telemetry.addData("Intake Power:","%.2f", robot.intake.intakeMotor.getPower());
 
-            telemetry.addData("X Position","%.2f", globalPositionUpdate.returnXCoordinate() / robot.drive.ODO_COUNTS_PER_INCH);
-            telemetry.addData("Y Position", "%.2f",globalPositionUpdate.returnYCoordinate() / robot.drive.ODO_COUNTS_PER_INCH);
+            telemetry.addData("X Position","%.2f", globalPositionUpdate.returnXCoordinate() / robot.driveOdo.ODO_COUNTS_PER_INCH);
+            telemetry.addData("Y Position", "%.2f",globalPositionUpdate.returnYCoordinate() / robot.driveOdo.ODO_COUNTS_PER_INCH);
             telemetry.addData("Orientation (Degrees)", "%.2f", globalPositionUpdate.returnOrientation());
 
             telemetry.addData("Intake Encoder:", robot.intake.intakeMotor.getCurrentPosition());
-            telemetry.addData("left Encoder:", robot.drive.leftOdometry.getCurrentPosition());
-            telemetry.addData("right Encoder:", robot.drive.rightOdometry.getCurrentPosition());
-            telemetry.addData("back Encoder:", robot.drive.backOdometry.getCurrentPosition());
+            telemetry.addData("left Encoder:", robot.driveOdo.leftOdometry.getCurrentPosition());
+            telemetry.addData("right Encoder:", robot.driveOdo.rightOdometry.getCurrentPosition());
+            telemetry.addData("back Encoder:", robot.driveOdo.backOdometry.getCurrentPosition());
 
             telemetry.update();
         }

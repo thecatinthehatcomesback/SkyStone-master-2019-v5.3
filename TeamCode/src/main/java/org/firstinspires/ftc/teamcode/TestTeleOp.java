@@ -42,7 +42,7 @@ public class TestTeleOp extends LinearOpMode {
         telemetry.update();
         // Initialize the hardware
         robot.init(hardwareMap, this);
-        robot.drive.IMUinit();
+        robot.driveClassic.IMU_Init();
 
 
         // Finished!  Now tell the driver...

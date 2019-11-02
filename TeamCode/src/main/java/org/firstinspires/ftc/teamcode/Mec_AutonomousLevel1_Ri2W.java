@@ -68,10 +68,10 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
         //robot.setDrivePowers.setDriveRunToPosition();
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Starting at :%7d  :%7d  :%7d  :%7d",
-                robot.drive.leftFrontMotor.getCurrentPosition(),
-                robot.drive.rightFrontMotor.getCurrentPosition(),
-                robot.drive.leftRearMotor.getCurrentPosition(),
-                robot.drive.rightRearMotor.getCurrentPosition());
+                robot.driveClassic.leftFrontMotor.getCurrentPosition(),
+                robot.driveClassic.rightFrontMotor.getCurrentPosition(),
+                robot.driveClassic.leftRearMotor.getCurrentPosition(),
+                robot.driveClassic.rightRearMotor.getCurrentPosition());
         telemetry.update();
 
         /**
@@ -166,7 +166,7 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
          * Init the IMU after play so that it is not offset after
          * remaining idle for a minute or two...
          */
-        robot.drive.IMUinit();
+        robot.driveClassic.IMU_Init();
 
         /* Go! */
         if (isBuildZone) {
@@ -186,11 +186,11 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
         robot.intake.intakeMotor.setPower(0);
         robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 25, 2);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 25, 2);
+        robot.driveClassic.waitUntilDone();
         // Drive forward a bit more but slower
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED, 10, 3);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED, 10, 3);
+        robot.driveClassic.waitUntilDone();
 
         // Close intake
         robot.intake.runtime.reset();
@@ -202,11 +202,11 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
         robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //back up from stones
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -14, 2);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -14, 2);
+        robot.driveClassic.waitUntilDone();
         // Drive completely across the taped line
-        robot.drive.mecDriveHorizontal(CatHW_DriveClassic.DRIVE_SPEED, (isRedAlliance) ? -40 : 40, 6);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.DRIVE_SPEED, (isRedAlliance) ? -40 : 40, 6);
+        robot.driveClassic.waitUntilDone();
 
         // Spit block out
         robot.intake.runtime.reset();
@@ -217,52 +217,52 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
         robot.intake.intakeMotor.setPower(0);
         robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED,10, 4);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED,10, 4);
+        robot.driveClassic.waitUntilDone();
         //back up from stone
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED, -6, 1);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED, -6, 1);
+        robot.driveClassic.waitUntilDone();
         // Navigate (Park over taped line)
-        robot.drive.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? 15 : -15, 3);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? 15 : -15, 3);
+        robot.driveClassic.waitUntilDone();
 
 
 
     }
     public void driveBuildZone() throws InterruptedException {
         // Drive to Foundation
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -30, 3.0);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -30, 3.0);
+        robot.driveClassic.waitUntilDone();
         //robot.robotWait(1);
         // Latch on
         robot.tail.grabFoundationFingers();
         robot.tail.waitUntilDone();
         robot.robotWait(0.3);
         // Drive back to Building Zone
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 30, 3.0);
-        robot.drive.waitUntilDone();
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 7, 1.25);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 30, 3.0);
+        robot.driveClassic.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 7, 1.25);
+        robot.driveClassic.waitUntilDone();
         robot.robotWait(.1);
         robot.tail.releaseFoundationFingers();
         robot.robotWait(.2);
         // Slide out to towards the line
-        robot.drive.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? -22 : 22, 5.0);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? -22 : 22, 5.0);
+        robot.driveClassic.waitUntilDone();
         // Drive ahead and line up with the foundation
-        robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -18, 2);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -18, 2);
+        robot.driveClassic.waitUntilDone();
         // Push the foundation further into the building zone
-        robot.drive.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? 8 : -8, 1);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? 8 : -8, 1);
+        robot.driveClassic.waitUntilDone();
         // Back up and navigate (park on the taped line)
         if (isParkAtWall) {
-            robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -5, 1);
+            robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -5, 1);
         } else {
-            robot.drive.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 25, 1);
+            robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 25, 1);
         }
-        robot.drive.waitUntilDone();
-        robot.drive.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? -20 : 20, 2);
-        robot.drive.waitUntilDone();
+        robot.driveClassic.waitUntilDone();
+        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? -20 : 20, 2);
+        robot.driveClassic.waitUntilDone();
     }
 }
