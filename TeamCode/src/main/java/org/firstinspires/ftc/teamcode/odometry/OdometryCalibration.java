@@ -30,7 +30,7 @@ public class OdometryCalibration extends LinearOpMode {
     //IMU Sensor
     BNO055IMU imu;
 
-    //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
+    //Hardware Map Names for setDrivePowers motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
     String rfName = "rf", rbName = "rb", lfName = "lf", lbName = "lb";
     String verticalLeftEncoderName = rbName, verticalRightEncoderName = lfName, horizontalEncoderName = rfName;
 
@@ -102,7 +102,7 @@ public class OdometryCalibration extends LinearOpMode {
 
         /*
         Encoder Difference is calculated by the formula (leftEncoder - rightEncoder)
-        Since the left encoder is also mapped to a drive motor, the encoder value needs to be reversed with the negative sign in front
+        Since the left encoder is also mapped to a setDrivePowers motor, the encoder value needs to be reversed with the negative sign in front
         THIS MAY NEED TO BE CHANGED FOR EACH ROBOT
        */
         double encoderDifference = Math.abs(verticalLeft.getCurrentPosition()) + (Math.abs(verticalRight.getCurrentPosition()));
@@ -188,7 +188,7 @@ public class OdometryCalibration extends LinearOpMode {
     }
 
     /**
-     * Sets power to all four drive motors
+     * Sets power to all four setDrivePowers motors
      * @param rf power for right front motor
      * @param rb power for right back motor
      * @param lf power for left front motor

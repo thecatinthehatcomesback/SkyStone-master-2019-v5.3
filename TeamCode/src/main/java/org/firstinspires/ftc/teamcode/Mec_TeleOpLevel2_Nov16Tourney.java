@@ -93,7 +93,7 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
                 driveSpeed = 0.7;
             }
 
-            // Input for drive train and sets the dead-zones:
+            // Input for setDrivePowers train and sets the dead-zones:
             leftFront  = -((Math.abs(gamepad1.right_stick_y) < 0.1) ? 0 : gamepad1.right_stick_y) +
                     ((Math.abs(gamepad1.right_stick_x) < 0.1) ? 0 : gamepad1.right_stick_x) +
                     gamepad1.left_stick_x;
@@ -109,7 +109,7 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
             // Calculate the scale factor:
             SF = robot.drive.findScalor(leftFront, rightFront, leftBack, rightBack);
-            // Set powers to each drive motor:
+            // Set powers to each setDrivePowers motor:
             leftFront  = leftFront  * SF * driveSpeed;
             rightFront = rightFront * SF * driveSpeed;
             leftBack   = leftBack   * SF * driveSpeed;

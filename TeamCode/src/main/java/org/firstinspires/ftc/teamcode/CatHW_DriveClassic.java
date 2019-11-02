@@ -2,7 +2,7 @@
         CatHW_DriveClassic.java
 
     A "hardware" class containing common code accessing hardware specific
-    to the movement and rotation of the drive train.  This is a modified
+    to the movement and rotation of the setDrivePowers train.  This is a modified
     or stripped down version of CatSingleOverallHW to run all of intake
     movements.  This file is used by the new autonomous OpModes to run
     multiple operations at once.
@@ -17,21 +17,9 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Log;
 
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 /**
  * This is NOT an OpMode.
@@ -45,8 +33,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  *
  * Note:  All names are lower case and have underscores between words.
  *
- * Motor channel:  Left  drive motor:        "left_rear"  & "left_front"
- * Motor channel:  Right drive motor:        "right_rear" & "right_front"
+ * Motor channel:  Left  setDrivePowers motor:        "left_rear"  & "left_front"
+ * Motor channel:  Right setDrivePowers motor:        "right_rear" & "right_front"
  * And so on...
  */
 public class CatHW_DriveClassic extends CatHW_DriveBase
@@ -87,45 +75,13 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
     /* Constructor */
     public CatHW_DriveClassic(CatHW_Async mainHardware){
         super(mainHardware);
-
     }
 
     /* Initialize standard Hardware interfaces */
     public void init()  throws InterruptedException  {
 
-        // Define and Initialize Motors //
-        leftFrontMotor   = hwMap.dcMotor.get("left_front_motor");
-        rightFrontMotor  = hwMap.dcMotor.get("right_front_motor");
-        leftRearMotor    = hwMap.dcMotor.get("left_rear_motor");
-        rightRearMotor   = hwMap.dcMotor.get("right_rear_motor");
-
-
-        // Define motor directions //
-        leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        // Define motor zero power behavior //
-        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // Set motor modes //
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        runNoEncoders();
-
-
-        // Set all motors to run at no power so that the robot doesn't move during init //
-        leftFrontMotor.setPower(0);
-        rightFrontMotor.setPower(0);
-        leftRearMotor.setPower(0);
-        rightRearMotor.setPower(0);
-
+        // Calls DriveBase's init
+        super.init();
 
         // Sets enums to a default value
         currentMode   = DRIVE_MODE.driveTilDistance;
@@ -138,55 +94,6 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
      * ---   Driving Chassis Methods   ---
      * ---   \/ \/ \/ \/ \/ \/ \/ \/   ---
      */
-    /* Basic methods for setting all four drive motor powers and setModes: */
-    public void drive(double leftFront, double rightFront, double leftBack, double rightBack) {
-        /**
-         * Simply setting the powers of each motor in less characters
-         */
-        leftFrontMotor.setPower(leftFront);
-        rightFrontMotor.setPower(rightFront);
-        leftRearMotor.setPower(leftBack);
-        rightRearMotor.setPower(rightBack);
-
-        Log.d("catbot", String.format("Drive Power  LF: %.2f, RF: %.2f, LB: %.2f, RB: %.2f", leftFront, rightFront, leftBack, rightBack));
-    }
-    public void resetEncoders(){
-        /**
-         * Set all motors to STOP_AND_RESET_ENCODER
-         */
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-    public void runUsingEncoders(){
-        /**
-         * Set all motors to RUN_USING_ENCODER
-         */
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void runNoEncoders(){
-        /**
-         * Set all motors to RUN_WITHOUT_ENCODER
-         */
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-    public void runToPosition(){
-        /**
-         * Set all motors to RUN_TO_POSITION
-         */
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftRearMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightRearMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    // Driving Methods:
     public void mecDriveVertical(double power,
                                  double distance,
                                  double timeoutS)  throws InterruptedException {
@@ -196,12 +103,12 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
                                      double distance,
                                      double timeoutS, DRIVE_MODE driveMode, ColorSensor leftColSenIn, ColorSensor rightColSenIn)  throws InterruptedException {
         /**
-         * This is a simpler mecanum drive method that drives blindly
+         * This is a simpler mecanum setDrivePowers method that drives blindly
          * straight vertically or using the color sensors to find a
          * line.
          */
 
-        Log.d("catbot", String.format(" Started drive vert pow: %.2f, dist: %.2f, time:%.2f ", power, distance, timeoutS));
+        Log.d("catbot", String.format(" Started setDrivePowers vert pow: %.2f, dist: %.2f, time:%.2f ", power, distance, timeoutS));
         currentMethod = DRIVE_METHOD.vertical;
         currentMode = driveMode;
         timeout = timeoutS;
@@ -212,7 +119,6 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
         int newRightFrontTarget;
         int newLeftBackTarget;
         int newRightBackTarget;
-        boolean keepDriving = true;
         baseDelta = 0;
         isDone = false;
         if (driveMode == DRIVE_MODE.findLine) {
@@ -229,8 +135,8 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
             newRightBackTarget  = (int) (distance * COUNTS_PER_INCH);
 
             // Set the motors to travel towards their desired targets
-            resetEncoders();
-            runToPosition();
+            resetDriveEncoders();
+            setDriveRunToPosition();
             leftFrontMotor.setTargetPosition(newLeftFrontTarget);
             rightFrontMotor.setTargetPosition(newRightFrontTarget);
             leftRearMotor.setTargetPosition(newLeftBackTarget);
@@ -244,16 +150,16 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
                 power = -power;
             }
 
-            drive(power, power, power, power);
+            setDrivePowers(power, power, power, power);
 
         }
     }
     public void mecDriveHorizontal(double power, double distance, double timeoutS) {
         /**
-         * This is a simpler mecanum drive method that drives blindly
+         * This is a simpler mecanum setDrivePowers method that drives blindly
          * straight horizontally (positive numbers should translate left)
          */
-        Log.d("catbot", String.format(" Started drive horizontal pow: %.2f, dist: %.2f, time:%.2f ",power,distance, timeoutS));
+        Log.d("catbot", String.format(" Started setDrivePowers horizontal pow: %.2f, dist: %.2f, time:%.2f ",power,distance, timeoutS));
 
         currentMethod = DRIVE_METHOD.horizontal;
         timeout = timeoutS;
@@ -274,8 +180,8 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
             newRightBackTarget  = (int) -(distance * COUNTS_PER_INCH * Math.sqrt(2));
 
             // Set the motors to travel towards their desired targets
-            resetEncoders();
-            runToPosition();
+            resetDriveEncoders();
+            setDriveRunToPosition();
             leftFrontMotor.setTargetPosition(newLeftFrontTarget);
             rightFrontMotor.setTargetPosition(newRightFrontTarget);
             leftRearMotor.setTargetPosition(newLeftBackTarget);
@@ -290,14 +196,14 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
             }
 
             // Due to the differences in weight on each wheel, adjust powers accordingly
-            drive(power, power, power, power);
+            setDrivePowers(power, power, power, power);
         }
     }
     public void advMecDrive(double power, double vectorDistance,
                             double vectorAng, double timeoutS) throws InterruptedException {
         /**
-         * In this mecanum drive method, we are trying to have the robot
-         * drive at an angle while the face of the robot remains pointed
+         * In this mecanum setDrivePowers method, we are trying to have the robot
+         * setDrivePowers at an angle while the face of the robot remains pointed
          * ahead.
          *
          *
@@ -331,8 +237,8 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
             newRightBackTarget  = (int) (vectorDistance * COUNTS_PER_INCH * rightBackMod);
 
             // Set the motors to travel towards their desired targets
-            resetEncoders();
-            runToPosition();
+            resetDriveEncoders();
+            setDriveRunToPosition();
             leftFrontMotor.setTargetPosition(newLeftFrontTarget);
             rightFrontMotor.setTargetPosition(newRightFrontTarget);
             leftRearMotor.setTargetPosition(newLeftBackTarget);
@@ -346,14 +252,14 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
                 power = -power;
             }
 
-            // Calculate motor drive powers after we decide direction
+            // Calculate motor setDrivePowers powers after we decide direction
             double SF = findScalor(leftFrontMod, rightFrontMod, leftBackMod, rightBackMod);
             leftFrontMod  = leftFrontMod  * SF * power;
             rightFrontMod = rightFrontMod * SF * power;
             leftBackMod   = leftBackMod   * SF * power;
             rightBackMod  = rightBackMod  * SF * power;
             // Drive
-            drive(leftFrontMod, rightFrontMod, leftBackMod, rightBackMod);
+            setDrivePowers(leftFrontMod, rightFrontMod, leftBackMod, rightBackMod);
 
             while (opMode.opModeIsActive() &&
                     (runTime.seconds() < timeoutS) &&
@@ -383,7 +289,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
 
 
             // Stop all motion
-            drive(0, 0, 0, 0);
+            setDrivePowers(0, 0, 0, 0);
         }
     }
     public void mecTurn(double power, int degrees, double timeoutS) throws InterruptedException {
@@ -405,7 +311,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
             clockwiseTurn = (getCurrentAngle() < targetAngleZ);
 
             // Don't use encoders.  We only use the gyro angle to turn
-            runNoEncoders();
+            setDriveRunWithoutEncoders();
             // reset the timeout time and start motion.
             runTime.reset();
             Log.d("catbot", String.format("Start turn...  target %d, current %d  %s", -targetAngleZ, -getCurrentAngle(), clockwiseTurn ?"CW":"CCW"));
@@ -450,7 +356,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
         }
         switch (currentMethod){
             case vertical:
-                // One drive mode that drives blindly straight
+                // One setDrivePowers mode that drives blindly straight
                 if (currentMode == DRIVE_MODE.driveTilDistance) {
 
                     //  Exit the method once robot stops
@@ -465,7 +371,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
                             rightRearMotor.getTargetPosition(), rightRearMotor.getCurrentPosition()));
                 }
 
-                // The other drive mode using color sensors to fine lines
+                // The other setDrivePowers mode using color sensors to fine lines
                 if (currentMode == DRIVE_MODE.findLine) {
 
                     // Once left side hits color, turn left side motors off
@@ -521,7 +427,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
 
         if (!keepDriving){
             // Stop all motion;
-            drive(0, 0, 0, 0);
+            setDrivePowers(0, 0, 0, 0);
             isDone = true;
             return true;
         }

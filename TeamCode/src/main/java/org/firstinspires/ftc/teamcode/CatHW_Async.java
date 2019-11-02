@@ -27,8 +27,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  * Note:  All names are lower case and have underscores between words.
  *
- * Motor channel:  Left  drive motor:        "left_rear"  & "left_front"
- * Motor channel:  Right drive motor:        "right_rear" & "right_front"
+ * Motor channel:  Left  setDrivePowers motor:        "left_rear"  & "left_front"
+ * Motor channel:  Right setDrivePowers motor:        "right_rear" & "right_front"
  * And so on...
  */
 public class CatHW_Async
@@ -49,9 +49,10 @@ public class CatHW_Async
 
 
     /* Other Hardware subSystems */
-    CatHW_Intake intake  = null;
-    CatHW_DriveClassic drive    = null;
-    CatHW_Tail tail      = null;
+    CatHW_Intake intake         = null;
+    CatHW_Tail tail             = null;
+    CatHW_DriveClassic  driveClassic    = null;
+    CatHW_DriveOdo      driveOdo        = null;
 
 
     /* Constructor */
@@ -74,8 +75,8 @@ public class CatHW_Async
         intake.init();
         opMode.telemetry.addData("Initialize","Drive...");
         opMode.telemetry.update();
-        drive = new CatHW_DriveClassic(this);
-        drive.init();
+        driveClassic = new CatHW_DriveClassic(this);
+        driveClassic.init();
         opMode.telemetry.addData("Initialize","Tail...");
         opMode.telemetry.update();
         tail = new CatHW_Tail(this);

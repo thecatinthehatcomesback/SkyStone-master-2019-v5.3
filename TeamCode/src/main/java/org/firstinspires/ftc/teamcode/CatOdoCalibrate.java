@@ -74,7 +74,7 @@ public class CatOdoCalibrate extends LinearOpMode {
 
         /*
         Encoder Difference is calculated by the formula (leftEncoder - rightEncoder)
-        Since the left encoder is also mapped to a drive motor, the encoder value needs to be reversed with the negative sign in front
+        Since the left encoder is also mapped to a setDrivePowers motor, the encoder value needs to be reversed with the negative sign in front
         THIS MAY NEED TO BE CHANGED FOR EACH ROBOT
        */
         double encoderDifference = Math.abs(robot.drive.leftOdometry.getCurrentPosition()) + (Math.abs(robot.drive.rightOdometry.getCurrentPosition()));

@@ -2,7 +2,7 @@
         CatHW_DriveClassic.java
 
     A "hardware" class containing common code accessing hardware specific
-    to the movement and rotation of the drive train.  This is a modified
+    to the movement and rotation of the setDrivePowers train.  This is a modified
     or stripped down version of CatSingleOverallHW to run all of intake
     movements.  This file is used by the new autonomous OpModes to run
     multiple operations at once.
@@ -44,19 +44,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  *
  * Note:  All names are lower case and have underscores between words.
  *
- * Motor channel:  Left  drive motor:        "left_rear"  & "left_front"
- * Motor channel:  Right drive motor:        "right_rear" & "right_front"
+ * Motor channel:  Left  setDrivePowers motor:        "left_rear"  & "left_front"
+ * Motor channel:  Right setDrivePowers motor:        "right_rear" & "right_front"
  * And so on...
  */
 public class CatHW_DriveBase extends CatHW_Subsystem
 {
     /* Wheel measurements */
     static final double     COUNTS_PER_MOTOR_REV    = 537.6;    // Accurate for a NeveRest Orbital 20
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0;      // For figuring circumference
     static final double     COUNTS_PER_INCH         = COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     ODO_COUNTS_PER_REV        = 1440;     // 1440 for E4T from Andymark
-    static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
-    static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * 3.1415);
+
 
     /* Autonomous Drive Speeds */
     static final double     HYPER_SPEED             = 0.95;
@@ -65,10 +63,11 @@ public class CatHW_DriveBase extends CatHW_Subsystem
     static final double     CREEP_SPEED             = 0.25;
     static final double     TURN_SPEED              = 0.6;
 
-
+    // Timer stuff
     ElapsedTime runTime = new ElapsedTime();
     double      timeout = 0;
 
+    // Turn stuff
     int             targetAngleZ;
     int             baseDelta;
     boolean         clockwiseTurn;
@@ -88,8 +87,16 @@ public class CatHW_DriveBase extends CatHW_Subsystem
     public RevBlinkinLedDriver.BlinkinPattern pattern;
 
 
+    /* Public OpMode members. */
+    // Motors:
+    public DcMotor  leftFrontMotor  = null;
+    public DcMotor  rightFrontMotor = null;
+    public DcMotor  leftRearMotor   = null;
+    public DcMotor  rightRearMotor  = null;
+
     /* local OpMode members. */
     LinearOpMode opMode = null;
+
     /* Constructor */
     public CatHW_DriveBase(CatHW_Async mainHardware){
         super(mainHardware);
@@ -98,6 +105,29 @@ public class CatHW_DriveBase extends CatHW_Subsystem
 
     /* Initialize standard Hardware interfaces */
     public void init()  throws InterruptedException  {
+
+        // Define and Initialize Motors //
+        leftFrontMotor   = hwMap.dcMotor.get("left_front_motor");
+        rightFrontMotor  = hwMap.dcMotor.get("right_front_motor");
+        leftRearMotor    = hwMap.dcMotor.get("left_rear_motor");
+        rightRearMotor   = hwMap.dcMotor.get("right_rear_motor");
+
+        // Define motor directions //
+        leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        // Define motor zero power behavior //
+        setDriveToBrake();
+
+        // Set motor modes //
+        resetDriveEncoders();
+        setDriveRunWithoutEncoders();
+
+        // Set all motors to run at no power so that the robot doesn't move during init //
+        setDrivePowers(0,0, 0, 0);
+
 
         // Blinkin LED stuff //
         lights           = hwMap.get(RevBlinkinLedDriver.class, "blinky");
@@ -112,7 +142,73 @@ public class CatHW_DriveBase extends CatHW_Subsystem
      * ---   Driving Chassis Methods   ---
      * ---   \/ \/ \/ \/ \/ \/ \/ \/   ---
      */
-    // Driving Methods:
+    /* Basic methods for setting all four setDrivePowers motor powers and setModes: */
+    public void setDrivePowers(double leftFront, double rightFront, double leftBack, double rightBack) {
+        /**
+         * Set the powers of each drive motor
+         */
+        leftFrontMotor.setPower(leftFront);
+        rightFrontMotor.setPower(rightFront);
+        leftRearMotor.setPower(leftBack);
+        rightRearMotor.setPower(rightBack);
+
+        Log.d("catbot", String.format("Drive Power  LF: %.2f, RF: %.2f, LB: %.2f, RB: %.2f", leftFront, rightFront, leftBack, rightBack));
+    }
+    public void setDriveToBrake() {
+        /**
+         * Set drive motors to BRAKE
+         */
+        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    public void setDriveToCoast() {
+        /**
+         * Set drive motors to FLOAT (coast)
+         */
+        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
+    public void resetDriveEncoders(){
+        /**
+         * Set drive motors to STOP_AND_RESET_ENCODER
+         */
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    public void setDriveRunUsingEncoders(){
+        /**
+         * Set drive motors to RUN_USING_ENCODER
+         */
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void setDriveRunWithoutEncoders(){
+        /**
+         * Set drive motors to RUN_WITHOUT_ENCODER
+         */
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public void setDriveRunToPosition(){
+        /**
+         * Set drive motors to RUN_TO_POSITION
+         */
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRearMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightRearMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    // Math operations:
     public double findScalor(double leftFrontValue, double rightFrontValue,
                              double leftBackValue, double rightBackValue) {
         /**
@@ -151,7 +247,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
             // Get the reciprocal
             scaleFactor = 1.0 / scalor;
         } else {
-            // Set to 1 so that we don't change anything we don'thave to...
+            // Set to 1 so that we don't change anything we don't have to...
             scaleFactor = 1.0;
         }
 
@@ -160,12 +256,13 @@ public class CatHW_DriveBase extends CatHW_Subsystem
         // After finding scale factor, we need to scale each motor power down by the same amount...
     }
 
+
     /**
      * ---   ___________   ---
      * ---   IMU Methods   ---
      * ---   \/ \/ \/ \/   ---
      */
-    public void IMUinit () {
+    public void IMU_Init() {
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -204,7 +301,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
         }
         switch (currentMethod){
             case vertical:
-                // One drive mode that drives blindly straight
+                // One setDrivePowers mode that drives blindly straight
                 if (currentMode == DRIVE_MODE.driveTilDistance) {
 
                     //  Exit the method once robot stops
@@ -219,7 +316,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
                             rightRearMotor.getTargetPosition(), rightRearMotor.getCurrentPosition()));
                 }
 
-                // The other drive mode using color sensors to fine lines
+                // The other setDrivePowers mode using color sensors to fine lines
                 if (currentMode == DRIVE_MODE.findLine) {
 
                     // Once left side hits color, turn left side motors off
@@ -359,7 +456,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
 
         if (!keepDriving){
             // Stop all motion;
-            drive(0, 0, 0, 0);
+            setDrivePowers(0, 0, 0, 0);
             isDone = true;
             return true;
         }

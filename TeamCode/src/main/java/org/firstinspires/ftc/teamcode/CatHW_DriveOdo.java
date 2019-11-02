@@ -2,7 +2,7 @@
         CatHW_DriveClassic.java
 
     A "hardware" class containing common code accessing hardware specific
-    to the movement and rotation of the drive train.  This is a modified
+    to the movement and rotation of the setDrivePowers train.  This is a modified
     or stripped down version of CatSingleOverallHW to run all of intake
     movements.  This file is used by the new autonomous OpModes to run
     multiple operations at once.
@@ -16,21 +16,8 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 /**
  * This is NOT an OpMode.
@@ -44,8 +31,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  *
  * Note:  All names are lower case and have underscores between words.
  *
- * Motor channel:  Left  drive motor:        "left_rear"  & "left_front"
- * Motor channel:  Right drive motor:        "right_rear" & "right_front"
+ * Motor channel:  Left  setDrivePowers motor:        "left_rear"  & "left_front"
+ * Motor channel:  Right setDrivePowers motor:        "right_rear" & "right_front"
  * And so on...
  */
 public class CatHW_DriveOdo extends CatHW_DriveBase
@@ -172,8 +159,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * ---   Driving Chassis Methods   ---
      * ---   \/ \/ \/ \/ \/ \/ \/ \/   ---
      */
-    /* Basic methods for setting all four drive motor powers and setModes: */
-    public void drive(double leftFront, double rightFront, double leftBack, double rightBack) {
+    /* Basic methods for setting all four setDrivePowers motor powers and setModes: */
+    public void setDrivePowers(double leftFront, double rightFront, double leftBack, double rightBack) {
         /**
          * Simply setting the powers of each motor in less characters
          */
@@ -184,7 +171,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         Log.d("catbot", String.format("Drive Power  LF: %.2f, RF: %.2f, LB: %.2f, RB: %.2f", leftFront, rightFront, leftBack, rightBack));
     }
-    public void resetEncoders(){
+    public void resetDriveEncoders(){
 
         leftOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -330,7 +317,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         if (!keepDriving){
             // Stop all motion;
-            drive(0, 0, 0, 0);
+            setDrivePowers(0, 0, 0, 0);
             isDone = true;
             return true;
         }

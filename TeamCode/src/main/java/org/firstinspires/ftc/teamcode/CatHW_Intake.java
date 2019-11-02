@@ -31,8 +31,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  * Note:  All names are lower case and have underscores between words.
  *
- * Motor channel:  Left  drive motor:        "left_rear"  & "left_front"
- * Motor channel:  Right drive motor:        "right_rear" & "right_front"
+ * Motor channel:  Left  setDrivePowers motor:        "left_rear"  & "left_front"
+ * Motor channel:  Right setDrivePowers motor:        "right_rear" & "right_front"
  * And so on...
  */
 public class CatHW_Intake extends CatHW_Subsystem

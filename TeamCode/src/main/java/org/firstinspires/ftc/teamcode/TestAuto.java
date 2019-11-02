@@ -32,7 +32,7 @@ public class TestAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         /**
-         * Initialize the drive system variables.  The init() methods of
+         * Initialize the setDrivePowers system variables.  The init() methods of
          * our hardware class does all the work:
          */
         robot.init(hardwareMap, this);
@@ -45,9 +45,9 @@ public class TestAuto extends LinearOpMode {
          */
         telemetry.addData("Status: ", "Resetting Encoders...");
         telemetry.update();
-        //robot.drive.resetEncoders();
+        //robot.setDrivePowers.resetDriveEncoders();
         //idle();
-        //robot.drive.runToPosition();
+        //robot.setDrivePowers.setDriveRunToPosition();
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Starting at :%7d  :%7d  :%7d  :%7d",
                 robot.drive.leftFrontMotor.getCurrentPosition(),
