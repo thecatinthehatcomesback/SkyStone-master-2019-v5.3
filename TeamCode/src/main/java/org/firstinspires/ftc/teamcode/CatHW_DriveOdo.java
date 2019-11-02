@@ -1,11 +1,11 @@
 /*
-        CatHW_DriveClassic.java
+        CatHW_DriveOdo.java
 
     A "hardware" class containing common code accessing hardware specific
-    to the movement and rotation of the setDrivePowers train.  This is a modified
-    or stripped down version of CatSingleOverallHW to run all of intake
-    movements.  This file is used by the new autonomous OpModes to run
-    multiple operations at once.
+    to the movement and rotation of the setDrivePowers train.  This is a
+    modified or stripped down version of CatSingleOverallHW to run all
+    the drive train overall.  This file is used by the new autonomous
+    OpModes to run multiple operations at once.
 
 
     This file is a modified version from the FTC SDK.
@@ -22,9 +22,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 /**
  * This is NOT an OpMode.
  *
- * This class is used to define all the specific hardware for the robot to
- * allow for multiple operations during autonomous.  In this case, that robot is //todo Change this name
- * Jack from the Cat in the Hat Comes Back team during the 2018-2019 season.
+ * This class is used when using the odometry encoders for autonomous.
  *
  * This hardware class assumes the following device names have been configured on the robot.
  *
@@ -40,14 +38,14 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     /* Wheel measurements */
     static final double     ODO_COUNTS_PER_REV        = 1440;     // 1440 for E4T from Andymark
     static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
-    static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
 
-    double          targetX;
-    double          targetY;
-    double          strafePower;
-    double          strafeAngle;
-    double          strafeTurnPower;
+    double  targetX;
+    double  targetY;
+    double  strafePower;
+    double  strafeAngle;
+    double  strafeTurnPower;
 
 
     /* Enums */
@@ -68,8 +66,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     }
 
 
-    private DRIVE_METHOD currentMethod;
     private DRIVE_MODE currentMode;
+    private DRIVE_METHOD currentMethod;
 
     /* Public OpMode members. */
     // Motors
@@ -96,63 +94,33 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     /* Initialize standard Hardware interfaces */
     public void init()  throws InterruptedException  {
 
+        // Calls DriveBase's init
+        super.init();
+
+        //todo: Name these motors things and such!!
+
         // Define and Initialize Motors //
-        leftFrontMotor   = hwMap.dcMotor.get("left_front_motor");
-        rightFrontMotor  = hwMap.dcMotor.get("right_front_motor");
-        leftRearMotor    = hwMap.dcMotor.get("left_rear_motor");
-        rightRearMotor   = hwMap.dcMotor.get("right_rear_motor");
         leftOdometry     = hwMap.dcMotor.get("left_odometry");
         rightOdometry    = hwMap.dcMotor.get("right_odometry");
         backOdometry     = hwMap.dcMotor.get("back_odometry");
 
-
-        // Define motor directions //
-        leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        // Define motor zero power behavior //
-        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        // Set odometry directions //
         leftOdometry.setDirection(DcMotor.Direction.FORWARD);
         rightOdometry.setDirection(DcMotor.Direction.FORWARD);
         backOdometry.setDirection(DcMotor.Direction.FORWARD);
 
-
-        // Set motor modes //
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Set all motors to run at no power so that the robot doesn't move during init //
-        leftFrontMotor.setPower(0);
-        rightFrontMotor.setPower(0);
-        leftRearMotor.setPower(0);
-        rightRearMotor.setPower(0);
-
-
-        // Sets enums to a default value
-        currentMode = DRIVE_MODE.driveTilPoint;
-        currentMethod = DRIVE_METHOD.translate;
+        // Set odometry modes //
+        resetOdometryEncoders();
 
         // Odometry Setup
         globalPositionUpdate  = new CatOdoPositionUpdate(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH, 25);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
-    }
 
+        // Sets enums to a default value
+        currentMode = DRIVE_MODE.driveTilPoint;
+        currentMethod = DRIVE_METHOD.translate;
+    }
 
     /**
      * ---   _______________________   ---
@@ -160,22 +128,17 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * ---   \/ \/ \/ \/ \/ \/ \/ \/   ---
      */
     /* Basic methods for setting all four setDrivePowers motor powers and setModes: */
-    public void setDrivePowers(double leftFront, double rightFront, double leftBack, double rightBack) {
+    public void resetOdometryEncoders(){
         /**
-         * Simply setting the powers of each motor in less characters
+         * Set the odometry wheels to STOP_AND_RESET_ENCODER
          */
-        leftFrontMotor.setPower(leftFront);
-        rightFrontMotor.setPower(rightFront);
-        leftRearMotor.setPower(leftBack);
-        rightRearMotor.setPower(rightBack);
-
-        Log.d("catbot", String.format("Drive Power  LF: %.2f, RF: %.2f, LB: %.2f, RB: %.2f", leftFront, rightFront, leftBack, rightBack));
-    }
-    public void resetDriveEncoders(){
-
         leftOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
     // Driving Methods:
     public void translateDrive(double x, double y, double power, double angle, double turnSpeed, double timeoutS){
@@ -193,7 +156,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         // Reset timer once called
         runTime.reset();
     }
-
 
     /**
      * ---   _____________   ---

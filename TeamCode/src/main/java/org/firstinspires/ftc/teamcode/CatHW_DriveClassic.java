@@ -2,10 +2,10 @@
         CatHW_DriveClassic.java
 
     A "hardware" class containing common code accessing hardware specific
-    to the movement and rotation of the setDrivePowers train.  This is a modified
-    or stripped down version of CatSingleOverallHW to run all of intake
-    movements.  This file is used by the new autonomous OpModes to run
-    multiple operations at once.
+    to the movement and rotation of the setDrivePowers train.  This is a
+    modified or stripped down version of CatSingleOverallHW to run all
+    the drive train overall.  This file is used by the new autonomous
+    OpModes to run multiple operations at once.
 
 
     This file is a modified version from the FTC SDK.
@@ -24,9 +24,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 /**
  * This is NOT an OpMode.
  *
- * This class is used to define all the specific hardware for the robot to
- * allow for multiple operations during autonomous.  In this case, that robot is //todo Change this name
- * Jack from the Cat in the Hat Comes Back team during the 2018-2019 season.
+ * This class is used when using the motor's encoders for autonomous.
  *
  * This hardware class assumes the following device names have been configured on the robot.
  *
@@ -58,15 +56,8 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
         TANK
     }
 
-    private DRIVE_METHOD currentMethod;
     private DRIVE_MODE currentMode;
-
-    /* Public OpMode members. */
-    // Motors
-    public DcMotor  leftFrontMotor  = null;
-    public DcMotor  rightFrontMotor = null;
-    public DcMotor  leftRearMotor   = null;
-    public DcMotor  rightRearMotor  = null;
+    private DRIVE_METHOD currentMethod;
 
 
     /* local OpMode members. */
@@ -88,27 +79,26 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
         currentMethod = DRIVE_METHOD.vertical;
     }
 
-
     /**
      * ---   _______________________   ---
      * ---   Driving Chassis Methods   ---
      * ---   \/ \/ \/ \/ \/ \/ \/ \/   ---
      */
-    public void mecDriveVertical(double power,
-                                 double distance,
-                                 double timeoutS)  throws InterruptedException {
+    public void mecDriveVertical(double power, double distance, double timeoutS)  throws InterruptedException {
         mecDriveVertical(power, distance, timeoutS, DRIVE_MODE.driveTilDistance, null, null);
     }
-        public void mecDriveVertical(double power,
-                                     double distance,
-                                     double timeoutS, DRIVE_MODE driveMode, ColorSensor leftColSenIn, ColorSensor rightColSenIn)  throws InterruptedException {
+    public void mecDriveVertical(double power, double distance, double timeoutS,
+                                 DRIVE_MODE driveMode, ColorSensor leftColSenIn, ColorSensor rightColSenIn)  throws InterruptedException {
         /**
          * This is a simpler mecanum setDrivePowers method that drives blindly
          * straight vertically or using the color sensors to find a
          * line.
          */
 
+        // Log message:
         Log.d("catbot", String.format(" Started setDrivePowers vert pow: %.2f, dist: %.2f, time:%.2f ", power, distance, timeoutS));
+
+
         currentMethod = DRIVE_METHOD.vertical;
         currentMode = driveMode;
         timeout = timeoutS;
@@ -150,8 +140,8 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
                 power = -power;
             }
 
+            // Due to the differences in weight on each wheel, adjust powers accordingly
             setDrivePowers(power, power, power, power);
-
         }
     }
     public void mecDriveHorizontal(double power, double distance, double timeoutS) {
@@ -159,7 +149,10 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
          * This is a simpler mecanum setDrivePowers method that drives blindly
          * straight horizontally (positive numbers should translate left)
          */
+
+        // Log message:
         Log.d("catbot", String.format(" Started setDrivePowers horizontal pow: %.2f, dist: %.2f, time:%.2f ",power,distance, timeoutS));
+
 
         currentMethod = DRIVE_METHOD.horizontal;
         timeout = timeoutS;
@@ -219,7 +212,6 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
         double rightFrontMod = Math.cos(Math.toRadians(vectorAng)) - Math.sin(Math.toRadians(vectorAng));
         double leftBackMod   = Math.cos(Math.toRadians(vectorAng)) - Math.sin(Math.toRadians(vectorAng));
         double rightBackMod  = Math.cos(Math.toRadians(vectorAng)) + Math.sin(Math.toRadians(vectorAng));
-
 
         int newLeftFrontTarget;
         int newRightFrontTarget;
@@ -295,7 +287,8 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
     public void mecTurn(double power, int degrees, double timeoutS) throws InterruptedException {
         mecTurn(power, degrees, timeoutS, TURN_MODE.SPIN);
     }
-    public void mecTurn(double power, int degrees, double timeoutS, TURN_MODE turnMode) throws InterruptedException {
+    public void mecTurn(double power, int degrees, double timeoutS,
+                        TURN_MODE turnMode) throws InterruptedException {
         /**
          * Turns counterclockwise with a negative Z angle
          * Turns clockwise with a positive Z angle
@@ -314,6 +307,8 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
             setDriveRunWithoutEncoders();
             // reset the timeout time and start motion.
             runTime.reset();
+
+            // Log message:
             Log.d("catbot", String.format("Start turn...  target %d, current %d  %s", -targetAngleZ, -getCurrentAngle(), clockwiseTurn ?"CW":"CCW"));
 
 
@@ -351,6 +346,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
     public boolean isDone() {
         boolean keepDriving = true;
         if ((runTime.seconds() > timeout)) {
+            // Log message:
             Log.d("catbot", "Timed out.");
             keepDriving = false;
         }
@@ -364,6 +360,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
                             !leftRearMotor.isBusy() || !rightRearMotor.isBusy()) {
                         keepDriving = false;
                     }
+                    // Log message:
                     Log.d("catbot", String.format("DriveVert LF: %d, %d;  RF: %d, %d;  LB: %d, %d;  RB %d,%d",
                             leftFrontMotor.getTargetPosition(),leftFrontMotor.getCurrentPosition(),
                             rightFrontMotor.getTargetPosition(), rightFrontMotor.getCurrentPosition(),
@@ -402,6 +399,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
 
                     keepDriving = false;
                 }
+                // Log message:
                 Log.d("catbot", String.format("DriveHor LF: %d, %d, %.2f;  RF: %d, %d, %.2f;  LB: %d, %d, %.2f;  RB %d,%d, %.2f",
                         leftFrontMotor.getTargetPosition(),leftFrontMotor.getCurrentPosition(),  leftFrontMotor.getPower(),
                         rightFrontMotor.getTargetPosition(), rightFrontMotor.getCurrentPosition(), rightFrontMotor.getPower(),
@@ -414,6 +412,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
 
                 int zVal = getCurrentAngle();
 
+                // Log message:
                 Log.d("catbot", String.format("target %d, current %d  %s", -targetAngleZ, -zVal, clockwiseTurn ? "CW": "CCW"));
 
                 if ((zVal >= targetAngleZ) && (!clockwiseTurn)) {
@@ -426,7 +425,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
         }
 
         if (!keepDriving){
-            // Stop all motion;
+            // Stop all motion
             setDrivePowers(0, 0, 0, 0);
             isDone = true;
             return true;

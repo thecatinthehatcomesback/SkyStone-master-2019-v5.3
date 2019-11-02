@@ -1,11 +1,11 @@
 /*
-        CatHW_DriveClassic.java
+        CatHW_DriveBase.java
 
     A "hardware" class containing common code accessing hardware specific
-    to the movement and rotation of the setDrivePowers train.  This is a modified
-    or stripped down version of CatSingleOverallHW to run all of intake
-    movements.  This file is used by the new autonomous OpModes to run
-    multiple operations at once.
+    to the movement and rotation of the setDrivePowers train.  This is a
+    modified or stripped down version of CatSingleOverallHW to run all
+    the drive train overall.  This file is used by the new autonomous
+    OpModes to run multiple operations at once.
 
 
     This file is a modified version from the FTC SDK.
@@ -35,9 +35,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 /**
  * This is NOT an OpMode.
  *
- * This class is used to define all the specific hardware for the robot to
- * allow for multiple operations during autonomous.  In this case, that robot is //todo Change this name
- * Jack from the Cat in the Hat Comes Back team during the 2018-2019 season.
+ * This class is used to define all the specific and basic hardware for the
+ * robot's drive train and such to allow for multiple operations during
+ * autonomous.  This class has two subclasses (CatHW_DriveClassic and
+ * CatHW_DriveOdo) that use encoders to determine position differently.
  *
  * This hardware class assumes the following device names have been configured on the robot.
  *
@@ -53,7 +54,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
     /* Wheel measurements */
     static final double     COUNTS_PER_MOTOR_REV    = 537.6;    // Accurate for a NeveRest Orbital 20
     static final double     WHEEL_DIAMETER_INCHES   = 4.0;      // For figuring circumference
-    static final double     COUNTS_PER_INCH         = COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     COUNTS_PER_INCH         = COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER_INCHES * Math.PI);
 
 
     /* Autonomous Drive Speeds */
@@ -130,8 +131,8 @@ public class CatHW_DriveBase extends CatHW_Subsystem
 
 
         // Blinkin LED stuff //
-        lights           = hwMap.get(RevBlinkinLedDriver.class, "blinky");
-        pattern          = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+        lights      = hwMap.get(RevBlinkinLedDriver.class, "blinky");
+        pattern     = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
         lights.setPattern(pattern);
 
     }
@@ -152,6 +153,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
         leftRearMotor.setPower(leftBack);
         rightRearMotor.setPower(rightBack);
 
+        // Log message:
         Log.d("catbot", String.format("Drive Power  LF: %.2f, RF: %.2f, LB: %.2f, RB: %.2f", leftFront, rightFront, leftBack, rightBack));
     }
     public void setDriveToBrake() {
@@ -255,7 +257,6 @@ public class CatHW_DriveBase extends CatHW_Subsystem
         return scaleFactor;
         // After finding scale factor, we need to scale each motor power down by the same amount...
     }
-
 
     /**
      * ---   ___________   ---
