@@ -8,7 +8,7 @@
  at the beginning of the match.
 
  MecBasic is written to use the most basic approach to our autonomous route
- with the help of mechanical sorting intake and a servo to drop our team marker
+ with the help of mechanical sorting jaws and a servo to drop our team marker
  off in the depot.  This autonomous is used for our first qualifier this year
 (November 10, 2018).
 

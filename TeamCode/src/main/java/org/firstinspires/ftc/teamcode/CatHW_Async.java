@@ -49,7 +49,7 @@ public class CatHW_Async
 
 
     /* Other Hardware subSystems */
-    CatHW_Intake intake         = null;
+    CatHW_Jaws jaws = null;
     CatHW_Tail tail             = null;
     CatHW_DriveClassic  driveClassic    = null;
     CatHW_DriveOdo      driveOdo        = null;
@@ -71,8 +71,8 @@ public class CatHW_Async
         // Give Telemetry for each system we begin to init:
         opMode.telemetry.addData("Initialize","Intake...");
         opMode.telemetry.update();
-        intake = new CatHW_Intake(this);
-        intake.init();
+        jaws = new CatHW_Jaws(this);
+        jaws.init();
         opMode.telemetry.addData("Initialize","Drive...");
         opMode.telemetry.update();
         driveClassic = new CatHW_DriveClassic(this);
@@ -80,7 +80,8 @@ public class CatHW_Async
         opMode.telemetry.addData("Initialize","Tail...");
         opMode.telemetry.update();
         tail = new CatHW_Tail(this);
-        tail.init();opMode.telemetry.addData("Initialize","All Done...  BOOM!");
+        tail.init();
+        opMode.telemetry.addData("Initialize","All Done...  BOOM!");
         opMode.telemetry.update();
 
 

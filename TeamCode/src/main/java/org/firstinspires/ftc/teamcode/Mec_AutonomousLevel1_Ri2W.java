@@ -8,7 +8,7 @@
  at the beginning of the match.
 
  MecBasic is written to use the most basic approach to our autonomous route
- with the help of mechanical sorting intake and a servo to drop our team marker
+ with the help of mechanical sorting jaws and a servo to drop our team marker
  off in the depot.  This autonomous is used for our first qualifier this year
 (November 10, 2018).
 
@@ -27,10 +27,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.CatHW_Intake.MOUTH_CLOSE;
-import static org.firstinspires.ftc.teamcode.CatHW_Intake.MOUTH_OPEN;
-import static org.firstinspires.ftc.teamcode.CatHW_Intake.MOUTH_RELEASE;
-
 
 @Autonomous(name="Ri2W Autonomous", group="CatAuto")
 public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
@@ -43,6 +39,12 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
     private boolean isRedAlliance = true;
     private boolean isBuildZone = true;
     private boolean isParkAtWall = false;
+
+    // Encoder Positions
+    static final int MOUTH_CLOSE = -140;
+    static final int MOUTH_OPEN = -62;
+    static final int MOUTH_LATCH = -125;
+    static final int MOUTH_RELEASE = 150;
 
     private CatHW_Vision.samplingPos samplingPos = CatHW_Vision.samplingPos.RIGHT;
 
@@ -176,15 +178,15 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
         }
     }
     public void driveLoadingZone() throws InterruptedException {
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // Open intake and start driving forwards towards stone
-        robot.intake.runtime.reset();
-        robot.intake.intakeMotor.setTargetPosition(MOUTH_OPEN);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.intake.intakeMotor.setPower(0.5);
-        robot.intake.waitUntilDone();
-        robot.intake.intakeMotor.setPower(0);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // Open jaws and start driving forwards towards stone
+        robot.jaws.runtime.reset();
+        robot.jaws.leftJawMotor.setTargetPosition(MOUTH_OPEN);
+        robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.jaws.leftJawMotor.setPower(0.5);
+        robot.jaws.waitUntilDone();
+        robot.jaws.leftJawMotor.setPower(0);
+        robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 25, 2);
         robot.driveClassic.waitUntilDone();
@@ -192,14 +194,14 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED, 10, 3);
         robot.driveClassic.waitUntilDone();
 
-        // Close intake
-        robot.intake.runtime.reset();
-        robot.intake.intakeMotor.setTargetPosition(MOUTH_CLOSE);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.intake.intakeMotor.setPower(0.5);
-        robot.intake.waitUntilDone();
-        robot.intake.intakeMotor.setPower(0.1);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // Close jaws
+        robot.jaws.runtime.reset();
+        robot.jaws.leftJawMotor.setTargetPosition(MOUTH_CLOSE);
+        robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.jaws.leftJawMotor.setPower(0.5);
+        robot.jaws.waitUntilDone();
+        robot.jaws.leftJawMotor.setPower(0.1);
+        robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //back up from stones
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -14, 2);
@@ -209,13 +211,13 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
         robot.driveClassic.waitUntilDone();
 
         // Spit block out
-        robot.intake.runtime.reset();
-        robot.intake.intakeMotor.setTargetPosition(MOUTH_RELEASE);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.intake.intakeMotor.setPower(0.5);
-        robot.intake.waitUntilDone();
-        robot.intake.intakeMotor.setPower(0);
-        robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.jaws.runtime.reset();
+        robot.jaws.leftJawMotor.setTargetPosition(MOUTH_RELEASE);
+        robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.jaws.leftJawMotor.setPower(0.5);
+        robot.jaws.waitUntilDone();
+        robot.jaws.leftJawMotor.setPower(0);
+        robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED,10, 4);
         robot.driveClassic.waitUntilDone();

@@ -3,7 +3,7 @@
 
     A "hardware" class containing common code accessing hardware specific
     to the movement and extension of the tail.  This is a modified and
-    stripped  down version of CatSingleOverallHW to run all of intake
+    stripped  down version of CatSingleOverallHW to run all of jaws
     extending movements.  This file is used by the new autonomous OpModes
     to run multiple operations at once.
 
@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * This is NOT an OpMode.
  *
- * This class is used to define all the intake specific hardware for the robot to
+ * This class is used to define all the jaws specific hardware for the robot to
  * allow for multiple operations during autonomous.  In this case, that robot is
  * Jack from the Cat in the Hat Comes Back team during the 2018-2019 season.
  *
@@ -39,12 +39,12 @@ public class CatHW_Tail extends CatHW_Subsystem
 
 
     /* Public OpMode members. */
-    public Servo tailLeft = null;
-    public Servo tailRight = null;
+    public Servo tailLeft   = null;
+    public Servo tailRight  = null;
 
 
     /* local OpMode members. */
-    LinearOpMode opMode         = null;
+    LinearOpMode opMode     = null;
 
     /* Constructor */
     public CatHW_Tail(CatHW_Async mainHardware){
@@ -56,8 +56,8 @@ public class CatHW_Tail extends CatHW_Subsystem
 
     /* Initialize standard Hardware interfaces */
     public void init()  throws InterruptedException  {
-        tailLeft = hwMap.servo.get("left_tail");
-        tailRight = hwMap.servo.get("right_tail");
+       // tailLeft = hwMap.servo.get("left_tail");
+       // tailRight = hwMap.servo.get("right_tail");
     }
 
     /**
@@ -66,8 +66,8 @@ public class CatHW_Tail extends CatHW_Subsystem
      * ---   \/ \/ \/ \/    ---
      */
     public void grabFoundationFingers() {
-        tailLeft.setPosition(.4);
-        tailRight.setPosition(0.4 );
+        tailLeft.setPosition(0.4);
+        tailRight.setPosition(0.4);
     }
     public void releaseFoundationFingers() {
         tailLeft.setPosition(0);

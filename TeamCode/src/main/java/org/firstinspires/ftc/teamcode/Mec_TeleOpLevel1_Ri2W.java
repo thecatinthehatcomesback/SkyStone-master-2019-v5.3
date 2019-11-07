@@ -138,21 +138,21 @@ public class Mec_TeleOpLevel1_Ri2W extends LinearOpMode {
 
             if (gamepad2.right_stick_button) {
                 autoIntake = true;
-                robot.intake.runtime.reset();
-                robot.intake.intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.intake.intakeMotor.setPower(CHILL_SPEED);
-                robot.intake.intakeMotor.setTargetPosition(-125);
+                robot.jaws.runtime.reset();
+                robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.jaws.leftJawMotor.setPower(CHILL_SPEED);
+                robot.jaws.leftJawMotor.setTargetPosition(-125);
             }
             if (autoIntake) {
-                if (robot.intake.isDone()) {
+                if (robot.jaws.isDone()) {
                     autoIntake = false;
-                    robot.intake.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 }
             }
             else{
-                // Control the spinning intake:
-                robot.intake.intakeMotor.setPower(intakeSpeed * gamepad2.left_stick_y);
+                // Control the spinning jaws:
+                robot.jaws.leftJawMotor.setPower(intakeSpeed * gamepad2.left_stick_y);
             }
 
             // Open/Close Foundation Fingers:
@@ -172,13 +172,13 @@ public class Mec_TeleOpLevel1_Ri2W extends LinearOpMode {
             telemetry.addData("Right Front Power:", "%.2f", rightFront);
             telemetry.addData("Left Back Power:", "%.2f", leftBack);
             telemetry.addData("Right Back Power:", "%.2f", rightBack);
-            telemetry.addData("Intake Power:","%.2f", robot.intake.intakeMotor.getPower());
+            telemetry.addData("Intake Power:","%.2f", robot.jaws.leftJawMotor.getPower());
 
             telemetry.addData("X Position","%.2f", globalPositionUpdate.returnXCoordinate() / robot.driveOdo.ODO_COUNTS_PER_INCH);
             telemetry.addData("Y Position", "%.2f",globalPositionUpdate.returnYCoordinate() / robot.driveOdo.ODO_COUNTS_PER_INCH);
             telemetry.addData("Orientation (Degrees)", "%.2f", globalPositionUpdate.returnOrientation());
 
-            telemetry.addData("Intake Encoder:", robot.intake.intakeMotor.getCurrentPosition());
+            telemetry.addData("Intake Encoder:", robot.jaws.leftJawMotor.getCurrentPosition());
             telemetry.addData("left Encoder:", robot.driveOdo.leftOdometry.getCurrentPosition());
             telemetry.addData("right Encoder:", robot.driveOdo.rightOdometry.getCurrentPosition());
             telemetry.addData("back Encoder:", robot.driveOdo.backOdometry.getCurrentPosition());
