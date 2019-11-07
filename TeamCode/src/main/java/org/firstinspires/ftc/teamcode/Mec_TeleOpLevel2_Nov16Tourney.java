@@ -70,11 +70,6 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
         double intakeSpeed;
         boolean autoIntake = false;
 
-        CatOdoPositionUpdate globalPositionUpdate = new CatOdoPositionUpdate(robot.driveOdo.leftOdometry, robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, robot.driveOdo.ODO_COUNTS_PER_INCH, 75);
-        Thread positionThread = new Thread(globalPositionUpdate);
-        positionThread.start();
-
-
         // Run infinitely until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -176,17 +171,9 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
             telemetry.addData("Right Back Power:", "%.2f", rightBack);
             telemetry.addData("Intake Power:","%.2f", robot.jaws.leftJawMotor.getPower());
 
-            telemetry.addData("X Position","%.2f", globalPositionUpdate.returnXCoordinate() / robot.driveOdo.ODO_COUNTS_PER_INCH);
-            telemetry.addData("Y Position", "%.2f",globalPositionUpdate.returnYCoordinate() / robot.driveOdo.ODO_COUNTS_PER_INCH);
-            telemetry.addData("Orientation (Degrees)", "%.2f", globalPositionUpdate.returnOrientation());
-
             telemetry.addData("Intake Encoder:", robot.jaws.leftJawMotor.getCurrentPosition());
-            telemetry.addData("left Encoder:", robot.driveOdo.leftOdometry.getCurrentPosition());
-            telemetry.addData("right Encoder:", robot.driveOdo.rightOdometry.getCurrentPosition());
-            telemetry.addData("back Encoder:", robot.driveOdo.backOdometry.getCurrentPosition());
 
             telemetry.update();
         }
-        globalPositionUpdate.stop();
     }
 }
