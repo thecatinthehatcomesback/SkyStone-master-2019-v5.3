@@ -158,9 +158,9 @@ public class Mec_TeleOpLevel1_Ri2W extends LinearOpMode {
 
             // Open/Close Foundation Fingers:
             if(gamepad2.y) {
-                robot.claw.clawRetract();
+                robot.claw.retractClaw();
             } else if (gamepad2.x) {
-                robot.claw.clawCatch();
+                robot.claw.extendClaw();
             }
 
 

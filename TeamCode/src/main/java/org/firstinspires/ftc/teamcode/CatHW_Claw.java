@@ -56,7 +56,7 @@ public class CatHW_Claw extends CatHW_Subsystem
         foundationClaw = hwMap.servo.get("claw_servo");
 
         // Pull the claw in to fit within sizing cube:
-        clawRetract();
+        retractClaw();
     }
 
     /**
@@ -64,10 +64,10 @@ public class CatHW_Claw extends CatHW_Subsystem
      * ---   Claw Methods   ---
      * ---   \/ \/ \/ \/    ---
      */
-    public void clawCatch() {
+    public void extendClaw() {
         foundationClaw.setPosition(1.0);
     }
-    public void clawRetract() {
+    public void retractClaw() {
         foundationClaw.setPosition(-1.0);
     }
 
