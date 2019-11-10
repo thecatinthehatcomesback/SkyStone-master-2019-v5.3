@@ -50,7 +50,7 @@ public class CatHW_Async
 
     /* Other Hardware subSystems */
     CatHW_Jaws jaws = null;
-    CatHW_Tail tail             = null;
+    CatHW_Claw claw = null;
     CatHW_DriveClassic  driveClassic    = null;
     CatHW_DriveOdo      driveOdo        = null;
 
@@ -79,8 +79,8 @@ public class CatHW_Async
         driveClassic.init();
         opMode.telemetry.addData("Initialize","Tail...");
         opMode.telemetry.update();
-        tail = new CatHW_Tail(this);
-        tail.init();
+        claw = new CatHW_Claw(this);
+        claw.init();
         opMode.telemetry.addData("Initialize","All Done...  BOOM!");
         opMode.telemetry.update();
 

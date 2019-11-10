@@ -11,6 +11,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,7 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.teamcode.CatHW_DriveClassic.CHILL_SPEED;
 
-
+@Disabled
 @TeleOp(name="Ri2W TeleOp", group="CatTeleOp")
 public class Mec_TeleOpLevel1_Ri2W extends LinearOpMode {
 
@@ -157,9 +158,9 @@ public class Mec_TeleOpLevel1_Ri2W extends LinearOpMode {
 
             // Open/Close Foundation Fingers:
             if(gamepad2.y) {
-                robot.tail.releaseFoundationFingers();
+                robot.claw.clawRetract();
             } else if (gamepad2.x) {
-                robot.tail.grabFoundationFingers();
+                robot.claw.clawCatch();
             }
 
 

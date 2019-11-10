@@ -237,8 +237,8 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
         robot.driveClassic.waitUntilDone();
         //robot.robotWait(1);
         // Latch on
-        robot.tail.grabFoundationFingers();
-        robot.tail.waitUntilDone();
+        robot.claw.clawCatch();
+        robot.claw.waitUntilDone();
         robot.robotWait(0.3);
         // Drive back to Building Zone
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 30, 3.0);
@@ -246,7 +246,7 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 7, 1.25);
         robot.driveClassic.waitUntilDone();
         robot.robotWait(.1);
-        robot.tail.releaseFoundationFingers();
+        robot.claw.clawRetract();
         robot.robotWait(.2);
         // Slide out to towards the line
         robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? -22 : 22, 5.0);

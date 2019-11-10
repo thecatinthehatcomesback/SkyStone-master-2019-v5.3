@@ -154,9 +154,9 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
             // Open/Close Foundation Fingers:
             if(gamepad2.y) {
-                robot.tail.releaseFoundationFingers();
+                robot.claw.clawRetract();
             } else if (gamepad2.x) {
-                robot.tail.grabFoundationFingers();
+                robot.claw.clawCatch();
             }
 
 
