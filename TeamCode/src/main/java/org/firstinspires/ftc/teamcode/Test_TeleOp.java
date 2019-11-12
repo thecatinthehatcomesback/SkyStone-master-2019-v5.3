@@ -1,5 +1,5 @@
 /*
-        TestTeleOp.java
+        Test_TeleOp.java
 
     A Linear opMode class to be our TeleOp testing method to try
     and solve our problems throughout the year without having to
@@ -17,8 +17,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="Test Tele", group="CatTeleOp")
-public class TestTeleOp extends LinearOpMode {
+@TeleOp(name="Test Tele", group="CatTest TeleOp")
+public class Test_TeleOp extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runTime = new ElapsedTime();
@@ -30,7 +30,7 @@ public class TestTeleOp extends LinearOpMode {
     boolean inReverse = true;
 
     /* constructor for class */
-    public TestTeleOp() {
+    public Test_TeleOp() {
         robot = new CatHW_Async();
     }
 

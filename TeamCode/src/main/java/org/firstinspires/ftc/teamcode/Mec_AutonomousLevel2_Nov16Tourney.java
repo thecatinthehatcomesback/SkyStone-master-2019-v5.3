@@ -7,7 +7,7 @@
  in our depot and park in either crater according to what we say using gamepad1
  at the beginning of the match.
 
- MecBasic is written to use the most basic approach to our autonomous route
+ MecBasic is written to use the most basic approach to our autonomous route      //TODO Change this
  with the help of mechanical sorting jaws and a servo to drop our team marker
  off in the depot.  This autonomous is used for our first qualifier this year
 (November 10, 2018).
@@ -24,10 +24,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="Strafe Autonomous", group="CatAuto")
+@Autonomous(name="Nov 16 Autonomous", group="CatAuto")
 public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -164,11 +165,83 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
         robot.driveClassic.IMU_Init();
 
         /* Go! */
-        driveLoadingZone();
+        if (isBuildZone) {
+            driveBuildZone();
+        } else {
+            driveLoadingZone();
+        }
     }
     public void driveLoadingZone() throws InterruptedException {
 
-       // Do stuff for Loading Zone:
+        // Start the jaws and begin driving forward towards stone
 
+
+        // Drive mostly to the quarry
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 25, 2);
+        robot.driveClassic.waitUntilDone();
+        // Drive forward a bit more but slower
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED, 10, 3);
+        robot.driveClassic.waitUntilDone();
+
+        // Stop jaws
+
+
+        // Back up from stones
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -14, 2);
+        robot.driveClassic.waitUntilDone();
+        // Drive completely across the taped line
+        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.DRIVE_SPEED, (isRedAlliance) ? -40 : 40, 6);
+        robot.driveClassic.waitUntilDone();
+
+        // Spit block out
+
+
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED,10, 4);
+        robot.driveClassic.waitUntilDone();
+        // Back up from stone
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CREEP_SPEED, -6, 1);
+        robot.driveClassic.waitUntilDone();
+        // Navigate (Park over taped line)
+        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? 15 : -15, 3);
+        robot.driveClassic.waitUntilDone();
+
+
+
+    }
+    public void driveBuildZone() throws InterruptedException {
+        // Drive to Foundation
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -30, 3.0);
+        robot.driveClassic.waitUntilDone();
+        //robot.robotWait(1);
+        // Latch on
+        robot.claw.extendClaw();
+        robot.claw.waitUntilDone();
+        robot.robotWait(0.3);
+        // Drive back to Building Zone
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 30, 3.0);
+        robot.driveClassic.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 7, 1.25);
+        robot.driveClassic.waitUntilDone();
+        robot.robotWait(.1);
+        robot.claw.retractClaw();
+        robot.robotWait(.2);
+        // Slide out to towards the line
+        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? -22 : 22, 5.0);
+        robot.driveClassic.waitUntilDone();
+        // Drive ahead and line up with the foundation
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -18, 2);
+        robot.driveClassic.waitUntilDone();
+        // Push the foundation further into the building zone
+        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? 8 : -8, 1);
+        robot.driveClassic.waitUntilDone();
+        // Back up and navigate (park on the taped line)
+        if (isParkAtWall) {
+            robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -5, 1);
+        } else {
+            robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 25, 1);
+        }
+        robot.driveClassic.waitUntilDone();
+        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, (isRedAlliance) ? -20 : 20, 2);
+        robot.driveClassic.waitUntilDone();
     }
 }

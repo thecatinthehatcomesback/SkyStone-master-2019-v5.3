@@ -16,8 +16,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="Motor Test TeleOp", group="CatTeleOp")
-public class TestMotorTeleOp extends LinearOpMode {
+@TeleOp(name="Motor Test TeleOp", group="CatTest TeleOp")
+public class Test_MotorTeleOp extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime elapsedGameTime = new ElapsedTime();
@@ -28,7 +28,7 @@ public class TestMotorTeleOp extends LinearOpMode {
     DcMotor testMotor = null;
 
     // Our constructor for this class
-    public TestMotorTeleOp() {
+    public Test_MotorTeleOp() {
     }
 
     @Override

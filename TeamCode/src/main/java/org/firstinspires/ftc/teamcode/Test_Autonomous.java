@@ -1,5 +1,5 @@
 /*
-        TestAuto.java
+        Test_Autonomous.java
 
     A Linear OpMode class to be place to test code both old
     and new.  We constantly edit this, taking out and adding
@@ -16,8 +16,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="TestAuto", group="CatAuto")
-public class TestAuto extends LinearOpMode {
+@Autonomous(name="Test_Autonomous", group="CatTest Auto")
+public class Test_Autonomous extends LinearOpMode {
 
     /* Declare OpMode members. */
     CatHW_Async robot  = new CatHW_Async();    // All the hardwares init here
