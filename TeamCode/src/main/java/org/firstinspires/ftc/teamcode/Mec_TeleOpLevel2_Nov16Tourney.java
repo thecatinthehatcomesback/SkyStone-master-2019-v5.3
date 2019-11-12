@@ -13,10 +13,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import static org.firstinspires.ftc.teamcode.CatHW_DriveClassic.CHILL_SPEED;
 
 
 @TeleOp(name="TeleOp", group="CatTeleOp")
@@ -68,7 +65,6 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
         double rightBack;
         double SF;
         double intakeSpeed;
-        boolean autoIntake = false;
 
         // Run infinitely until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -115,7 +111,13 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
             // Jaws Control:
             robot.jaws.setJawPower(gamepad1.right_trigger-gamepad1.left_trigger);
 
-
+            //pusher control:
+            if (gamepad1.y) {
+                robot.jaws.pusher_Push();
+            }
+            if (gamepad1.x){
+                robot.jaws.pusher_Release();
+            }
 
             /**
              * ---   _________________   ---
@@ -131,25 +133,6 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
                 intakeSpeed = 0.6;
             } else {
                 intakeSpeed = 0.3;
-            }
-
-            if (gamepad2.right_stick_button) {
-                autoIntake = true;
-                robot.jaws.runtime.reset();
-                robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.jaws.leftJawMotor.setPower(CHILL_SPEED);
-                robot.jaws.leftJawMotor.setTargetPosition(-125);
-            }
-            if (autoIntake) {
-                if (robot.jaws.isDone()) {
-                    autoIntake = false;
-                    robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                }
-            }
-            else{
-                // Control the spinning jaws:
-                robot.jaws.leftJawMotor.setPower(intakeSpeed * gamepad2.left_stick_y);
             }
 
             // Open/Close Foundation Fingers:
@@ -171,8 +154,11 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
             telemetry.addData("Right Back Power:", "%.2f", rightBack);
             telemetry.addData("Intake Power:","%.2f", robot.jaws.leftJawMotor.getPower());
 
-            telemetry.addData("Intake Encoder:", robot.jaws.leftJawMotor.getCurrentPosition());
-
+            telemetry.addData("Encoder lf/lr rf/rr", "%5d %5d   %5d %5d",
+                    robot.driveClassic.leftFrontMotor.getCurrentPosition(),
+                    robot.driveClassic.leftRearMotor.getCurrentPosition(),
+                    robot.driveClassic.rightFrontMotor.getCurrentPosition(),
+                    robot.driveClassic.rightRearMotor.getCurrentPosition()  );
             telemetry.update();
         }
     }

@@ -18,6 +18,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -47,6 +48,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
     public DcMotor leftJawMotor     = null;
     public DcMotor rightJawMotor    = null;
 
+    public Servo pusher             = null;
 
     /* local OpMode members. */
 
@@ -67,6 +69,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
         // Define and Initialize Motors //
         leftJawMotor    = hwMap.dcMotor.get("left_jaw_motor");
         rightJawMotor   = hwMap.dcMotor.get("right_jaw_motor");
+        pusher = hwMap.servo.get("pusher");
 
         leftJawMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightJawMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -106,6 +109,14 @@ public class CatHW_Jaws extends CatHW_Subsystem
 
         leftJawMotor.setPower(0.0);
         rightJawMotor.setPower(0.0);
+    }
+
+    public  void pusher_Push(){
+        pusher.setPosition(0.56);
+    }
+
+    public  void pusher_Release(){
+        pusher.setPosition(0);
     }
 
     /* isDone stuff for CatHW_Jaws */
