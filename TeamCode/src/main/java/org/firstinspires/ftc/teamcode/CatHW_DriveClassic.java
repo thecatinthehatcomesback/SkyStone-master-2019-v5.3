@@ -16,10 +16,8 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * This is NOT an OpMode.
@@ -309,7 +307,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
             runTime.reset();
 
             // Log message:
-            Log.d("catbot", String.format("Start turn...  target %d, current %d  %s", -targetAngleZ, -getCurrentAngle(), clockwiseTurn ?"CW":"CCW"));
+            Log.d("catbot", String.format("Start turn...  target %d, current %d  %s", targetAngleZ, getCurrentAngle(), clockwiseTurn ?"CW":"CCW"));
 
 
             // Change the power based on which angle we are turning to
@@ -413,12 +411,12 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
                 int zVal = getCurrentAngle();
 
                 // Log message:
-                Log.d("catbot", String.format("target %d, current %d  %s", -targetAngleZ, -zVal, clockwiseTurn ? "CW": "CCW"));
+                Log.d("catbot", String.format("turn  target %d, current %d  %s", targetAngleZ, zVal, clockwiseTurn ? "CW": "CCW"));
 
-                if ((zVal >= targetAngleZ) && (!clockwiseTurn)) {
+                if ((zVal <= targetAngleZ) && (!clockwiseTurn)) {
                     keepDriving = false;
                 }
-                if ((zVal <= targetAngleZ) && (clockwiseTurn)) {
+                if ((zVal >= targetAngleZ) && (clockwiseTurn)) {
                     keepDriving = false;
                 }
                 break;

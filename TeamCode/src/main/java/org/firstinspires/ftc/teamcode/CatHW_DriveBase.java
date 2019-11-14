@@ -285,7 +285,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
     }
     public int getCurrentAngle() {
         angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return (int)angles.firstAngle;
+        return -(int)angles.firstAngle;
     }
 
     /**
