@@ -10,7 +10,7 @@
  MecBasic is written to use the most basic approach to our autonomous route      //TODO Change this
  with the help of mechanical sorting jaws and a servo to drop our team marker
  off in the depot.  This autonomous is used for our first qualifier this year
-(November 10, 2018).
+(November 16, 2019).
 
  This was the old code for our Robot in 2 Weeks bot, but we completely stripped
  it out as with our old bot.
