@@ -64,6 +64,7 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
         double leftBack;
         double rightBack;
         double SF;
+        boolean grabMode = true;
 
         // Run infinitely until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -108,8 +109,18 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
             robot.driveClassic.setDrivePowers(leftFront, rightFront, leftBack, rightBack);
 
             // Jaws Control:
-            robot.jaws.setJawPower(gamepad1.right_trigger - (gamepad1.left_trigger*0.2));
+            robot.jaws.setJawPower(gamepad1.right_trigger - (gamepad1.left_trigger*0.3));
 
+            // stonePusher controls:
+            if (gamepad1.dpad_left) {
+                robot.jaws.pusherRetract();
+            }
+            //if (gamepad1.dpad_left){
+            //    robot.jaws.pusherMid();
+            //}
+            if (gamepad1.dpad_right){
+                robot.jaws.pusherFullPush();
+            }
 
 
             /**
@@ -118,16 +129,6 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
              * ---   \/ \/ \/ \/ \/ \/   ---
              */
 
-            // stonePusher controls:
-            if (gamepad2.dpad_up) {
-                robot.jaws.pusherRetract();
-            }
-            if (gamepad2.dpad_left){
-                robot.jaws.pusherMid();
-            }
-            if (gamepad2.dpad_down){
-                robot.jaws.pusherFullPush();
-            }
 
             // Open/Close Foundation Fingers:
             if(gamepad2.y) {
@@ -141,8 +142,21 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
             robot.tail.tailLift.setPower(-gamepad2.right_stick_y);
 
             // Extend and wrist controls:
-            robot.tail.tailExtend.setPower(-gamepad2.left_stick_y);
-            robot.tail.wristServo.setPower(gamepad2.left_stick_x);
+            robot.tail.tailExtend.setPower(gamepad2.left_stick_y);
+
+            if (gamepad2.dpad_right){
+                grabMode = true;
+            }
+            if (gamepad2.dpad_left){
+                grabMode = false;
+            }
+
+            if(grabMode){
+                robot.tail.wristServo.setPower(gamepad2.left_stick_x-.95);
+            }else {
+                robot.tail.wristServo.setPower(-gamepad2.left_stick_x+1);
+            }
+
 
             // Thumb controls:
             if (gamepad2.left_bumper) {
