@@ -10,12 +10,12 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
+@Disabled
 @TeleOp(name="Motor Test TeleOp", group="CatTeleOp")
 public class TestMotorTeleOp extends LinearOpMode {
 
@@ -25,7 +25,6 @@ public class TestMotorTeleOp extends LinearOpMode {
 
     /* Declare OpMode members. */
     CatHW_Async robot = new CatHW_Async();  // Use our new mecanum async hardware
-    DcMotor testMotor = null;
 
     // Our constructor for this class
     public TestMotorTeleOp() {
@@ -40,11 +39,8 @@ public class TestMotorTeleOp extends LinearOpMode {
         // Initialize the hardware
         robot.init(hardwareMap, this);
         // Define and Initialize Motors //
-        testMotor = hardwareMap.dcMotor.get("test_motor");
 
         // Set Motor and Servo Modes //
-        testMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        testMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Finished!  Now tell the driver...
         telemetry.addData("Status", "Initialized...  BOOM!");
@@ -60,7 +56,6 @@ public class TestMotorTeleOp extends LinearOpMode {
 
         // Run infinitely until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            testMotor.setPower(gamepad1.right_trigger);
 
 
 
@@ -69,8 +64,8 @@ public class TestMotorTeleOp extends LinearOpMode {
              * ---   TELEMETRY   ---
              * ---   \/ \/ \/    ---
              */
-            telemetry.addData("Test Power:", "%.2f", testMotor.getPower());
-            telemetry.addData("Test Encoder:", "%d", testMotor.getCurrentPosition());
+            //telemetry.addData("Test Power:", "%.2f", testMotor.getPower());
+            //telemetry.addData("Test Encoder:", "%d", testMotor.getCurrentPosition());
             telemetry.update();
         }
     }
