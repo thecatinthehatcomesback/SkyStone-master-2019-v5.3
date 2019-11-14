@@ -66,6 +66,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
         super(mainHardware);
     }
 
+
     /* Initialize standard Hardware interfaces */
     public void init()  throws InterruptedException  {
 
