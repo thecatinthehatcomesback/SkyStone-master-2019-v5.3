@@ -48,7 +48,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
     public DcMotor leftJawMotor     = null;
     public DcMotor rightJawMotor    = null;
 
-    public Servo pusher             = null;
+    public Servo stonePusher        = null;
 
     /* local OpMode members. */
 
@@ -69,7 +69,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
         // Define and Initialize Motors //
         leftJawMotor    = hwMap.dcMotor.get("left_jaw_motor");
         rightJawMotor   = hwMap.dcMotor.get("right_jaw_motor");
-        pusher = hwMap.servo.get("pusher");
+        stonePusher     = hwMap.servo.get("stone_pusher");
 
         leftJawMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightJawMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -93,7 +93,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
         rightJawMotor.setPower(JAW_POWER);
     }
 
-    public void outakeJaws() {
+    public void outputJaws() {
         /**
          * Turn on both jaws motors to spit out:
          */
@@ -111,12 +111,12 @@ public class CatHW_Jaws extends CatHW_Subsystem
         rightJawMotor.setPower(0.0);
     }
 
-    public  void pusher_Push(){
-        pusher.setPosition(0.56);
+    public  void pusherPush(){
+        stonePusher.setPosition(0.56);
     }
 
-    public  void pusher_Release(){
-        pusher.setPosition(0);
+    public  void pusherRetract(){
+        stonePusher.setPosition(0);
     }
 
     /* isDone stuff for CatHW_Jaws */

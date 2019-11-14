@@ -64,7 +64,6 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
         double leftBack;
         double rightBack;
         double SF;
-        double intakeSpeed;
 
         // Run infinitely until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -109,31 +108,23 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
             robot.driveClassic.setDrivePowers(leftFront, rightFront, leftBack, rightBack);
 
             // Jaws Control:
-            robot.jaws.setJawPower(gamepad1.right_trigger-gamepad1.left_trigger);
+            robot.jaws.setJawPower(gamepad1.right_trigger - (gamepad1.left_trigger*0.2));
 
-            //pusher control:
+            // stonePusher control:
             if (gamepad1.y) {
-                robot.jaws.pusher_Push();
+                robot.jaws.pusherRetract();
             }
             if (gamepad1.x){
-                robot.jaws.pusher_Release();
+                robot.jaws.pusherPush();
             }
+
+
 
             /**
              * ---   _________________   ---
              * ---   Driver 2 controls   ---
              * ---   \/ \/ \/ \/ \/ \/   ---
              */
-
-
-            // Intake speed control:
-            if (gamepad2.left_bumper) {
-                intakeSpeed = 1;
-            } else if (gamepad2.right_bumper) {
-                intakeSpeed = 0.6;
-            } else {
-                intakeSpeed = 0.3;
-            }
 
             // Open/Close Foundation Fingers:
             if(gamepad2.y) {
@@ -142,6 +133,20 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
                 robot.claw.extendClaw();
             }
 
+            // Tail/Stacker lift motor controls
+            robot.tail.tailLift.setPower(-gamepad2.right_stick_y);
+
+            // Extend and wrist controls
+            robot.tail.tailExtend.setPower(-gamepad2.left_stick_y);
+            robot.tail.wristServo.setPower(gamepad2.left_stick_x);
+
+            // Thumb controls
+            if (gamepad2.left_bumper) {
+                robot.tail.closeThumb();
+            }
+            if (gamepad2.right_bumper){
+                robot.tail.openThumb();
+            }
 
             /**
              * ---   _________   ---
