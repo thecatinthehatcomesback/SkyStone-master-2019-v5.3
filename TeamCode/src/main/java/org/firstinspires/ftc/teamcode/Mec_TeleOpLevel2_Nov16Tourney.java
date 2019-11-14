@@ -13,10 +13,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import static org.firstinspires.ftc.teamcode.CatHW_DriveClassic.CHILL_SPEED;
 
 
 @TeleOp(name="TeleOp", group="CatTeleOp")
@@ -67,8 +64,7 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
         double leftBack;
         double rightBack;
         double SF;
-        double intakeSpeed;
-        boolean autoIntake = false;
+        boolean grabMode = true;
 
         // Run infinitely until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -81,9 +77,9 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
             // Drive train speed control:
             if (gamepad1.left_bumper) {
-                driveSpeed = 1;
+                driveSpeed = 1.0;
             } else if (gamepad1.right_bumper) {
-                driveSpeed = 0.4;
+                driveSpeed = 0.25;
             } else {
                 driveSpeed = 0.7;
             }
@@ -113,8 +109,18 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
             robot.driveClassic.setDrivePowers(leftFront, rightFront, leftBack, rightBack);
 
             // Jaws Control:
-            robot.jaws.setJawPower(gamepad1.right_trigger-gamepad1.left_trigger);
+            robot.jaws.setJawPower(gamepad1.right_trigger - (gamepad1.left_trigger*0.3));
 
+            // stonePusher controls:
+            if (gamepad1.dpad_left) {
+                robot.jaws.pusherRetract();
+            }
+            //if (gamepad1.dpad_left){
+            //    robot.jaws.pusherMid();
+            //}
+            if (gamepad1.dpad_right){
+                robot.jaws.pusherFullPush();
+            }
 
 
             /**
@@ -124,40 +130,42 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
              */
 
 
-            // Intake speed control:
-            if (gamepad2.left_bumper) {
-                intakeSpeed = 1;
-            } else if (gamepad2.right_bumper) {
-                intakeSpeed = 0.6;
-            } else {
-                intakeSpeed = 0.3;
-            }
-
-            if (gamepad2.right_stick_button) {
-                autoIntake = true;
-                robot.jaws.runtime.reset();
-                robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.jaws.leftJawMotor.setPower(CHILL_SPEED);
-                robot.jaws.leftJawMotor.setTargetPosition(-125);
-            }
-            if (autoIntake) {
-                if (robot.jaws.isDone()) {
-                    autoIntake = false;
-                    robot.jaws.leftJawMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                }
-            }
-            else{
-                // Control the spinning jaws:
-                robot.jaws.leftJawMotor.setPower(intakeSpeed * gamepad2.left_stick_y);
-            }
-
             // Open/Close Foundation Fingers:
             if(gamepad2.y) {
                 robot.claw.retractClaw();
-            } else if (gamepad2.x) {
+            }
+            if (gamepad2.x) {
                 robot.claw.extendClaw();
             }
+
+            // Tail/Stacker lift motor controls:
+            robot.tail.tailLift.setPower(-gamepad2.right_stick_y);
+
+            // Extend and wrist controls:
+            robot.tail.tailExtend.setPower(gamepad2.left_stick_y);
+
+            if (gamepad2.dpad_right){
+                grabMode = true;
+            }
+            if (gamepad2.dpad_left){
+                grabMode = false;
+            }
+
+            if(grabMode){
+                robot.tail.wristServo.setPower(gamepad2.left_stick_x-.95);
+            }else {
+                robot.tail.wristServo.setPower(-gamepad2.left_stick_x+1);
+            }
+
+
+            // Thumb controls:
+            if (gamepad2.left_bumper) {
+                robot.tail.closeThumb();
+            }
+            if (gamepad2.right_bumper){
+                robot.tail.openThumb();
+            }
+
 
 
             /**
@@ -171,8 +179,11 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
             telemetry.addData("Right Back Power:", "%.2f", rightBack);
             telemetry.addData("Intake Power:","%.2f", robot.jaws.leftJawMotor.getPower());
 
-            telemetry.addData("Intake Encoder:", robot.jaws.leftJawMotor.getCurrentPosition());
-
+            telemetry.addData("Encoder lf/lr rf/rr", "%5d %5d   %5d %5d",
+                    robot.driveClassic.leftFrontMotor.getCurrentPosition(),
+                    robot.driveClassic.leftRearMotor.getCurrentPosition(),
+                    robot.driveClassic.rightFrontMotor.getCurrentPosition(),
+                    robot.driveClassic.rightRearMotor.getCurrentPosition()  );
             telemetry.update();
         }
     }
