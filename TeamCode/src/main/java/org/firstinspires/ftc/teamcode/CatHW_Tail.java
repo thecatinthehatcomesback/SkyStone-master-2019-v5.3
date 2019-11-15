@@ -75,7 +75,7 @@ public class CatHW_Tail extends CatHW_Subsystem
         thumbServo  = hwMap.servo.get("thumb_servo");
         wristServo  = hwMap.crservo.get("wrist_servo");
 
-        tailLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        tailLift.setDirection(DcMotorSimple.Direction.REVERSE);
         tailExtend.setDirection(DcMotorSimple.Direction.REVERSE);
         wristServo.setDirection(DcMotorSimple.Direction.FORWARD);
 

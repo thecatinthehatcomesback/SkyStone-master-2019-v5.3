@@ -34,7 +34,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class CatHW_Async
 {
     /* Public OpMode members. */
-
+    enum grabMode {
+        in,
+        half,
+        out,
+        full
+    }
     // LED stuff:
     public RevBlinkinLedDriver lights = null;
     public RevBlinkinLedDriver.BlinkinPattern pattern;

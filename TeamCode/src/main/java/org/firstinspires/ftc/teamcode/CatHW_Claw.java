@@ -65,10 +65,10 @@ public class CatHW_Claw extends CatHW_Subsystem
      * ---   \/ \/ \/ \/    ---
      */
     public void extendClaw() {
-        foundationClaw.setPosition(-1.0);
+        foundationClaw.setPosition(-.25);
     }
     public void retractClaw() {
-        foundationClaw.setPosition(1.0);
+        foundationClaw.setPosition(.6);
     }
 
 
