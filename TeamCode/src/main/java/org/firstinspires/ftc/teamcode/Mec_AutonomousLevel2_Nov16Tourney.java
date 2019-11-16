@@ -163,8 +163,10 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
          */
         robot.driveClassic.IMU_Init();
 
+        // Time Delay:
+        robot.robotWait(timeDelay);
+
         /* Go! */
-        driveBuildZone();
         if (isBuildZone) {
             driveBuildZone();
         } else {
@@ -173,17 +175,27 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
     }
     public void driveLoadingZone() throws InterruptedException {
 
-       // Do stuff for Loading Zone:
+        // Do stuff for Loading Zone:
+        if (isRedAlliance) {
+            robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, isParkAtWall ? -1.0 : -28, 3);
+            robot.driveClassic.waitUntilDone();
+        } else {
+            robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, isParkAtWall ? 1.0 : 28, 3);
+            robot.driveClassic.waitUntilDone();
+        }
+        // Back up to bridge
+        robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED, -28.0, 4);
+        robot.driveClassic.waitUntilDone();
 
     }
     public void driveBuildZone() throws InterruptedException {
-        //drive backwards
+        // Drive towards build site
         robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED, isRedAlliance ? -21 : 15,1.5);
         robot.driveClassic.waitUntilDone();
         // Drive to Foundation
         robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, -25, 3.0);
         robot.driveClassic.waitUntilDone();
-        // Latch on
+        // Latch on to foundation
         robot.claw.extendClaw();
         robot.robotWait(0.3);
         // Drive back to Building Zone
@@ -203,21 +215,20 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
         robot.driveClassic.waitUntilDone();
 
         if(!isRedAlliance) {
-            robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED, 180, 2);
+            robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED, 175, 2);
             robot.driveClassic.waitUntilDone();
         }
         // Push the foundation further into the building zone
-        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -11, 1);
+        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, -11, 2);
         robot.driveClassic.waitUntilDone();
         // Back up and navigate (park on the taped line)
         if (isParkAtWall) {
-            robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? 33 : -33, 1);
+            robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? 31 : -31, 1);
         } else {
             robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? -8 : 8, 1);
         }
         robot.driveClassic.waitUntilDone();
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 22, 2);
         robot.driveClassic.waitUntilDone();
-
     }
 }

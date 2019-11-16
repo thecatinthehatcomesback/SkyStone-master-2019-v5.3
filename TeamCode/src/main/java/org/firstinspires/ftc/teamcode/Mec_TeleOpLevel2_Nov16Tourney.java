@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="TeleOp", group="CatTeleOp")
+@TeleOp(name="Nov 16 TeleOp", group="CatTeleOp")
 public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
     //enum
@@ -32,7 +32,7 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime elapsedGameTime = new ElapsedTime();
-    private ElapsedTime elapsedTime = new ElapsedTime();
+    private ElapsedTime fineAdjustTimer = new ElapsedTime();
 
     /* Declare OpMode members. */
     CatHW_Async robot = new CatHW_Async();  // Use our new mecanum async hardware
@@ -72,13 +72,16 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
         // Go! (Presses PLAY)
         elapsedGameTime.reset();
-        elapsedTime.reset();
+        fineAdjustTimer.reset();
         double driveSpeed;
         double leftFront;
         double rightFront;
         double leftBack;
         double rightBack;
         double SF;
+        double fineAdjust = 0;
+        double adjustAmount = 0;
+        boolean wantAdjust = false;
         grabMode = GRAB_MODE.inside;
 
         // Run infinitely until the end of the match (driver presses STOP)
@@ -161,25 +164,43 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
             if (gamepad2.dpad_right){
                 grabMode = GRAB_MODE.half;
+                fineAdjust = 0;
+                adjustAmount = 0;
             }
             if (gamepad2.dpad_left){
                 grabMode = GRAB_MODE.full;
+                fineAdjust = 0;
+                adjustAmount = 0;
             }
             if (gamepad2.dpad_up){
                 grabMode = GRAB_MODE.out;
+                fineAdjust = 0;
+                adjustAmount = 0;
             }
             if (gamepad2.dpad_down){
                 grabMode = GRAB_MODE.inside;
+                fineAdjust = 0;
+                adjustAmount = 0;
+            }
+            //fine adjust for the wrist
+            if (gamepad2.right_stick_button && (fineAdjustTimer.seconds() > 0.5)){
+                wantAdjust = true;
+                adjustAmount = -gamepad2.left_stick_x*.35;
+            }
+            if (wantAdjust &&  Math.abs(gamepad2.left_stick_x) <= 0.05){
+                fineAdjust += adjustAmount;
+                fineAdjustTimer.reset();
+                wantAdjust = false;
             }
 
             if(grabMode == GRAB_MODE.inside){
-                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.3)-1);
+                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35)-1 + fineAdjust);
             }else if (grabMode == GRAB_MODE.half) {
-                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.3 -.05));
+                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35) -.05 + fineAdjust);
             }else if (grabMode == GRAB_MODE.out) {
-                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.3)+0.45);
+                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35)+0.45 + fineAdjust);
             }else if (grabMode == GRAB_MODE.full) {
-                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.3)+.975);
+                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35)+.975 + fineAdjust);
             }
 
 
