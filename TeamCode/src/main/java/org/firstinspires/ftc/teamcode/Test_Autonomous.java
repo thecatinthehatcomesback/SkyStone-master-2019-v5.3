@@ -21,7 +21,6 @@ public class Test_Autonomous extends LinearOpMode {
 
     /* Declare OpMode members. */
     CatHW_Async robot  = new CatHW_Async();    // All the hardwares init here
-    CatHW_Vision eyes  = new CatHW_Vision();   // Vision init
     private ElapsedTime delayTimer = new ElapsedTime();
     private double timeDelay;
     private boolean isRedAlliance = true;

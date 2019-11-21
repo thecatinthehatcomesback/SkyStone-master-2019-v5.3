@@ -59,7 +59,7 @@ public class CatHW_Async
     CatHW_DriveClassic  driveClassic    = null;
     CatHW_DriveOdo      driveOdo        = null;
     CatHW_Tail          tail            = null;
-
+    CatHW_Vision        eyes            = null;
 
     /* Constructor */
     public CatHW_Async(){
@@ -93,7 +93,8 @@ public class CatHW_Async
         claw.init();
         opMode.telemetry.addData("Initialize","All Done...  BOOM!");
         opMode.telemetry.update();
-
+        eyes = new CatHW_Vision(this);
+        eyes.initVision(hwMap);
 
 
         // Blinkin LED stuff //

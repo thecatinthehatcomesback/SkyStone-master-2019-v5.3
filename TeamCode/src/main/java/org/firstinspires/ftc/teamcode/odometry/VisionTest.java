@@ -27,8 +27,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.odometry;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -51,8 +52,8 @@ import java.util.List;
  * is explained below.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
-
-public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
+@Disabled
+public class VisionTest extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
@@ -70,7 +71,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-             "AWbfTmn/////AAABmY0xuIe3C0RHvL3XuzRxyEmOT2OekXBSbqN2jot1si3OGBObwWadfitJR/D6Vk8VEBiW0HG2Q8UAEd0//OliF9aWCRmyDJ1mMqKCJZxpZemfT5ELFuWnJIZWUkKyjQfDNe2RIaAh0ermSxF4Bq77IDFirgggdYJoRIyi2Ys7Gl9lD/tSonV8OnldIN/Ove4/MtEBJTKHqjUEjC5U2khV+26AqkeqbxhFTNiIMl0LcmSSfugGhmWFGFtuPtp/+flPBRGoBO+tSl9P2sV4mSUBE/WrpHqB0Jd/tAmeNvbtgQXtZEGYc/9NszwRLVNl9k13vrBcgsiNxs2UY5xAvA4Wb6LN7Yu+tChwc+qBiVKAQe09\n";
+            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia

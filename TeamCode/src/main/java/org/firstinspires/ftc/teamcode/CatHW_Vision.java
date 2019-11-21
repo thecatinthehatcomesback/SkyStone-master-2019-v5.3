@@ -30,21 +30,21 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
-import static org.firstinspires.ftc.robotcore.external.tfod.TfodRoverRuckus.LABEL_GOLD_MINERAL;
-import static org.firstinspires.ftc.robotcore.external.tfod.TfodRoverRuckus.LABEL_SILVER_MINERAL;
-import static org.firstinspires.ftc.robotcore.external.tfod.TfodRoverRuckus.TFOD_MODEL_ASSET;
-
 /**
  * This is NOT an opmode.
  *
  * This class can be used to define all vision coding we use.
  *
  */
-public class CatHW_Vision
+public class CatHW_Vision extends CatHW_Subsystem
 {
     private static final float mmPerInch        = 25.4f;
     private static final float mmFTCFieldWidth  = (12*6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)
     private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
+
+    private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
+    private static final String STONE_LABEL = "Stone";
+    private static final String SKYSTONE_LABEL = "Skystone";
 
     HardwareMap hwMap   = null;
 
@@ -56,13 +56,18 @@ public class CatHW_Vision
 
     Deque<samplingPos> samplingValues;
 
-    public int loopCount = 0;
+    public double lastLeft;
+    public double lastRight;
+    public double lastConfidence;
 
     // Objects and Detectors
     private VuforiaLocalizer vuforia;
     public TFObjectDetector tfod;
 
+    public CatHW_Vision(CatHW_Async mainHardware){
+        super(mainHardware);
 
+    }
 
     public void initVision(HardwareMap ahwMap) {
         hwMap = ahwMap;
@@ -82,17 +87,17 @@ public class CatHW_Vision
         // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
 
         // Now init the tfod
-        int tfodMonitorViewId   = ahwMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", ahwMap.appContext.getPackageName());
+        int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfod                    = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
-
+        tfodParameters.minimumConfidence = 0.29;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, STONE_LABEL, SKYSTONE_LABEL);
         // And now ACTIVATE!!!
         tfod.activate();
     }
 
-    public void findGoldPos() {
+    public void findSkyStone() {
         /**
          * Newest way to continuously look for the gold
          * while looping inside the autonomous init mode
@@ -108,29 +113,39 @@ public class CatHW_Vision
         // getUpdatedRecognitions() will return null if no new information is available since
         // the last time that call was made.
         List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        if (tfod != null) {
         if (updatedRecognitions != null) {
-            loopCount++;
-            for (Recognition recognition : updatedRecognitions) {
-                if (recognition.getLabel().equals(LABEL_GOLD_MINERAL) && recognition.getConfidence() > 0.5) {
-                    int goldMineralX = (int) recognition.getLeft();
-                    // Look for the Gold Pos and decide which side of the sampling field the gold lies
-                    if (goldMineralX > 450) {
-                        //***Inverted this since the camera was recently placed upside down***//
-                        samplingValues.add(samplingPos.LEFT);
-                        return;
+
+                for (Recognition recognition : updatedRecognitions) {
+
+                    if (recognition.getLabel().equals(SKYSTONE_LABEL)) {
+                        int skyStoneX = (int) recognition.getLeft();
+                        lastLeft = recognition.getLeft();
+                        lastRight = recognition.getRight();
+                        lastConfidence = recognition.getConfidence();
+                        // Look for the Gold Pos and decide which side of the sampling field the gold lies
+                        if (skyStoneX < 160) {
+                            //***Inverted this since the camera was recently placed upside down***//
+                            samplingValues.add(samplingPos.LEFT);
+                            return;
+                        } else if (skyStoneX < 325) {
+                            samplingValues.add(samplingPos.CENTER);
+                            return;
+                        } else {
+                            samplingValues.add(samplingPos.RIGHT);
+                            return;
+                        }
+
                     }
-                    samplingValues.add(samplingPos.CENTER);
-                    return;
                 }
-            }
-            samplingValues.add(samplingPos.RIGHT);
+        }
         }
         // Since camera is only looking at the LEFT and CENTER values, it will return RIGHT
         // if is doesn't see the gold (just basic logic)
         return;
     }
 
-    public samplingPos giveSamplePos() {
+    public samplingPos giveSkyStonePos() {
         /**
          * A new way to take the all the values during the init
          * and choosing the value in the deque that has the most

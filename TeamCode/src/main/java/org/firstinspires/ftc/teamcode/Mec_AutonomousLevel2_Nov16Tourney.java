@@ -32,7 +32,6 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
 
     /* Declare OpMode members. */
     CatHW_Async robot  = new CatHW_Async();    // All the hardwares init here
-    CatHW_Vision eyes  = new CatHW_Vision();   // Vision init
     private ElapsedTime delayTimer = new ElapsedTime();
     private double timeDelay;
     private boolean isRedAlliance = true;
@@ -80,6 +79,9 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
                 // Leave the loop if STOP is pressed
                 return;
             }
+
+            robot.eyes.findSkyStone();
+
             if (gamepad1.dpad_up && (delayTimer.seconds() > 0.8)) {
                 // Increases the amount of time we wait
                 timeDelay += 1;
@@ -136,6 +138,13 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
              * Telemetry while waiting for PLAY:
              */
             telemetry.addData("Delay Timer: ", timeDelay);
+
+            telemetry.addData("Label", robot.eyes.giveSkyStonePos());
+
+            telemetry.addData("left position", robot.eyes.lastLeft);
+            telemetry.addData("right position", robot.eyes.lastRight);
+            telemetry.addData("center position", (robot.eyes.lastRight+robot.eyes.lastLeft)/2);
+            telemetry.addData("confidence", robot.eyes.lastConfidence);
 
             if (isRedAlliance) {
                 telemetry.addData("Alliance: ", "Red");
