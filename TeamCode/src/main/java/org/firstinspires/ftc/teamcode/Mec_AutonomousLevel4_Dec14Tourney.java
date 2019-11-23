@@ -28,7 +28,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="Dec 14 Autonomous", group="CatAuto")
-public class Mec_AutonomousLevel3_Dec14Tourney extends LinearOpMode {
+public class Mec_AutonomousLevel4_Dec14Tourney extends LinearOpMode {
 
     /* Declare OpMode members. */
     CatHW_Async robot  = new CatHW_Async();    // All the hardwares init here
