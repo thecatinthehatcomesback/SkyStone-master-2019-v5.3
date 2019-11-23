@@ -93,7 +93,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         // Calls DriveBase's init
         super.init();
 
-        //todo: Name these motors things and such!!
+        //todo: Name these motors things and such!
 
         // Define and Initialize Motors //
         leftOdometry     = hwMap.dcMotor.get("tail_lift");
