@@ -91,12 +91,11 @@ public class CatHW_Async
             opMode.telemetry.update();
             driveOdo = new CatHW_DriveOdo(this);
             driveOdo.init();
-        } else {
-            opMode.telemetry.addData("Initialize","DriveClassic...");
-            opMode.telemetry.update();
-            driveClassic = new CatHW_DriveClassic(this);
-            driveClassic.init();
         }
+        opMode.telemetry.addData("Initialize","DriveClassic...");
+        opMode.telemetry.update();
+        driveClassic = new CatHW_DriveClassic(this);
+        driveClassic.init();
 
         opMode.telemetry.addData("Initialize","Eyes...");
         opMode.telemetry.update();

@@ -68,8 +68,8 @@ public class Test_TeleOp extends LinearOpMode {
             // Tell us the odometry encoder ticks
             telemetry.addData("OdoTicks", "L/R/B  :%7d  :%7d  :%7d",
                     robot.driveOdo.leftOdometry.getCurrentPosition(),
-                    robot.driveOdo.rightOdometry.getCurrentPosition()/*,
-                    robot.driveOdo.backOdometry.getCurrentPosition()*/);
+                    robot.driveOdo.rightOdometry.getCurrentPosition(),
+                    robot.driveOdo.backOdometry.getCurrentPosition());
             telemetry.update();
         }
     }
