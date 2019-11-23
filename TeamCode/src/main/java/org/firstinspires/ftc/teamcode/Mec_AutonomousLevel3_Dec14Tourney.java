@@ -139,8 +139,8 @@ public class Mec_AutonomousLevel3_Dec14Tourney extends LinearOpMode {
              */
             telemetry.addData("Delay Timer: ", timeDelay);
 
-            telemetry.addData("Label", robot.eyes.giveSkyStonePos());
             skyStonePos = robot.eyes.giveSkyStonePos();
+            telemetry.addData("Label", robot.eyes.giveSkyStonePos());
 
             telemetry.addData("left position", robot.eyes.lastLeft);
             telemetry.addData("right position", robot.eyes.lastRight);
@@ -185,18 +185,36 @@ public class Mec_AutonomousLevel3_Dec14Tourney extends LinearOpMode {
     }
     public void driveLoadingZone() throws InterruptedException {
 
-        //drive to quarry
+        // Drive to quarry
         robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED,22,2);
         robot.driveClassic.waitUntilDone();
-        //turn towards correct stone
-        if (skyStonePos == CatHW_Vision.skyStonePos.CENTER) {
-            robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, -7, 1);
-            robot.driveClassic.waitUntilDone();
-            robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED, -35, 1.5);
-            robot.jaws.intakeJaws();
-            robot.driveClassic.waitUntilDone();
+        // Set the tongue to stop the block from being forced through so we can spit back out later
+        robot.jaws.pusherMid();
+        // Turn and grab the SkyStone
+        switch (skyStonePos) {
+            case LEFT:
+                robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, -3, 1);
+                robot.driveClassic.waitUntilDone();
+                robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED, -35, 1.5);
+                robot.jaws.intakeJaws();
+                robot.driveClassic.waitUntilDone();
+                break;
+            case CENTER:
+                robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, -7, 1);
+                robot.driveClassic.waitUntilDone();
+                robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED, -35, 1.5);
+                robot.jaws.intakeJaws();
+                robot.driveClassic.waitUntilDone();
+                break;
+            case RIGHT:
+                robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, -15, 1);
+                robot.driveClassic.waitUntilDone();
+                robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED, -35, 1.5);
+                robot.jaws.intakeJaws();
+                robot.driveClassic.waitUntilDone();
+                break;
         }
-        //intake stone
+        // Intake stone (hopefully a SkyStone)
         robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CREEP_SPEED,10,3);
         robot.driveClassic.waitUntilDone();
         robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CREEP_SPEED,-5,2);
@@ -205,35 +223,32 @@ public class Mec_AutonomousLevel3_Dec14Tourney extends LinearOpMode {
         robot.driveClassic.waitUntilDone();
         robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED,-12,2);
         robot.driveClassic.waitUntilDone();
-        robot.jaws.turnOffJaws();
-        //turn toward building zone
-        if (skyStonePos == CatHW_Vision.skyStonePos.CENTER) {
-            robot.driveClassic.mecTurn(CatHW_DriveBase.TURN_SPEED, 90, 2.5);
-            robot.driveClassic.waitUntilDone();
-            robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED, 22, 2);
-            robot.driveClassic.waitUntilDone();
-        }
-
-
-
-
-
-
-        // just park on line
-
-        /*
-        // Do stuff for Loading Zone:
-        if (isRedAlliance) {
-            robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, isParkAtWall ? -1.0 : -28, 3);
-            robot.driveClassic.waitUntilDone();
-        } else {
-            robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, isParkAtWall ? 1.0 : 28, 3);
-            robot.driveClassic.waitUntilDone();
-        }
-        // Back up to bridge
-        robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED, -28.0, 4);
+        //robot.jaws.turnOffJaws();
+        robot.driveClassic.mecTurn(CatHW_DriveBase.TURN_SPEED, 90, 2.5);
         robot.driveClassic.waitUntilDone();
-*/
+        // Drive into building zone
+        switch (skyStonePos ){
+
+            case LEFT:
+                robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED, 26, 2);
+                robot.driveClassic.waitUntilDone();
+                break;
+            case CENTER:
+                robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED, 22, 2);
+                robot.driveClassic.waitUntilDone();
+                break;
+            case RIGHT:
+                robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED, 18, 2);
+                robot.driveClassic.waitUntilDone();
+                break;
+
+        }
+        robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED, 10, 2);
+        robot.driveClassic.waitUntilDone();
+        robot.jaws.outputJaws();
+        robot.robotWait(2.0);
+        robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED, -10, 2);
+        robot.driveClassic.waitUntilDone();
 
     }
     public void driveBuildZone() throws InterruptedException {
