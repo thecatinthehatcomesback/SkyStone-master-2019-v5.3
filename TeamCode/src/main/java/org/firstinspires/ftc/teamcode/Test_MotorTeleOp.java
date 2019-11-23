@@ -37,7 +37,7 @@ public class Test_MotorTeleOp extends LinearOpMode {
         telemetry.addData("Status", "Initializing...");
         telemetry.update();
         // Initialize the hardware
-        robot.init(hardwareMap, this);
+        robot.init(hardwareMap, this, false);
         // Define and Initialize Motors //
 
         // Set Motor and Servo Modes //

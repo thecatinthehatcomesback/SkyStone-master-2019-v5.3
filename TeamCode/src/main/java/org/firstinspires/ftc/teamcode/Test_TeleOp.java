@@ -41,7 +41,7 @@ public class Test_TeleOp extends LinearOpMode {
         telemetry.addData("Status: ", "Initializing...");
         telemetry.update();
         // Initialize the hardware
-        robot.init(hardwareMap, this);
+        robot.init(hardwareMap, this, true);
         robot.driveClassic.IMU_Init();
 
 
@@ -65,6 +65,12 @@ public class Test_TeleOp extends LinearOpMode {
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            // Tell us the odometry encoder ticks
+            telemetry.addData("OdoTicks", "L/R/B  :%7d  :%7d  :%7d",
+                    robot.driveOdo.leftOdometry.getCurrentPosition(),
+                    robot.driveOdo.rightOdometry.getCurrentPosition()/*,
+                    robot.driveOdo.backOdometry.getCurrentPosition()*/);
+            telemetry.update();
         }
     }
 }

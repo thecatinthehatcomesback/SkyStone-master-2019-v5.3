@@ -11,11 +11,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
+@Disabled
 @TeleOp(name="Nov 16 TeleOp", group="CatTeleOp")
 public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
@@ -55,7 +56,7 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
         telemetry.addData("Status", "Initializing...");
         telemetry.update();
         // Initialize the hardware
-        robot.init(hardwareMap, this);
+        robot.init(hardwareMap, this, false);
         // Finished!  Now tell the driver...
         telemetry.addData("Status", "Initialized...  BOOM!");
         telemetry.update();

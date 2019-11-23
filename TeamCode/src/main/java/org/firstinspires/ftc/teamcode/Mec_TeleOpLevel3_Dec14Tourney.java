@@ -55,7 +55,7 @@ public class Mec_TeleOpLevel3_Dec14Tourney extends LinearOpMode {
         telemetry.addData("Status", "Initializing...");
         telemetry.update();
         // Initialize the hardware
-        robot.init(hardwareMap, this);
+        robot.init(hardwareMap, this, false);
         // Finished!  Now tell the driver...
         telemetry.addData("Status", "Initialized...  BOOM!");
         telemetry.update();

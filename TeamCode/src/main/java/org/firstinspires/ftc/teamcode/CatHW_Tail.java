@@ -70,7 +70,7 @@ public class CatHW_Tail extends CatHW_Subsystem
     public void init()  throws InterruptedException  {
 
         // Define and Initialize Motors and Servos//
-        tailLift = hwMap.dcMotor.get("tail_lift");
+        tailLift    = hwMap.dcMotor.get("tail_lift");
         tailExtend  = hwMap.dcMotor.get("tail_extend");
         thumbServo  = hwMap.servo.get("thumb_servo");
         wristServo  = hwMap.crservo.get("wrist_servo");

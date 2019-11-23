@@ -46,7 +46,7 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
          * Initialize the setDrivePowers system variables.  The init() methods of
          * our hardware class does all the work:
          */
-        robot.init(hardwareMap, this);
+        robot.init(hardwareMap, this, false);
         // Init IMU sensor later when the match starts to avoid drifting in the values
         // Init our Machine Vision
         //eyes.initVision(hardwareMap);

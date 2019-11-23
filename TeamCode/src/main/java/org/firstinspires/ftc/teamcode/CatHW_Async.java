@@ -34,12 +34,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class CatHW_Async
 {
     /* Public OpMode members. */
-    enum grabMode {
-        in,
-        half,
-        out,
-        full
-    }
+    public boolean isInitOdo = false;
+
     // LED stuff:
     public RevBlinkinLedDriver lights = null;
     public RevBlinkinLedDriver.BlinkinPattern pattern;
@@ -68,7 +64,7 @@ public class CatHW_Async
 
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap, LinearOpMode theOpMode)  throws InterruptedException  {
+    public void init(HardwareMap ahwMap, LinearOpMode theOpMode, boolean isInitOdo)  throws InterruptedException  {
 
         // Save Reference to Hardware map
         hwMap = ahwMap;
@@ -79,23 +75,36 @@ public class CatHW_Async
         opMode.telemetry.update();
         jaws = new CatHW_Jaws(this);
         jaws.init();
+
         opMode.telemetry.addData("Initialize","Tail...");
         opMode.telemetry.update();
         tail = new CatHW_Tail(this);
         tail.init();
-        opMode.telemetry.addData("Initialize","Drive...");
-        opMode.telemetry.update();
-        driveClassic = new CatHW_DriveClassic(this);
-        driveClassic.init();
+
         opMode.telemetry.addData("Initialize","Claw...");
         opMode.telemetry.update();
         claw = new CatHW_Claw(this);
         claw.init();
-        opMode.telemetry.addData("Initialize","All Done...  BOOM!");
+
+        if (isInitOdo) {
+            opMode.telemetry.addData("Initialize","DriveOdo...");
+            opMode.telemetry.update();
+            driveOdo = new CatHW_DriveOdo(this);
+            driveOdo.init();
+        } else {
+            opMode.telemetry.addData("Initialize","DriveClassic...");
+            opMode.telemetry.update();
+            driveClassic = new CatHW_DriveClassic(this);
+            driveClassic.init();
+        }
+
+        opMode.telemetry.addData("Initialize","Eyes...");
         opMode.telemetry.update();
         eyes = new CatHW_Vision(this);
         eyes.initVision(hwMap);
 
+        opMode.telemetry.addData("Initialize","All Done...  BOOM!");
+        opMode.telemetry.update();
 
         // Blinkin LED stuff //
         lights           = hwMap.get(RevBlinkinLedDriver.class, "blinky");

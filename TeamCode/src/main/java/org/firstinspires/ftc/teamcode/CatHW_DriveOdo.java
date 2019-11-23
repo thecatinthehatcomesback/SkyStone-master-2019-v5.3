@@ -71,12 +71,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
     /* Public OpMode members. */
     // Motors
-    public DcMotor  leftFrontMotor  = null;
-    public DcMotor  rightFrontMotor = null;
-    public DcMotor  leftRearMotor   = null;
-    public DcMotor  rightRearMotor  = null;
-    public DcMotor  rightOdometry   = null;
     public DcMotor  leftOdometry    = null;
+    public DcMotor  rightOdometry   = null;
     public DcMotor  backOdometry    = null;
 
     CatOdoPositionUpdate globalPositionUpdate;
@@ -100,9 +96,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         //todo: Name these motors things and such!!
 
         // Define and Initialize Motors //
-        leftOdometry     = hwMap.dcMotor.get("left_front_motor");
-        rightOdometry    = hwMap.dcMotor.get("right_front_motor");
-        backOdometry     = hwMap.dcMotor.get("left_rear_motor");
+        leftOdometry     = hwMap.dcMotor.get("tail_lift");
+        rightOdometry    = hwMap.dcMotor.get("tail_extend");
+        backOdometry     = hwMap.dcMotor.get("right_rear_motor");
 
         // Set odometry directions //
         leftOdometry.setDirection(DcMotor.Direction.FORWARD);

@@ -43,7 +43,7 @@ public class Mec_TeleOpLevel1_Ri2W extends LinearOpMode {
         telemetry.addData("Status", "Initializing...");
         telemetry.update();
         // Initialize the hardware
-        robot.init(hardwareMap, this);
+        robot.init(hardwareMap, this, true);
         // Finished!  Now tell the driver...
         telemetry.addData("Status", "Initialized...  BOOM!");
         telemetry.update();
