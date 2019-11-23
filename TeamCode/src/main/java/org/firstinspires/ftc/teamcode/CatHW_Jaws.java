@@ -41,7 +41,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
 {
 
     /* Public OpMode members. */
-    static final double JAW_POWER           = 0.8;
+    static final double JAW_POWER           = 0.9;
     static final double PUSHER_OPEN         = -1.0;
     static final double PUSHER_MID          = 0.2;
     static final double PUSHER_FULL_PUSH    = 1.0;

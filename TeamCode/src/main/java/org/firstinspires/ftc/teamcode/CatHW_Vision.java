@@ -48,13 +48,13 @@ public class CatHW_Vision extends CatHW_Subsystem
 
     HardwareMap hwMap   = null;
 
-    enum samplingPos {
+    enum skyStonePos {
         LEFT,
         CENTER,
         RIGHT
     }
 
-    Deque<samplingPos> samplingValues;
+    Deque<skyStonePos> skyStoneValues;
 
     public double lastLeft;
     public double lastRight;
@@ -71,7 +71,7 @@ public class CatHW_Vision extends CatHW_Subsystem
 
     public void initVision(HardwareMap ahwMap) {
         hwMap = ahwMap;
-        samplingValues = new ArrayDeque<samplingPos>(30);
+        skyStoneValues = new ArrayDeque<skyStonePos>(30);
 
         /**
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -79,7 +79,7 @@ public class CatHW_Vision extends CatHW_Subsystem
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = "AWbfTmn/////AAABmY0xuIe3C0RHvL3XuzRxyEmOT2OekXBSbqN2jot1si3OGBObwWadfitJR/D6Vk8VEBiW0HG2Q8UAEd0//OliF9aWCRmyDJ1mMqKCJZxpZemfT5ELFuWnJIZWUkKyjQfDNe2RIaAh0ermSxF4Bq77IDFirgggdYJoRIyi2Ys7Gl9lD/tSonV8OnldIN/Ove4/MtEBJTKHqjUEjC5U2khV+26AqkeqbxhFTNiIMl0LcmSSfugGhmWFGFtuPtp/+flPBRGoBO+tSl9P2sV4mSUBE/WrpHqB0Jd/tAmeNvbtgQXtZEGYc/9NszwRLVNl9k13vrBcgsiNxs2UY5xAvA4Wb6LN7Yu+tChwc+qBiVKAQe09\n";
-        parameters.cameraName = hwMap.get(WebcamName.class, "Webcam 1");
+        parameters.cameraName = hwMap.get(WebcamName.class, "Webcam 2");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -90,7 +90,7 @@ public class CatHW_Vision extends CatHW_Subsystem
         int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.29;
+        tfodParameters.minimumConfidence = 0.75;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, STONE_LABEL, SKYSTONE_LABEL);
         // And now ACTIVATE!!!
@@ -106,46 +106,46 @@ public class CatHW_Vision extends CatHW_Subsystem
          */
 
 
-        if (samplingValues.size() > 99) {
+        if (skyStoneValues.size() > 99) {
             // Make sure we keep the size at a reasonable level
-            samplingValues.removeFirst();
+            skyStoneValues.removeFirst();
         }
         // getUpdatedRecognitions() will return null if no new information is available since
         // the last time that call was made.
         List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-        if (tfod != null) {
         if (updatedRecognitions != null) {
 
                 for (Recognition recognition : updatedRecognitions) {
 
                     if (recognition.getLabel().equals(SKYSTONE_LABEL)) {
-                        int skyStoneX = (int) recognition.getLeft();
+                        int skyStoneX = (int) ((recognition.getLeft()+recognition.getRight())/2);
                         lastLeft = recognition.getLeft();
                         lastRight = recognition.getRight();
                         lastConfidence = recognition.getConfidence();
                         // Look for the Gold Pos and decide which side of the sampling field the gold lies
-                        if (skyStoneX < 160) {
+                        if (skyStoneX > 300) {
                             //***Inverted this since the camera was recently placed upside down***//
-                            samplingValues.add(samplingPos.LEFT);
+                            skyStoneValues.add(skyStonePos.RIGHT);
                             return;
-                        } else if (skyStoneX < 325) {
-                            samplingValues.add(samplingPos.CENTER);
+                        } else if (skyStoneX > 135) {
+                            skyStoneValues.add(skyStonePos.CENTER);
                             return;
                         } else {
-                            samplingValues.add(samplingPos.RIGHT);
+                            skyStoneValues.add(skyStonePos.LEFT);
                             return;
                         }
 
                     }
+                    skyStoneValues.add(skyStonePos.LEFT);
+                    return;
                 }
-        }
         }
         // Since camera is only looking at the LEFT and CENTER values, it will return RIGHT
         // if is doesn't see the gold (just basic logic)
         return;
     }
 
-    public samplingPos giveSkyStonePos() {
+    public skyStonePos giveSkyStonePos() {
         /**
          * A new way to take the all the values during the init
          * and choosing the value in the deque that has the most
@@ -153,22 +153,22 @@ public class CatHW_Vision extends CatHW_Subsystem
          */
 
         Log.d("catbot", String.format("giveSamplePos amounts:  LEFT: %d, CENTER: %d, RIGHT: &d",
-                Collections.frequency(samplingValues, samplingPos.LEFT),
-                Collections.frequency(samplingValues, samplingPos.CENTER),
-                Collections.frequency(samplingValues, samplingPos.RIGHT)));
+                Collections.frequency(skyStoneValues, skyStonePos.LEFT),
+                Collections.frequency(skyStoneValues, skyStonePos.CENTER),
+                Collections.frequency(skyStoneValues, skyStonePos.RIGHT)));
 
         // Check to see which value has the most occurrences in the deque
-        if (Collections.frequency(samplingValues, samplingPos.LEFT) > Collections.frequency(samplingValues, samplingPos.CENTER) &&
-                Collections.frequency(samplingValues, samplingPos.LEFT) > Collections.frequency(samplingValues, samplingPos.RIGHT)) {
+        if (Collections.frequency(skyStoneValues, skyStonePos.LEFT) > Collections.frequency(skyStoneValues, skyStonePos.CENTER) &&
+                Collections.frequency(skyStoneValues, skyStonePos.LEFT) > Collections.frequency(skyStoneValues, skyStonePos.RIGHT)) {
             // If the amount of LEFT readings is the most in the past 30 readings, return LEFT
-            return samplingPos.LEFT;
-        } else if (Collections.frequency(samplingValues, samplingPos.CENTER) > Collections.frequency(samplingValues, samplingPos.LEFT) &&
-                Collections.frequency(samplingValues, samplingPos.CENTER) > Collections.frequency(samplingValues, samplingPos.RIGHT)) {
+            return skyStonePos.LEFT;
+        } else if (Collections.frequency(skyStoneValues, skyStonePos.CENTER) > Collections.frequency(skyStoneValues, skyStonePos.LEFT) &&
+                Collections.frequency(skyStoneValues, skyStonePos.CENTER) > Collections.frequency(skyStoneValues, skyStonePos.RIGHT)) {
             // If the amount of CENTER readings is the most in the past 30 readings, return CENTER
-            return samplingPos.CENTER;
+            return skyStonePos.CENTER;
         } else {
             // Just return back RIGHT since it is the last possible value
-            return samplingPos.RIGHT;
+            return skyStonePos.RIGHT;
         }
     }
 }// End of class bracket

@@ -27,8 +27,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="Nov 16 Autonomous", group="CatAuto")
-public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
+@Autonomous(name="Dec 14 Autonomous", group="CatAuto")
+public class Mec_AutonomousLevel3_Dec14Tourney extends LinearOpMode {
 
     /* Declare OpMode members. */
     CatHW_Async robot  = new CatHW_Async();    // All the hardwares init here
@@ -37,6 +37,8 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
     private boolean isRedAlliance = true;
     private boolean isBuildZone = true;
     private boolean isParkAtWall = false;
+
+    private CatHW_Vision.skyStonePos skyStonePos = CatHW_Vision.skyStonePos.RIGHT;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -182,6 +184,43 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
     }
     public void driveLoadingZone() throws InterruptedException {
 
+        //drive to quarry
+        robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED,22,2);
+        robot.driveClassic.waitUntilDone();
+        //turn towards correct stone
+        if (skyStonePos == CatHW_Vision.skyStonePos.CENTER) {
+            robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, -7, 1);
+            robot.driveClassic.waitUntilDone();
+            robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED, -35, 1.5);
+            robot.jaws.intakeJaws();
+            robot.driveClassic.waitUntilDone();
+        }
+        //intake stone
+        robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CREEP_SPEED,10,3);
+        robot.driveClassic.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CREEP_SPEED,-5,2);
+        robot.driveClassic.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED,6,1.5);
+        robot.driveClassic.waitUntilDone();
+        robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED,-12,2);
+        robot.driveClassic.waitUntilDone();
+        robot.jaws.turnOffJaws();
+        //turn toward building zone
+        if (skyStonePos == CatHW_Vision.skyStonePos.CENTER) {
+            robot.driveClassic.mecTurn(CatHW_DriveBase.TURN_SPEED, 90, 2.5);
+            robot.driveClassic.waitUntilDone();
+            robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED, 22, 2);
+            robot.driveClassic.waitUntilDone();
+        }
+
+
+
+
+
+
+        // just park on line
+
+        /*
         // Do stuff for Loading Zone:
         if (isRedAlliance) {
             robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, isParkAtWall ? -1.0 : -28, 3);
@@ -193,6 +232,7 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
         // Back up to bridge
         robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED, -28.0, 4);
         robot.driveClassic.waitUntilDone();
+*/
 
     }
     public void driveBuildZone() throws InterruptedException {
