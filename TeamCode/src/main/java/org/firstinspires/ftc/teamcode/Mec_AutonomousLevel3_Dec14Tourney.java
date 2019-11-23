@@ -140,6 +140,7 @@ public class Mec_AutonomousLevel3_Dec14Tourney extends LinearOpMode {
             telemetry.addData("Delay Timer: ", timeDelay);
 
             telemetry.addData("Label", robot.eyes.giveSkyStonePos());
+            skyStonePos = robot.eyes.giveSkyStonePos();
 
             telemetry.addData("left position", robot.eyes.lastLeft);
             telemetry.addData("right position", robot.eyes.lastRight);
