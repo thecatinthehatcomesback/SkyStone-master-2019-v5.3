@@ -24,9 +24,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * This is NOT an OpMode.
  *
- * This class is used to define all the jaws specific hardware for the robot to
- * allow for multiple operations during autonomous.  In this case, that robot is //todo Change this name
- * Jack from the Cat in the Hat Comes Back team during the 2018-2019 season.
+ * This class is used to define all specific hardware related to the robot's jaws
+ * or stone intake which will also allow for multiple operations during autonomous.
  *
  * This hardware class assumes the following device names have been configured on the robot.
  *
