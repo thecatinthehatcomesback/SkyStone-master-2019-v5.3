@@ -18,7 +18,6 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -41,16 +40,11 @@ public class CatHW_Jaws extends CatHW_Subsystem
 
     /* Public OpMode members. */
     static final double JAW_POWER           = 0.9;
-    static final double PUSHER_OPEN         = -1.0;
-    static final double PUSHER_MID          = 0.4;
-    static final double PUSHER_FULL_PUSH    = 1.0;
 
 
     // Motors:
     public DcMotor leftJawMotor     = null;
     public DcMotor rightJawMotor    = null;
-
-    public Servo stonePusher        = null;
 
     /* local OpMode members. */
 
@@ -71,7 +65,6 @@ public class CatHW_Jaws extends CatHW_Subsystem
         // Define and Initialize Motors //
         leftJawMotor    = hwMap.dcMotor.get("left_jaw_motor");
         rightJawMotor   = hwMap.dcMotor.get("right_jaw_motor");
-        stonePusher     = hwMap.servo.get("stone_pusher");
 
         leftJawMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightJawMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -107,15 +100,6 @@ public class CatHW_Jaws extends CatHW_Subsystem
 
         leftJawMotor.setPower(0.0);
         rightJawMotor.setPower(0.0);
-    }
-    public  void pusherRetract(){
-        stonePusher.setPosition(PUSHER_OPEN);
-    }
-    public  void pusherMid(){
-        stonePusher.setPosition(PUSHER_MID);
-    }
-    public  void pusherFullPush(){
-        stonePusher.setPosition(PUSHER_FULL_PUSH);
     }
 
 

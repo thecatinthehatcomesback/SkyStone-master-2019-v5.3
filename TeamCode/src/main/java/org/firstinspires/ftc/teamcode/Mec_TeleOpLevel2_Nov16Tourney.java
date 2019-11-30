@@ -135,11 +135,13 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
             }
 
             // stonePusher controls:
+            /*
             if (gamepad1.dpad_left) {
                 robot.jaws.pusherFullPush();
             } else {
                 robot.jaws.pusherRetract();
             }
+            */
 
 
             /**

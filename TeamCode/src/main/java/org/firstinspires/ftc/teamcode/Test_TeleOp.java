@@ -27,8 +27,6 @@ public class Test_TeleOp extends LinearOpMode {
     /* Declare OpMode members. */
     CatHW_Async robot;
 
-    boolean inReverse = true;
-
     /* constructor for class */
     public Test_TeleOp() {
         robot = new CatHW_Async();
@@ -61,6 +59,8 @@ public class Test_TeleOp extends LinearOpMode {
         runTime.reset();
         elapsedGameTime.reset();
 
+        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.CHILL_SPEED, 45, CatHW_DriveBase.TURN_SPEED, 5);
+        robot.driveOdo.waitUntilDone();
 
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
