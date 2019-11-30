@@ -204,7 +204,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                  *
                  * ang1 is the calculation of the angle
                  *
-                 * ang2 is the 0 of the target angle
+                 * ang2 is the 0 of the target angle with the current needed angles
                   */
                 double ang1 = (Math.atan2(targetX - getX, targetY - getY));
                 double ang2 = ang1 - Math.toRadians(getTheta);
