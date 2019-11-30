@@ -44,7 +44,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     double  targetX;
     double  targetY;
     double  strafePower;
-    double  strafeAngle;
+    double strafeAngleEndTarget;
     double  strafeTurnPower;
 
 
@@ -145,7 +145,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetX = x;
         targetY = y;
         strafePower = power;
-        strafeAngle = angle;
+        strafeAngleEndTarget = angle;
         strafeTurnPower = turnSpeed;
 
 
@@ -160,17 +160,22 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      */
     @Override
     public boolean isDone() {
+
         boolean keepDriving = true;
+
+
         if ((runTime.seconds() > timeout)) {
             Log.d("catbot", "Timed out.");
             keepDriving = false;
         }
+
         switch (currentMethod) {
             case turn:
 
                 int zVal = getCurrentAngle();
 
-                Log.d("catbot", String.format("target %d, current %d  %s", -targetAngleZ, -zVal, clockwiseTurn ? "CW": "CCW"));
+                Log.d("catbot", String.format("target %d, current %d  %s",
+                        -targetAngleZ, -zVal, clockwiseTurn ? "CW": "CCW"));
 
                 if ((zVal >= targetAngleZ) && (!clockwiseTurn)) {
                     keepDriving = false;
@@ -186,72 +191,64 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 double getX = globalPositionUpdate.returnXInches();
                 double getTheta = globalPositionUpdate.returnOrientation();
 
-                // if is good to end
-                if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  && ( Math.abs(getTheta - strafeAngle) < 5|| (Math.abs(getTheta - (strafeAngle + 360)) < 5))) {
+                // Check if ready to end
+                if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&
+                        (Math.abs(getTheta - strafeAngleEndTarget) < 5 || (Math.abs(getTheta - (strafeAngleEndTarget + 360)) < 5))) {
 
                     keepDriving = false;
                 }
 
-                //calc angle  - globalPositionUpdate.returnOrientation()
-                double ang = (Math.atan2(targetX - getX, targetY - getY));
-                double ang2 = ang - Math.toRadians(getTheta);
-                //double ang = 0.785398;
+                /**
+                 * Calc robot angles:
+                 *
+                 *
+                 * ang1 is the calculation of the angle
+                 *
+                 * ang2 is the 0 of the target angle
+                  */
+                double ang1 = (Math.atan2(targetX - getX, targetY - getY));
+                double ang2 = ang1 - Math.toRadians(getTheta);
 
-                double lFrontPower = (Math.cos(ang2)  + Math.sin(ang2));
+                double lFrontPower = (Math.cos(ang2) + Math.sin(ang2));
                 double rFrontPower = (Math.cos(ang2) - Math.sin(ang2));
                 double lBackPower;
                 double rBackPower;
 
-
-/*
-                if ( Math.abs(lFrontPower) > Math.abs(rFrontPower)){
-                    //if lFrontPower is greater than right
-                    lFrontPower = (1 / Math.abs(lFrontPower)) * lFrontPower;
-                    rFrontPower = (1 / Math.abs(lFrontPower)) * rFrontPower;
-                }
-                else {
-                    //if rFrontPower is greater than left
-                    lFrontPower = (1 / Math.abs(rFrontPower)) * lFrontPower;
-                    rFrontPower = (1 / Math.abs(rFrontPower)) * rFrontPower;
-                }
- */
+                // Set powers for mecanum wheels
                 lBackPower = rFrontPower;
                 rBackPower = lFrontPower;
 
-                //todo: Add turn here
-                if (Math.abs((getTheta - strafeAngle)) < Math.abs((getTheta - (strafeAngle + 360)))) {
-                    if ((getTheta - strafeAngle) < 0) {
+                //TODO: Add turn here
+                if (Math.abs((getTheta - strafeAngleEndTarget)) < Math.abs((getTheta - (strafeAngleEndTarget + 360)))) {
+                    if ((getTheta - strafeAngleEndTarget) < 0) {
                         // Turn right
-                        if (Math.abs(getTheta - strafeAngle) > 4) {
+                        if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
                             rFrontPower = rFrontPower - strafeTurnPower;
                             rBackPower  = rBackPower  - strafeTurnPower;
                             lFrontPower = lFrontPower + strafeTurnPower;
                             lBackPower  = lBackPower  + strafeTurnPower;
                         }
-                    }
-                    else {
+                    } else {
                         // Turn left
-                        if (Math.abs(getTheta - strafeAngle) > 4) {
+                        if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
                             rFrontPower = rFrontPower + strafeTurnPower;
                             rBackPower  = rBackPower  + strafeTurnPower;
                             lFrontPower = lFrontPower - strafeTurnPower;
                             lBackPower  = lBackPower  - strafeTurnPower;
                         }
                     }
-                }
-                else {
-                    if ((getTheta - (strafeAngle + 360)) < 0) {
+                } else {
+                    if ((getTheta - (strafeAngleEndTarget + 360)) < 0) {
                         // Turn right
-                        if (Math.abs(getTheta - (strafeAngle + 360)) > 4) {
+                        if (Math.abs(getTheta - (strafeAngleEndTarget + 360)) > 4) {
                             rFrontPower = rFrontPower - strafeTurnPower;
                             rBackPower  = rBackPower  - strafeTurnPower;
                             lFrontPower = lFrontPower + strafeTurnPower;
                             lBackPower  = lBackPower  + strafeTurnPower;
                         }
-                    }
-                    else {
+                    } else {
                         // Turn left
-                        if (Math.abs(getTheta - (strafeAngle + 360)) > 4) {
+                        if (Math.abs(getTheta - (strafeAngleEndTarget + 360)) > 4) {
                             rFrontPower = rFrontPower + strafeTurnPower;
                             rBackPower  = rBackPower  + strafeTurnPower;
                             lFrontPower = lFrontPower - strafeTurnPower;
@@ -269,7 +266,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                 Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle: %.1f %.1f %.1f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
-                        targetX, targetY, getX, getY, Math.toDegrees(ang), Math.toDegrees(ang2), getTheta));
+                        targetX, targetY, getX, getY, Math.toDegrees(ang1), Math.toDegrees(ang2), getTheta));
                 break;
         }
 
