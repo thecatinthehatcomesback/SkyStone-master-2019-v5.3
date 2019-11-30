@@ -192,7 +192,7 @@ public class Mec_AutonomousLevel3_DeadSkyStonePickup extends LinearOpMode {
         robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED,22,2);
         robot.driveClassic.waitUntilDone();
         // Set the tongue to stop the block from being forced through so we can spit back out later
-        robot.jaws.pusherMid();
+        //robot.jaws.pusherMid();
         // Turn and grab the SkyStone
         switch (skyStonePos) {
             case LEFT:
