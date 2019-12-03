@@ -101,7 +101,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         backOdometry     = hwMap.dcMotor.get("left_rear_motor");
 
         // Set odometry directions //
-        leftOdometry.setDirection(DcMotor.Direction.FORWARD);
+        leftOdometry.setDirection(DcMotor.Direction.REVERSE);
         rightOdometry.setDirection(DcMotor.Direction.REVERSE);
         backOdometry.setDirection(DcMotor.Direction.REVERSE);
 
