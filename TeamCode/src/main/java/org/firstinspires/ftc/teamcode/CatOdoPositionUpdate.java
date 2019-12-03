@@ -11,12 +11,9 @@ import java.io.File;
  * Created by Sarthak on 6/1/2019.
  * Modified by Team #10273, The Cat in the Hat Comes Back.
  */
-public class CatOdoPositionUpdate implements Runnable{
+public class CatOdoPositionUpdate {
     //Odometry wheels
     private DcMotor verticalEncoderLeft, verticalEncoderRight, horizontalEncoder;
-
-    //Thead run condition
-    private boolean isRunning = true;
 
     //Position variables used for storage and calculations
     double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0,  changeInRobotOrientation = 0;
@@ -141,11 +138,6 @@ public class CatOdoPositionUpdate implements Runnable{
         return (horizontalEncoder.getCurrentPosition() * normalEncoderPositionMultiplier);
     }
 
-    /**
-     * Stops the position update thread
-     */
-    public void stop(){ isRunning = false; }
-
     public void reverseLeftEncoder(){
         if(verticalLeftEncoderPositionMultiplier == 1){
             verticalLeftEncoderPositionMultiplier = -1;
@@ -180,18 +172,4 @@ public class CatOdoPositionUpdate implements Runnable{
         robotOrientationRadians = Math.toRadians(theta);
     }
 
-    /**
-     * Runs the thread
-     */
-    @Override
-    public void run() {
-        while(isRunning) {
-            globalCoordinatePositionUpdate();
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }
