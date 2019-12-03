@@ -11,7 +11,7 @@ import java.io.File;
  * Created by Sarthak on 6/1/2019.
  * Modified by Team #10273, The Cat in the Hat Comes Back.
  */
-public class CatOdoPositionUpdate implements Runnable{
+public class CatOdoAllUpdates implements Runnable{
     //Odometry wheels
     private DcMotor verticalEncoderLeft, verticalEncoderRight, horizontalEncoder;
 
@@ -47,7 +47,7 @@ public class CatOdoPositionUpdate implements Runnable{
      * @param horizontalEncoder horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      * @param threadSleepDelay delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
      */
-    public CatOdoPositionUpdate(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, int threadSleepDelay){
+    public CatOdoAllUpdates(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, int threadSleepDelay){
         count_per_in = COUNTS_PER_INCH;
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
@@ -59,8 +59,8 @@ public class CatOdoPositionUpdate implements Runnable{
 
     }
 
-    public CatOdoPositionUpdate(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, double startingX,
-                                double startingY, double startingOrientation, int threadSleepDelay){
+    public CatOdoAllUpdates(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, double startingX,
+                            double startingY, double startingOrientation, int threadSleepDelay){
         count_per_in = COUNTS_PER_INCH;
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
