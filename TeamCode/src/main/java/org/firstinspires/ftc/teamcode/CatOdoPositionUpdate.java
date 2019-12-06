@@ -72,7 +72,6 @@ public class CatOdoPositionUpdate implements Runnable{
 
         robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
         this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
-
     }
 
     /**
@@ -127,7 +126,7 @@ public class CatOdoPositionUpdate implements Runnable{
      * Returns the robot's global orientation
      * @return global orientation, in degrees
      */
-    public double returnOrientation(){ return Math.toDegrees(robotOrientationRadians) % 360; }
+    public double returnOrientation(){ return Math.toDegrees(robotOrientationRadians); }
 
     public double returnVerticalLeftEncoderPosition(){
         return (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
