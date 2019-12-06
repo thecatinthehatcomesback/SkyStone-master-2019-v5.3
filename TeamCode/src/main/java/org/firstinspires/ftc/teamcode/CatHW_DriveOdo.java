@@ -102,14 +102,14 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         // Set odometry directions //
         leftOdometry.setDirection(DcMotor.Direction.REVERSE);
-        rightOdometry.setDirection(DcMotor.Direction.REVERSE);
+        rightOdometry.setDirection(DcMotor.Direction.FORWARD);
         backOdometry.setDirection(DcMotor.Direction.REVERSE);
 
         // Set odometry modes //
         resetOdometryEncoders();
 
         // Odometry Setup
-        globalPositionUpdate  = new CatOdoPositionUpdate(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH, 25);
+        globalPositionUpdate  = new CatOdoPositionUpdate(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH, 15);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
@@ -193,7 +193,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                 // Check if ready to end
                 if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&
-                        (Math.abs(getTheta - strafeAngleEndTarget) < 5 || (Math.abs(getTheta - (strafeAngleEndTarget + 360)) < 5))) {
+                        (Math.abs(getTheta - strafeAngleEndTarget) < 5 )) {
 
                     keepDriving = false;
                 }
@@ -218,44 +218,25 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 lBackPower = rFrontPower;
                 rBackPower = lFrontPower;
 
-                //TODO: Add turn here
-                if (Math.abs((getTheta - strafeAngleEndTarget)) < Math.abs((getTheta - (strafeAngleEndTarget + 360)))) {
-                    if ((getTheta - strafeAngleEndTarget) < 0) {
-                        // Turn right
-                        if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
-                            rFrontPower = rFrontPower - strafeTurnPower;
-                            rBackPower  = rBackPower  - strafeTurnPower;
-                            lFrontPower = lFrontPower + strafeTurnPower;
-                            lBackPower  = lBackPower  + strafeTurnPower;
-                        }
-                    } else {
-                        // Turn left
-                        if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
-                            rFrontPower = rFrontPower + strafeTurnPower;
-                            rBackPower  = rBackPower  + strafeTurnPower;
-                            lFrontPower = lFrontPower - strafeTurnPower;
-                            lBackPower  = lBackPower  - strafeTurnPower;
-                        }
+                //adds turn
+                if ((getTheta - strafeAngleEndTarget) < 0) {
+                    // Turn right
+                    if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
+                        rFrontPower = rFrontPower - strafeTurnPower;
+                        rBackPower = rBackPower - strafeTurnPower;
+                        lFrontPower = lFrontPower + strafeTurnPower;
+                        lBackPower = lBackPower + strafeTurnPower;
                     }
                 } else {
-                    if ((getTheta - (strafeAngleEndTarget + 360)) < 0) {
-                        // Turn right
-                        if (Math.abs(getTheta - (strafeAngleEndTarget + 360)) > 4) {
-                            rFrontPower = rFrontPower - strafeTurnPower;
-                            rBackPower  = rBackPower  - strafeTurnPower;
-                            lFrontPower = lFrontPower + strafeTurnPower;
-                            lBackPower  = lBackPower  + strafeTurnPower;
-                        }
-                    } else {
-                        // Turn left
-                        if (Math.abs(getTheta - (strafeAngleEndTarget + 360)) > 4) {
-                            rFrontPower = rFrontPower + strafeTurnPower;
-                            rBackPower  = rBackPower  + strafeTurnPower;
-                            lFrontPower = lFrontPower - strafeTurnPower;
-                            lBackPower  = lBackPower  - strafeTurnPower;
-                        }
+                    // Turn left
+                    if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
+                        rFrontPower = rFrontPower + strafeTurnPower;
+                        rBackPower = rBackPower + strafeTurnPower;
+                        lFrontPower = lFrontPower - strafeTurnPower;
+                        lBackPower = lBackPower - strafeTurnPower;
                     }
                 }
+
 
                 // Calculate scale factor and motor powers
                 double SF = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
