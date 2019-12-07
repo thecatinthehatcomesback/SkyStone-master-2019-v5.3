@@ -75,7 +75,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     public DcMotor  rightOdometry   = null;
     public DcMotor  backOdometry    = null;
 
-    CatOdoPositionUpdate globalPositionUpdate;
+    CatOdoAllUpdates updatesThread;
 
 
     /* local OpMode members. */
@@ -109,8 +109,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         resetOdometryEncoders();
 
         // Odometry Setup
-        globalPositionUpdate  = new CatOdoPositionUpdate(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH, 15);
-        Thread positionThread = new Thread(globalPositionUpdate);
+        updatesThread = new CatOdoAllUpdates(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
+        Thread positionThread = new Thread(updatesThread);
         positionThread.start();
 
         // Sets enums to a default value
@@ -165,7 +165,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
         if ((runTime.seconds() > timeout)) {
-            Log.d("catbot", "Timed OUT.");
+            Log.d("catbot", "Timed out.");
             keepDriving = false;
         }
 
@@ -187,13 +187,13 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
             case translate:
 
-                double getY = globalPositionUpdate.returnYInches();
-                double getX = globalPositionUpdate.returnXInches();
-                double getTheta = globalPositionUpdate.returnOrientation();
+                double getY = updatesThread.positionUpdate.returnYInches();
+                double getX = updatesThread.positionUpdate.returnXInches();
+                double getTheta = updatesThread.positionUpdate.returnOrientation();
 
                 // Check if ready to end
                 if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&
-                        (Math.abs(getTheta - strafeAngleEndTarget) < 5 )) {
+                        (Math.abs(getTheta - strafeAngleEndTarget) < 5 || (Math.abs(getTheta - (strafeAngleEndTarget + 360)) < 5))) {
 
                     keepDriving = false;
                 }
@@ -218,25 +218,44 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 lBackPower = rFrontPower;
                 rBackPower = lFrontPower;
 
-                //adds turn
-                if ((getTheta - strafeAngleEndTarget) < 0) {
-                    // Turn right
-                    if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
-                        rFrontPower = rFrontPower - (strafeTurnPower);
-                        rBackPower = rBackPower - (strafeTurnPower);
-                        lFrontPower = lFrontPower + (strafeTurnPower);
-                        lBackPower = lBackPower + (strafeTurnPower);
+                //TODO: Add turn here
+                if (Math.abs((getTheta - strafeAngleEndTarget)) < Math.abs((getTheta - (strafeAngleEndTarget + 360)))) {
+                    if ((getTheta - strafeAngleEndTarget) < 0) {
+                        // Turn right
+                        if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
+                            rFrontPower = rFrontPower - strafeTurnPower;
+                            rBackPower  = rBackPower  - strafeTurnPower;
+                            lFrontPower = lFrontPower + strafeTurnPower;
+                            lBackPower  = lBackPower  + strafeTurnPower;
+                        }
+                    } else {
+                        // Turn left
+                        if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
+                            rFrontPower = rFrontPower + strafeTurnPower;
+                            rBackPower  = rBackPower  + strafeTurnPower;
+                            lFrontPower = lFrontPower - strafeTurnPower;
+                            lBackPower  = lBackPower  - strafeTurnPower;
+                        }
                     }
                 } else {
-                    // Turn left
-                    if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
-                        rFrontPower = rFrontPower + (strafeTurnPower);
-                        rBackPower = rBackPower + (strafeTurnPower);
-                        lFrontPower = lFrontPower - (strafeTurnPower);
-                        lBackPower = lBackPower - (strafeTurnPower);
+                    if ((getTheta - (strafeAngleEndTarget + 360)) < 0) {
+                        // Turn right
+                        if (Math.abs(getTheta - (strafeAngleEndTarget + 360)) > 4) {
+                            rFrontPower = rFrontPower - strafeTurnPower;
+                            rBackPower  = rBackPower  - strafeTurnPower;
+                            lFrontPower = lFrontPower + strafeTurnPower;
+                            lBackPower  = lBackPower  + strafeTurnPower;
+                        }
+                    } else {
+                        // Turn left
+                        if (Math.abs(getTheta - (strafeAngleEndTarget + 360)) > 4) {
+                            rFrontPower = rFrontPower + strafeTurnPower;
+                            rBackPower  = rBackPower  + strafeTurnPower;
+                            lFrontPower = lFrontPower - strafeTurnPower;
+                            lBackPower  = lBackPower  - strafeTurnPower;
+                        }
                     }
                 }
-
 
                 // Calculate scale factor and motor powers
                 double SF = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
@@ -245,9 +264,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 leftRearMotor.setPower(lBackPower    * strafePower * SF);
                 rightRearMotor.setPower(rBackPower   * strafePower * SF);
 
-                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle/target angle: %.1f %.1f %.1f %.1f",
+                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle: %.1f %.1f %.1f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
-                        targetX, targetY, getX, getY, Math.toDegrees(ang1), Math.toDegrees(ang2), getTheta, strafeAngleEndTarget));
+                        targetX, targetY, getX, getY, Math.toDegrees(ang1), Math.toDegrees(ang2), getTheta));
                 break;
         }
 
