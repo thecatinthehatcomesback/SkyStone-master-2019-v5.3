@@ -6,21 +6,17 @@ package org.firstinspires.ftc.teamcode;
  */
 public class CatOdoPowerUpdate {
 
-    CatOdoPositionUpdate positionUpdate = null;
+    CatOdoPositionUpdate positionUpdate;
 
     // Variables:
     double currentPower;
+    double minPower = 0.1;
     double maxPower;
-    double minPower      = 0.0;
 
-    public double currentLF     = 0.0;
-    public double currentRF     = 0.0;
-    public double currentLB     = 0.0;
-    public double currentRB     = 0.0;
-
-    double previousTime;
+    double startTime;
+    double currentTime;
     double distanceToTarget;
-    double deltaDistance;
+    double rampUpTime       = 2.0;
     double rampDownDistance = 7;
 
     private double rampUPrate;
@@ -42,11 +38,12 @@ public class CatOdoPowerUpdate {
     }
 
 
-    public void setTarget(double x, double y, double theta, double power) {
-        targetX = x;
-        targetY = y;
+    public void setTarget(double x, double y, double theta, double power, double time) {
+        targetX     = x;
+        targetY     = y;
         targetTheta = theta;
-        maxPower = power;
+        maxPower    = power;
+        startTime   = time;
     }
 
     public double updatePower() {
@@ -70,7 +67,11 @@ public class CatOdoPowerUpdate {
             }
         } else {
             // Ramp up power
+            //TODO: add the first time to minimum power
             if (currentPower >= maxPower) {
+                //TODO: might not be right
+                rampUPrate = maxPower * (currentTime / rampUpTime);
+
                 currentPower = currentPower + rampUPrate;
             } else {
                 currentPower = maxPower;
