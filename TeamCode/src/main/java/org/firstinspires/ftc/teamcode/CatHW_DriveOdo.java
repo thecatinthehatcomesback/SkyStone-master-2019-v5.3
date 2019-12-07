@@ -102,7 +102,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         // Set odometry directions //
         leftOdometry.setDirection(DcMotor.Direction.REVERSE);
-        rightOdometry.setDirection(DcMotor.Direction.FORWARD);
+        rightOdometry.setDirection(DcMotor.Direction.REVERSE);
         backOdometry.setDirection(DcMotor.Direction.REVERSE);
 
         // Set odometry modes //
@@ -222,18 +222,18 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 if ((getTheta - strafeAngleEndTarget) < 0) {
                     // Turn right
                     if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
-                        rFrontPower = rFrontPower - strafeTurnPower;
-                        rBackPower = rBackPower - strafeTurnPower;
-                        lFrontPower = lFrontPower + strafeTurnPower;
-                        lBackPower = lBackPower + strafeTurnPower;
+                        rFrontPower = rFrontPower - (strafeTurnPower);
+                        rBackPower = rBackPower - (strafeTurnPower);
+                        lFrontPower = lFrontPower + (strafeTurnPower);
+                        lBackPower = lBackPower + (strafeTurnPower);
                     }
                 } else {
                     // Turn left
                     if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
-                        rFrontPower = rFrontPower + strafeTurnPower;
-                        rBackPower = rBackPower + strafeTurnPower;
-                        lFrontPower = lFrontPower - strafeTurnPower;
-                        lBackPower = lBackPower - strafeTurnPower;
+                        rFrontPower = rFrontPower + (strafeTurnPower);
+                        rBackPower = rBackPower + (strafeTurnPower);
+                        lFrontPower = lFrontPower - (strafeTurnPower);
+                        lBackPower = lBackPower - (strafeTurnPower);
                     }
                 }
 
@@ -245,9 +245,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 leftRearMotor.setPower(lBackPower    * strafePower * SF);
                 rightRearMotor.setPower(rBackPower   * strafePower * SF);
 
-                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle: %.1f %.1f %.1f",
+                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle/target angle: %.1f %.1f %.1f %.1f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
-                        targetX, targetY, getX, getY, Math.toDegrees(ang1), Math.toDegrees(ang2), getTheta));
+                        targetX, targetY, getX, getY, Math.toDegrees(ang1), Math.toDegrees(ang2), getTheta, strafeAngleEndTarget));
                 break;
         }
 

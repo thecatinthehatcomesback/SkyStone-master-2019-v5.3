@@ -119,7 +119,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
      * Returns the robot's global orientation
      * @return global orientation, in degrees
      */
-    public double returnOrientation(){ return Math.toDegrees(robotOrientationRadians) % 360; }
+    public double returnOrientation(){ return Math.toDegrees(robotOrientationRadians); }
 
     public double returnVerticalLeftEncoderPosition(){
         return (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
