@@ -75,7 +75,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     public DcMotor  rightOdometry   = null;
     public DcMotor  backOdometry    = null;
 
-    CatOdoPositionUpdate globalPositionUpdate;
+    CatOdoAllUpdates updatesThread;
 
 
     /* local OpMode members. */
@@ -109,8 +109,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         resetOdometryEncoders();
 
         // Odometry Setup
-        globalPositionUpdate  = new CatOdoPositionUpdate(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH, 25);
-        Thread positionThread = new Thread(globalPositionUpdate);
+        updatesThread = new CatOdoAllUpdates(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
+        Thread positionThread = new Thread(updatesThread);
         positionThread.start();
 
         // Sets enums to a default value
@@ -187,9 +187,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
             case translate:
 
-                double getY = globalPositionUpdate.returnYInches();
-                double getX = globalPositionUpdate.returnXInches();
-                double getTheta = globalPositionUpdate.returnOrientation();
+                double getY = updatesThread.positionUpdate.returnYInches();
+                double getX = updatesThread.positionUpdate.returnXInches();
+                double getTheta = updatesThread.positionUpdate.returnOrientation();
 
                 // Check if ready to end
                 if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&

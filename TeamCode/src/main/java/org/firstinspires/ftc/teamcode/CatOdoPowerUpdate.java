@@ -1,20 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-
-import java.io.File;
 
 /**
- * Created by Sarthak on 6/1/2019.
  * Modified by Team #10273, The Cat in the Hat Comes Back.
  */
 public class CatOdoPowerUpdate {
 
+    CatOdoPositionUpdate positionUpdate = null;
+
     // Variables:
-    public double currentPower  = 0.0;
-    public double maxPower      = 0.0;
+    public double currentPower;
+    public double maxPower;
     public double minPower      = 0.0;
 
     public double currentLF     = 0.0;
@@ -25,8 +21,48 @@ public class CatOdoPowerUpdate {
     public double previousTime      = 0.0;
     public double previousDistance  = 0.0;
 
-    public double rampUPrate        = 0.0;
-    public double rampDOWNrate      = 0.0;
+    double rampUPrate           = 0.0;
+    double rampDOWNrate         = 0.0;
+
+    public double currentX;
+    public double currentY;
+    public double targetX;
+    public double targetY;
+
+    public CatOdoPowerUpdate(CatOdoPositionUpdate inPositionUpdate) {
+        positionUpdate = inPositionUpdate;
+    }
+
+
+    public double updatePower(double maxPower) {
+        this.maxPower = maxPower;
+
+        // Always begin power with a good chunk to overcome static friction
+        currentPower = 0.1;
+
+        currentX    = positionUpdate.returnXInches();
+        currentY    = positionUpdate.returnYInches();
+        ////TODO: Grab the correct targets from the CatHW_DriveOdo class...
+        targetX     = 0;
+        targetY     = 0;
+
+        if (distance(currentX, currentY, targetX, targetY) < 7) {
+            // Start ramping down
+            return currentPower = currentPower - rampDOWNrate;
+
+        } else if (currentPower >= maxPower) {
+            // Don't let power get above max power
+            return currentPower = maxPower;
+
+        } else {
+            // Ramp up the the power
+            return currentPower = currentPower + rampUPrate;
+        }
+    }
+
+    public double distance(double currentX, double currentY, double targetX, double targetY) {
+        return Math.sqrt((targetX - currentX)*(targetX - currentX) + (targetY - currentY)*(targetY - currentY));
+    }
 
 
     /**
