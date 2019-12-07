@@ -31,6 +31,7 @@ public class CatOdoAllUpdates implements Runnable{
     public void run() {
         while(isRunning) {
             positionUpdate.globalCoordinatePositionUpdate();
+            powerUpdate.updatePower();
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {

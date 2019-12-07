@@ -9,55 +9,76 @@ public class CatOdoPowerUpdate {
     CatOdoPositionUpdate positionUpdate = null;
 
     // Variables:
-    public double currentPower;
-    public double maxPower;
-    public double minPower      = 0.0;
+    double currentPower;
+    double maxPower;
+    double minPower      = 0.0;
 
     public double currentLF     = 0.0;
     public double currentRF     = 0.0;
     public double currentLB     = 0.0;
     public double currentRB     = 0.0;
 
-    public double previousTime      = 0.0;
-    public double previousDistance  = 0.0;
+    double previousTime;
+    double distanceToTarget;
+    double deltaDistance;
+    double rampDownDistance = 7;
 
-    double rampUPrate           = 0.0;
-    double rampDOWNrate         = 0.0;
+    private double rampUPrate;
+    private double rampDOWNrate;
 
-    public double currentX;
-    public double currentY;
-    public double targetX;
-    public double targetY;
+    double currentX;
+    double currentY;
+    double targetX;
+    double targetY;
+    double targetTheta;
 
-    public CatOdoPowerUpdate(CatOdoPositionUpdate inPositionUpdate) {
+
+    /**
+     * Constructor which also has access to the values and such in CatOdoPositionUpdate
+     * @param inPositionUpdate Create an instance of the CatOdoPositionUpdate
+     */
+    CatOdoPowerUpdate(CatOdoPositionUpdate inPositionUpdate) {
         positionUpdate = inPositionUpdate;
     }
 
 
-    public double updatePower(double maxPower) {
-        this.maxPower = maxPower;
+    public void setTarget(double x, double y, double theta, double power) {
+        targetX = x;
+        targetY = y;
+        targetTheta = theta;
+        maxPower = power;
+    }
+
+    public double updatePower() {
 
         // Always begin power with a good chunk to overcome static friction
-        currentPower = 0.1;
 
+        // Update the current position
         currentX    = positionUpdate.returnXInches();
         currentY    = positionUpdate.returnYInches();
-        ////TODO: Grab the correct targets from the CatHW_DriveOdo class...
-        targetX     = 0;
-        targetY     = 0;
 
-        if (distance(currentX, currentY, targetX, targetY) < 7) {
-            // Start ramping down
-            return currentPower = currentPower - rampDOWNrate;
+        // Distances
+        distanceToTarget = distance(currentX, currentY, targetX, targetY);
 
-        } else if (currentPower >= maxPower) {
-            // Don't let power get above max power
-            return currentPower = maxPower;
 
+        if (distanceToTarget < rampDownDistance) {
+            // Ramp down if within the rampDownDistance
+            if (currentPower > minPower) {
+                currentPower = maxPower * (distanceToTarget / rampDownDistance);
+            } else {
+                currentPower = minPower;
+            }
         } else {
-            // Ramp up the the power
-            return currentPower = currentPower + rampUPrate;
+            // Ramp up power
+            if (currentPower >= maxPower) {
+                currentPower = currentPower + rampUPrate;
+            } else {
+                currentPower = maxPower;
+            }
         }
+
+        // Finally!  Give the power!
+        return currentPower;
     }
 
     public double distance(double currentX, double currentY, double targetX, double targetY) {
