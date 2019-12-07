@@ -44,7 +44,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     double  targetX;
     double  targetY;
     double  strafePower;
-    double strafeAngleEndTarget;
+    double targetTheta;
     double  strafeTurnPower;
 
 
@@ -145,7 +145,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetX = x;
         targetY = y;
         strafePower = power;
-        strafeAngleEndTarget = angle;
+        targetTheta = angle;
         strafeTurnPower = turnSpeed;
 
 
@@ -193,7 +193,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                 // Check if ready to end
                 if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&
-                        (Math.abs(getTheta - strafeAngleEndTarget) < 5 || (Math.abs(getTheta - (strafeAngleEndTarget + 360)) < 5))) {
+                        (Math.abs(getTheta - targetTheta) < 5 || (Math.abs(getTheta - (targetTheta + 360)) < 5))) {
 
                     keepDriving = false;
                 }
@@ -219,10 +219,10 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 rBackPower = lFrontPower;
 
                 //TODO: Add turn here
-                if (Math.abs((getTheta - strafeAngleEndTarget)) < Math.abs((getTheta - (strafeAngleEndTarget + 360)))) {
-                    if ((getTheta - strafeAngleEndTarget) < 0) {
+                if (Math.abs((getTheta - targetTheta)) < Math.abs((getTheta - (targetTheta + 360)))) {
+                    if ((getTheta - targetTheta) < 0) {
                         // Turn right
-                        if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
+                        if (Math.abs(getTheta - targetTheta) > 4) {
                             rFrontPower = rFrontPower - strafeTurnPower;
                             rBackPower  = rBackPower  - strafeTurnPower;
                             lFrontPower = lFrontPower + strafeTurnPower;
@@ -230,7 +230,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                         }
                     } else {
                         // Turn left
-                        if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
+                        if (Math.abs(getTheta - targetTheta) > 4) {
                             rFrontPower = rFrontPower + strafeTurnPower;
                             rBackPower  = rBackPower  + strafeTurnPower;
                             lFrontPower = lFrontPower - strafeTurnPower;
@@ -238,9 +238,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                         }
                     }
                 } else {
-                    if ((getTheta - (strafeAngleEndTarget + 360)) < 0) {
+                    if ((getTheta - (targetTheta + 360)) < 0) {
                         // Turn right
-                        if (Math.abs(getTheta - (strafeAngleEndTarget + 360)) > 4) {
+                        if (Math.abs(getTheta - (targetTheta + 360)) > 4) {
                             rFrontPower = rFrontPower - strafeTurnPower;
                             rBackPower  = rBackPower  - strafeTurnPower;
                             lFrontPower = lFrontPower + strafeTurnPower;
@@ -248,7 +248,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                         }
                     } else {
                         // Turn left
-                        if (Math.abs(getTheta - (strafeAngleEndTarget + 360)) > 4) {
+                        if (Math.abs(getTheta - (targetTheta + 360)) > 4) {
                             rFrontPower = rFrontPower + strafeTurnPower;
                             rBackPower  = rBackPower  + strafeTurnPower;
                             lFrontPower = lFrontPower - strafeTurnPower;
@@ -259,6 +259,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                 // Calculate scale factor and motor powers
                 double SF = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
+                //TODO Add the get currentPower here from PowerUpdate
                 leftFrontMotor.setPower(lFrontPower  * strafePower * SF);
                 rightFrontMotor.setPower(rFrontPower * strafePower * SF);
                 leftRearMotor.setPower(lBackPower    * strafePower * SF);
