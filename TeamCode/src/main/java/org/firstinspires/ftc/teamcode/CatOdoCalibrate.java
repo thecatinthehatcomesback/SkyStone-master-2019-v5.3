@@ -53,8 +53,8 @@ public class CatOdoCalibrate extends LinearOpMode {
         waitForStart();
 
         //Begin calibration (if robot is unable to pivot at these speeds, please adjust the constant at the top of the code
-        while(robot.driveOdo.getCurrentAngle() < 90 && opModeIsActive()){
-            if(robot.driveOdo.getCurrentAngle() < 60) {
+        while(robot.driveOdo.getCurrentAngle() > -90 && opModeIsActive()){
+            if(robot.driveOdo.getCurrentAngle() > -60) {
                 robot.driveOdo.setDrivePowers(PIVOT_SPEED,-PIVOT_SPEED,PIVOT_SPEED,-PIVOT_SPEED);
 
             }else{
@@ -81,9 +81,9 @@ public class CatOdoCalibrate extends LinearOpMode {
 
         double verticalEncoderTickOffsetPerDegree = encoderDifference/angle;
 
-        double wheelBaseSeparation = (angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*robot.driveOdo.ODO_COUNTS_PER_INCH);
+        //double wheelBaseSeparation = (angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*robot.driveOdo.ODO_COUNTS_PER_INCH);
 
-        //double wheelBaseSeparation = (2*angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*robot.driveOdo.ODO_COUNTS_PER_INCH);
+        double wheelBaseSeparation = (2*angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*robot.driveOdo.ODO_COUNTS_PER_INCH);
 
         // Negated this numberto move the robot center to the actual center instead of behind it
         horizontalTickOffset = -robot.driveOdo.backOdometry.getCurrentPosition()/Math.toRadians(robot.driveOdo.getCurrentAngle());

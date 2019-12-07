@@ -193,6 +193,14 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
         robot.driveOdo.waitUntilDone();
         switch (skyStonePos) {
             case LEFT:
+                robot.driveOdo.translateDrive(-9, 25, CatHW_DriveOdo.DRIVE_SPEED, -35, .4, 3);
+                robot.driveOdo.waitUntilDone();
+                robot.jaws.intakeJaws();
+                robot.driveOdo.translateDrive(-9, 39, CatHW_DriveOdo.CHILL_SPEED, -35, .25, 1.5);
+                robot.driveOdo.waitUntilDone();
+                robot.driveOdo.translateDrive(3, 24, CatHW_DriveOdo.DRIVE_SPEED, -35, .25, 1.5);
+                break;
+            case CENTER:
                 robot.driveOdo.translateDrive(0, 25, CatHW_DriveOdo.DRIVE_SPEED, -35, .4, 3);
                 robot.driveOdo.waitUntilDone();
                 robot.jaws.intakeJaws();
@@ -200,33 +208,25 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
                 robot.driveOdo.waitUntilDone();
                 robot.driveOdo.translateDrive(6, 24, CatHW_DriveOdo.DRIVE_SPEED, -35, .25, 1.5);
                 break;
-            case CENTER:
-                robot.driveOdo.translateDrive(3, 25, CatHW_DriveOdo.DRIVE_SPEED, -35, .4, 3);
-                robot.driveOdo.waitUntilDone();
-                robot.jaws.intakeJaws();
-                robot.driveOdo.translateDrive(3, 39, CatHW_DriveOdo.CHILL_SPEED, -35, .25, 1.5);
-                robot.driveOdo.waitUntilDone();
-                robot.driveOdo.translateDrive(8, 24, CatHW_DriveOdo.DRIVE_SPEED, -35, .25, 1.5);
-                break;
             case RIGHT:
-                robot.driveOdo.translateDrive(8.5, 25, CatHW_DriveOdo.DRIVE_SPEED, -35, .4, 3);
+                robot.driveOdo.translateDrive(5, 25, CatHW_DriveOdo.DRIVE_SPEED, -35, .4, 3);
                 robot.driveOdo.waitUntilDone();
                 robot.jaws.intakeJaws();
-                robot.driveOdo.translateDrive(8.5, 39, CatHW_DriveOdo.CHILL_SPEED, -35, .25, 1.5);
+                robot.driveOdo.translateDrive(5, 39, CatHW_DriveOdo.CHILL_SPEED, -35, .25, 1.5);
                 robot.driveOdo.waitUntilDone();
-                robot.driveOdo.translateDrive(11.5, 24, CatHW_DriveOdo.DRIVE_SPEED, -35, .25, 1.5);
+                robot.driveOdo.translateDrive(9, 24, CatHW_DriveOdo.DRIVE_SPEED, -35, .25, 1.5);
                 break;
         }
 
         robot.driveOdo.waitUntilDone();
         // go to build zone
 
-        robot.driveOdo.translateDrive(45,12,.8,-170,.4,4);
+        robot.driveOdo.translateDrive(45,-20,.8,-105,.4,4);
         robot.driveOdo.waitUntilDone();
         robot.jaws.outputJaws();
-        robot.driveOdo.translateDrive(45,15,CatHW_DriveBase.DRIVE_SPEED,180,.55,2);
+        robot.driveOdo.translateDrive(45,-13,CatHW_DriveBase.DRIVE_SPEED,-105,.55,2);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(45,18.5,.55,-90,.65,5);
+        robot.driveOdo.translateDrive(45,-7,.55,-170,.65,5);
         robot.driveOdo.waitUntilDone();
 
 
