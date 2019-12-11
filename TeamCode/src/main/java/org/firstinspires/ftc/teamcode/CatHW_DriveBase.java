@@ -271,7 +271,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
          * 2: Find the highest absolute value (the "scalor")
          * 3: If the highest value is not more than 1.0, we don't need to change the values
          * 4: But if it is higher than 1.0, we need to find the scale to get that value down to 1.0
-         * 5: Finally, we pass out the scale factor so that we can scale each motor down
+         * 5: Finally, we pass OUT the scale factor so that we can scale each motor down
          */
         double scalor = 0;
         double scaleFactor;

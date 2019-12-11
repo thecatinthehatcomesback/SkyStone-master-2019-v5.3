@@ -36,8 +36,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class CatHW_Claw extends CatHW_Subsystem
 {
 
+    private static final double CLAW_UP     = -0.25;
+    private static final double CLAW_DOWN   = 0.6;
+
     /* Public OpMode members. */
-    public Servo foundationClaw = null;
+    public Servo rightFoundationClaw = null;
+    public Servo leftFoundationClaw  = null;
 
 
     /* local OpMode members. */
@@ -53,10 +57,11 @@ public class CatHW_Claw extends CatHW_Subsystem
 
     /* Initialize standard Hardware interfaces */
     public void init()  throws InterruptedException  {
-        foundationClaw = hwMap.servo.get("claw_servo");
+        rightFoundationClaw = hwMap.servo.get("right_claw_servo");
+        leftFoundationClaw  = hwMap.servo.get("left_claw_servo");
 
         // Pull the claw in to fit within sizing cube:
-        retractClaw();
+        retractClaws();
     }
 
     /**
@@ -64,11 +69,13 @@ public class CatHW_Claw extends CatHW_Subsystem
      * ---   Claw Methods   ---
      * ---   \/ \/ \/ \/    ---
      */
-    public void extendClaw() {
-        foundationClaw.setPosition(-.25);
+    public void extendClaws() {
+        rightFoundationClaw.setPosition(CLAW_DOWN);
+        leftFoundationClaw.setPosition(CLAW_DOWN);
     }
-    public void retractClaw() {
-        foundationClaw.setPosition(.6);
+    public void retractClaws() {
+        rightFoundationClaw.setPosition(CLAW_UP);
+        leftFoundationClaw.setPosition(CLAW_UP);
     }
 
 

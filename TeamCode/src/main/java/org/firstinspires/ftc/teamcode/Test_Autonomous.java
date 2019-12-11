@@ -2,7 +2,7 @@
         Test_Autonomous.java
 
     A Linear OpMode class to be place to test code both old
-    and new.  We constantly edit this, taking out and adding
+    and new.  We constantly edit this, taking OUT and adding
     in code.  This is never the same at any given time.
 
 

@@ -16,7 +16,6 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -41,16 +40,15 @@ public class CatHW_Tail extends CatHW_Subsystem
 {
 
     /* Public OpMode members. */
-    static final double THUMB_OPEN  = 1.0;
-    static final double THUMB_CLOSE = -1.0;
+    private static final double GRABBER_OPEN = 1.0;
+    private static final double GRABBER_CLOSE = -1.0;
 
 
     // Motors:
     public DcMotor tailLift     = null;
     public DcMotor tailExtend   = null;
 
-    public Servo thumbServo     = null;
-    public CRServo wristServo   = null;
+    public Servo grabberServo   = null;
 
     /* local OpMode members. */
 
@@ -69,14 +67,12 @@ public class CatHW_Tail extends CatHW_Subsystem
     public void init()  throws InterruptedException  {
 
         // Define and Initialize Motors and Servos//
-        tailLift    = hwMap.dcMotor.get("tail_lift");
-        tailExtend  = hwMap.dcMotor.get("tail_extend");
-        thumbServo  = hwMap.servo.get("thumb_servo");
-        wristServo  = hwMap.crservo.get("wrist_servo");
+        tailLift        = hwMap.dcMotor.get("tail_lift");
+        tailExtend      = hwMap.dcMotor.get("tail_extend");
+        grabberServo    = hwMap.servo.get("grabber_servo");
 
         tailLift.setDirection(DcMotorSimple.Direction.REVERSE);
         tailExtend.setDirection(DcMotorSimple.Direction.REVERSE);
-        wristServo.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set Motor and Servo Modes //
         tailLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -89,11 +85,11 @@ public class CatHW_Tail extends CatHW_Subsystem
      * ---   Methods   ---
      * ---   \/ \/     ---
      */
-    public void closeThumb() {
-        thumbServo.setPosition(THUMB_CLOSE);
+    public void closeGrabber() {
+        grabberServo.setPosition(GRABBER_CLOSE);
     }
-    public void openThumb() {
-        thumbServo.setPosition(THUMB_OPEN);
+    public void openGrabber() {
+        grabberServo.setPosition(GRABBER_OPEN);
     }
 
     /* isDone stuff for CatHW_Jaws */

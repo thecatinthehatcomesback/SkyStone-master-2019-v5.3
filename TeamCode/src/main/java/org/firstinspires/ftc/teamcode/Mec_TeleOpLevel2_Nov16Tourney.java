@@ -153,10 +153,10 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
 
             // Open/Close Foundation Fingers:
             if(gamepad2.y) {
-                robot.claw.retractClaw();
+                robot.claw.retractClaws();
             }
             if (gamepad2.x) {
-                robot.claw.extendClaw();
+                robot.claw.extendClaws();
             }
 
             // Tail/Stacker lift motor controls:
@@ -196,6 +196,7 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
                 wantAdjust = false;
             }
 
+            /*
             if(grabMode == GRAB_MODE.inside){
                 robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35)-1 + fineAdjust);
             }else if (grabMode == GRAB_MODE.half) {
@@ -204,15 +205,15 @@ public class Mec_TeleOpLevel2_Nov16Tourney extends LinearOpMode {
                 robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35)+0.45 + fineAdjust);
             }else if (grabMode == GRAB_MODE.full) {
                 robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35)+.975 + fineAdjust);
-            }
+            }*/
 
 
             // Thumb controls:
             if (gamepad2.left_bumper) {
-                robot.tail.closeThumb();
+                robot.tail.closeGrabber();
             }
             if (gamepad2.right_bumper){
-                robot.tail.openThumb();
+                robot.tail.openGrabber();
             }
 
 
