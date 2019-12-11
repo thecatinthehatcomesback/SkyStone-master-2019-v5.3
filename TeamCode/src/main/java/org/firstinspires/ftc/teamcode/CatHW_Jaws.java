@@ -87,7 +87,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
     }
     public void outputJaws() {
         /**
-         * Turn on both jaws motors to spit out:
+         * Turn on both jaws motors to spit OUT:
          */
 
         leftJawMotor.setPower(-JAW_POWER*0.3);

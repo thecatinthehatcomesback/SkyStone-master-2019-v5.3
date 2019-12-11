@@ -14,7 +14,7 @@
 (November 16, 2019).
 
  This was the old code for our Robot in 2 Weeks bot, but we completely stripped
- it out as with our old bot.
+ it OUT as with our old bot.
 
 
 
@@ -205,7 +205,7 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
         robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, -25, 3.0);
         robot.driveClassic.waitUntilDone();
         // Latch on to foundation
-        robot.claw.extendClaw();
+        robot.claw.extendClaws();
         robot.robotWait(0.3);
         // Drive back to Building Zone
         robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, 60, 3.0);
@@ -214,15 +214,15 @@ public class Mec_AutonomousLevel2_Nov16Tourney extends LinearOpMode {
         robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, -2, 0.5);
         robot.driveClassic.waitUntilDone();
         robot.robotWait(.1);
-        robot.claw.retractClaw();
+        robot.claw.retractClaws();
         robot.robotWait(.2);
         //Rotate ourselves back square
         robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED,0,1.0);
         robot.driveClassic.waitUntilDone();
-        // Slide out to wall to line up
+        // Slide OUT to wall to line up
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? -14 : 0, 5.0);
         robot.driveClassic.waitUntilDone();
-        // Slide out to towards the line
+        // Slide OUT to towards the line
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? 42 : -25, 5.0);
         robot.driveClassic.waitUntilDone();
         // Drive ahead and line up with the foundation

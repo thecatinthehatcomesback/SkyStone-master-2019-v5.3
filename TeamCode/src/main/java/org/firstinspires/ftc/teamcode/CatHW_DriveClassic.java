@@ -346,7 +346,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
         boolean keepDriving = true;
         if ((runTime.seconds() > timeout)) {
             // Log message:
-            Log.d("catbot", "Timed out.");
+            Log.d("catbot", "Timed OUT.");
             keepDriving = false;
         }
         switch (currentMethod){

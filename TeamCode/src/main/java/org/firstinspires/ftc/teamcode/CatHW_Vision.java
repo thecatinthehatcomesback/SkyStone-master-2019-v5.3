@@ -100,7 +100,7 @@ public class CatHW_Vision extends CatHW_Subsystem
     public void findSkyStone() {
         /**
          * Newest way to continuously look for the gold
-         * while looping inside the autonomous init mode
+         * while looping INSIDE the autonomous init mode
          * but limits the amount of occurrences we keep
          * using a Deque.
          */

@@ -165,7 +165,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
         if ((runTime.seconds() > timeout)) {
-            Log.d("catbot", "Timed out.");
+            Log.d("catbot", "Timed OUT.");
             keepDriving = false;
         }
 

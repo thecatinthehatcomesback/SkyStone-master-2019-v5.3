@@ -88,7 +88,7 @@ import java.util.Locale;
  * later when running an opmode which uses the IMU.</p>
  *
  * <p>Note: if your intended uses of the IMU do not include use of all its sensors (for exmaple,
- * you might not use the magnetometer), then it makes little sense for you to wait for full
+ * you might not use the magnetometer), then it makes little sense for you to wait for FULL
  * calibration of the sensors you are not using before saving the calibration data. Indeed,
  * it appears that in a SensorMode that doesn't use the magnetometer (for example), the
  * magnetometer cannot actually be calibrated.</p>
