@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 public class CatHW_DriveOdo extends CatHW_DriveBase
 {
-    /* Wheel measurements */
+    /* Wheel measurements */   //TODO:  Update these constants!
     static final double     ODO_COUNTS_PER_REV        = 1440;     // 1440 for E4T from Andymark
     static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
     static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
@@ -44,7 +44,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     double  targetX;
     double  targetY;
     double  strafePower;
-    double targetTheta;
+    double  targetTheta;
     double  strafeTurnPower;
 
 
@@ -60,11 +60,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         driveTilPoint
     }
 
-    enum TURN_MODE {
-        SPIN,
-        TANK
-    }
-
 
     private DRIVE_MODE currentMode;
     private DRIVE_METHOD currentMethod;
@@ -76,7 +71,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     public DcMotor  backOdometry    = null;
 
     CatOdoAllUpdates updatesThread;
-
 
     /* local OpMode members. */
     LinearOpMode opMode = null;
@@ -109,8 +103,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         // Odometry Setup
         updatesThread = new CatOdoAllUpdates(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
-        Thread positionThread = new Thread(updatesThread);
-        positionThread.start();
+        Thread allUpdatesThread = new Thread(updatesThread);
+        allUpdatesThread.start();
 
         // Sets enums to a default value
         currentMode = DRIVE_MODE.driveTilPoint;
@@ -136,7 +130,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
     }
     // Driving Methods:
-    public void translateDrive(double x, double y, double power, double angle, double turnSpeed, double timeoutS){
+    public void translateDrive(double x, double y, double power, double theta, double turnSpeed, double timeoutS){
 
         currentMethod = DRIVE_METHOD.translate;
         timeout = timeoutS;
@@ -144,12 +138,15 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetX = x;
         targetY = y;
         strafePower = power;
-        targetTheta = angle;
+        targetTheta = theta;
         strafeTurnPower = turnSpeed;
-
 
         // Reset timer once called
         runTime.reset();
+
+
+        // Power update Thread:
+        updatesThread.powerUpdate.setTarget(x, y, theta, power);
     }
 
     /**
