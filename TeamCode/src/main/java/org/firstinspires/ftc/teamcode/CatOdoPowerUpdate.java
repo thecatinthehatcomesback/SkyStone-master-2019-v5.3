@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode;
  */
 public class CatOdoPowerUpdate {
 
-    CatOdoPositionUpdate positionUpdate;
+    private CatOdoPositionUpdate positionUpdate;
 
     // Variables:
     double currentPower;
@@ -82,7 +82,7 @@ public class CatOdoPowerUpdate {
         return currentPower;
     }
 
-    public double distance(double currentX, double currentY, double targetX, double targetY) {
+    private double distance(double currentX, double currentY, double targetX, double targetY) {
         return Math.sqrt((targetX - currentX)*(targetX - currentX) + (targetY - currentY)*(targetY - currentY));
     }
 
