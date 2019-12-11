@@ -186,6 +186,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 double getY = updatesThread.positionUpdate.returnYInches();
                 double getX = updatesThread.positionUpdate.returnXInches();
                 double getTheta = updatesThread.positionUpdate.returnOrientation();
+                double getPower = updatesThread.powerUpdate.updatePower();
 
                 // Check if ready to end
                 if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&
@@ -256,10 +257,10 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 // Calculate scale factor and motor powers
                 double SF = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
                 //TODO Add the get currentPower here from PowerUpdate
-                leftFrontMotor.setPower(lFrontPower  * strafePower * SF);
-                rightFrontMotor.setPower(rFrontPower * strafePower * SF);
-                leftRearMotor.setPower(lBackPower    * strafePower * SF);
-                rightRearMotor.setPower(rBackPower   * strafePower * SF);
+                leftFrontMotor.setPower(lFrontPower  * getPower * SF);
+                rightFrontMotor.setPower(rFrontPower * getPower * SF);
+                leftRearMotor.setPower(lBackPower    * getPower * SF);
+                rightRearMotor.setPower(rBackPower   * getPower * SF);
 
                 Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle: %.1f %.1f %.1f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
