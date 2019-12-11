@@ -77,8 +77,7 @@ public class CatOdoPowerUpdate {
             //TODO: add the first time to minimum power
             if (currentPower < maxPower) {
                 //TODO: might not be right
-
-                rampUPrate = maxPower * ((currentTime - startTime) / rampUpTime);
+                rampUPrate = maxPower * (currentTime / rampUpTime);
 
                 currentPower = currentPower + rampUPrate;
             } else {
