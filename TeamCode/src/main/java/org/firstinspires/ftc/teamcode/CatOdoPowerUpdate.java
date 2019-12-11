@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 /**
  * Modified by Team #10273, The Cat in the Hat Comes Back.
  */
 public class CatOdoPowerUpdate {
 
     private CatOdoPositionUpdate positionUpdate;
+
+    ElapsedTime powerTime = new ElapsedTime();
 
     // Variables:
     double currentPower;
@@ -16,7 +20,7 @@ public class CatOdoPowerUpdate {
     double startTime;
     double currentTime;
     double distanceToTarget;
-    double rampUpTime       = 2.0;
+    double rampUpTime       = 2000;  // In milliseconds
     double rampDownDistance = 7;
 
     private double rampUPrate;
@@ -38,12 +42,14 @@ public class CatOdoPowerUpdate {
     }
 
 
-    public void setTarget(double x, double y, double theta, double power, double time) {
+    public void setTarget(double x, double y, double theta, double power) {
         targetX     = x;
         targetY     = y;
         targetTheta = theta;
         maxPower    = power;
-        startTime   = time;
+        //startTime   = time;
+
+        powerTime.reset();
     }
 
     public double updatePower() {
@@ -53,6 +59,7 @@ public class CatOdoPowerUpdate {
         // Update the current position
         currentX    = positionUpdate.returnXInches();
         currentY    = positionUpdate.returnYInches();
+        currentTime = powerTime.milliseconds();
 
         // Distances
         distanceToTarget = distance(currentX, currentY, targetX, targetY);
@@ -68,9 +75,10 @@ public class CatOdoPowerUpdate {
         } else {
             // Ramp up power
             //TODO: add the first time to minimum power
-            if (currentPower >= maxPower) {
+            if (currentPower < maxPower) {
                 //TODO: might not be right
-                rampUPrate = maxPower * (currentTime / rampUpTime);
+
+                rampUPrate = maxPower * ((currentTime - startTime) / rampUpTime);
 
                 currentPower = currentPower + rampUPrate;
             } else {

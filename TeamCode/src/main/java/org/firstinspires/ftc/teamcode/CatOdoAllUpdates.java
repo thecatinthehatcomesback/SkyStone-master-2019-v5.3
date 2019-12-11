@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class CatOdoAllUpdates implements Runnable{
     // Thread run condition
     private boolean isRunning   = true;
-    private int sleepTime       = 25;
+    private int     sleepTime   = 25;
 
     CatOdoPositionUpdate positionUpdate = null;
     CatOdoPowerUpdate powerUpdate = null;
