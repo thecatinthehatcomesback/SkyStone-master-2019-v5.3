@@ -66,8 +66,8 @@ public class CatHW_Jaws extends CatHW_Subsystem
         leftJawMotor    = hwMap.dcMotor.get("left_jaw_motor");
         rightJawMotor   = hwMap.dcMotor.get("right_jaw_motor");
 
-        leftJawMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightJawMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftJawMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightJawMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set Motor and Servo Modes //
         leftJawMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
