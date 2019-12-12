@@ -52,16 +52,18 @@ public class CatOdoPowerUpdate {
         powerTime.reset();
     }
 
+    /**
+     * Use this method to continually update the powers for the
+     * @return The power based on our motion profiling equations
+     */
     public double updatePower() {
-
-        // Always begin power with a good chunk to overcome static friction
 
         // Update the current position
         currentX    = positionUpdate.returnXInches();
         currentY    = positionUpdate.returnYInches();
         currentTime = powerTime.milliseconds();
 
-        // Distances
+        // Distance left to target calculation
         distanceToTarget = distance(currentX, currentY, targetX, targetY);
 
 
@@ -89,6 +91,15 @@ public class CatOdoPowerUpdate {
         return currentPower;
     }
 
+    /**
+     * Just a simple distance formula so that we know how long until robot reaches
+     * the target with motion profiling.
+     * @param currentX Enter in the positionUpdate.returnXInches()
+     * @param currentY Enter in the positionUpdate.returnYInches()
+     * @param targetX Set by the setTarget method inside the CatHW_DriveOdo.translateDrive
+     * @param targetY Set by the setTarget method inside the CatHW_DriveOdo.translateDrive
+     * @return distance
+     */
     private double distance(double currentX, double currentY, double targetX, double targetY) {
         return Math.sqrt((targetX - currentX)*(targetX - currentX) + (targetY - currentY)*(targetY - currentY));
     }
