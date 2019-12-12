@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 public class CatHW_DriveOdo extends CatHW_DriveBase
 {
-    /* Wheel measurements */
+    /* Wheel measurements */   //TODO:  Update these constants!
     static final double     ODO_COUNTS_PER_REV        = 1440;     // 1440 for E4T from Andymark
     static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
     static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
@@ -44,7 +44,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     double  targetX;
     double  targetY;
     double  strafePower;
-    double strafeAngleEndTarget;
+    double  targetTheta;
     double  strafeTurnPower;
 
 
@@ -60,11 +60,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         driveTilPoint
     }
 
-    enum TURN_MODE {
-        SPIN,
-        TANK
-    }
-
 
     private DRIVE_MODE currentMode;
     private DRIVE_METHOD currentMethod;
@@ -75,8 +70,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     public DcMotor  rightOdometry   = null;
     public DcMotor  backOdometry    = null;
 
-    CatOdoPositionUpdate globalPositionUpdate;
-
+    CatOdoAllUpdates updatesThread;
 
     /* local OpMode members. */
     LinearOpMode opMode = null;
@@ -93,7 +87,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         // Calls DriveBase's init
         super.init();
 
-        //todo: Name these motors things and such!
 
         // Define and Initialize Motors //
         leftOdometry     = hwMap.dcMotor.get("left_jaw_motor");
@@ -109,9 +102,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         resetOdometryEncoders();
 
         // Odometry Setup
-        globalPositionUpdate  = new CatOdoPositionUpdate(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH, 15);
-        Thread positionThread = new Thread(globalPositionUpdate);
-        positionThread.start();
+        updatesThread = new CatOdoAllUpdates(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
+        Thread allUpdatesThread = new Thread(updatesThread);
+        allUpdatesThread.start();
 
         // Sets enums to a default value
         currentMode = DRIVE_MODE.driveTilPoint;
@@ -137,7 +130,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
     }
     // Driving Methods:
-    public void translateDrive(double x, double y, double power, double angle, double turnSpeed, double timeoutS){
+    public void translateDrive(double x, double y, double power, double theta, double turnSpeed, double timeoutS){
 
         currentMethod = DRIVE_METHOD.translate;
         timeout = timeoutS;
@@ -145,12 +138,15 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetX = x;
         targetY = y;
         strafePower = power;
-        strafeAngleEndTarget = angle;
+        targetTheta = theta;
         strafeTurnPower = turnSpeed;
-
 
         // Reset timer once called
         runTime.reset();
+
+
+        // Power update Thread:
+        updatesThread.powerUpdate.setTarget(x, y, power);
     }
 
     /**
@@ -187,9 +183,10 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
             case translate:
 
-                double getY = globalPositionUpdate.returnYInches();
-                double getX = globalPositionUpdate.returnXInches();
-                double getTheta = globalPositionUpdate.returnOrientation();
+                double getY = updatesThread.positionUpdate.returnYInches();
+                double getX = updatesThread.positionUpdate.returnXInches();
+                double getTheta = updatesThread.positionUpdate.returnOrientation();
+                double getPower = updatesThread.powerUpdate.updatePower();
 
                 // Check if ready to end
                 if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&
@@ -240,10 +237,10 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                 // Calculate scale factor and motor powers
                 double SF = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
-                leftFrontMotor.setPower(lFrontPower  * strafePower * SF);
-                rightFrontMotor.setPower(rFrontPower * strafePower * SF);
-                leftRearMotor.setPower(lBackPower    * strafePower * SF);
-                rightRearMotor.setPower(rBackPower   * strafePower * SF);
+                leftFrontMotor.setPower(lFrontPower  * getPower * SF);
+                rightFrontMotor.setPower(rFrontPower * getPower * SF);
+                leftRearMotor.setPower(lBackPower    * getPower * SF);
+                rightRearMotor.setPower(rBackPower   * getPower * SF);
 
                 Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle/target angle: %.1f %.1f %.1f %.1f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
