@@ -4,33 +4,24 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * Modified by Team #10273, The Cat in the Hat Comes Back.
+ * Written by Team #10273, The Cat in the Hat Comes Back.
  */
 public class CatOdoPowerUpdate {
 
     private CatOdoPositionUpdate positionUpdate;
 
-    ElapsedTime powerTime = new ElapsedTime();
+    private ElapsedTime powerTime = new ElapsedTime();
 
     // Variables:
-    double currentPower;
-    double minPower = 0.1;
-    double maxPower;
+    private double currentPower;
+    private double minPower = 0.10;
+    private double maxPower;
 
-    double startTime;
-    double currentTime;
-    double distanceToTarget;
-    double rampUpTime       = 2000;  // In milliseconds
-    double rampDownDistance = 7;
+    static final private double rampUpTime       = 300;  // In milliseconds
+    static final private double rampDownDistance = 7;
 
-    private double rampUPrate;
-    private double rampDOWNrate;
-
-    double currentX;
-    double currentY;
-    double targetX;
-    double targetY;
-    double targetTheta;
+    private double targetX;
+    private double targetY;
 
 
     /**
@@ -42,13 +33,11 @@ public class CatOdoPowerUpdate {
     }
 
 
-    public void setTarget(double x, double y, double theta, double power) {
+    public void setTarget(double x, double y, double power) {
         targetX     = x;
         targetY     = y;
-        targetTheta = theta;
         maxPower    = power;
-        //startTime   = time;
-
+        currentPower = minPower;
         powerTime.reset();
     }
 
@@ -59,15 +48,14 @@ public class CatOdoPowerUpdate {
     public double updatePower() {
 
         // Update the current position
-        currentX    = positionUpdate.returnXInches();
-        currentY    = positionUpdate.returnYInches();
-        currentTime = powerTime.milliseconds();
+        double  currentX    = positionUpdate.returnXInches();
+        double currentY    = positionUpdate.returnYInches();
+        double currentTime = powerTime.milliseconds();
 
         // Distance left to target calculation
-        distanceToTarget = distance(currentX, currentY, targetX, targetY);
+        double distanceToTarget = distance(currentX, currentY, targetX, targetY);
 
-
-        if (distanceToTarget < rampDownDistance) {
+        if (currentPower > (maxPower * (distanceToTarget / rampDownDistance))) {
             // Ramp down if within the rampDownDistance
             if (currentPower > minPower) {
                 currentPower = maxPower * (distanceToTarget / rampDownDistance);
@@ -78,10 +66,7 @@ public class CatOdoPowerUpdate {
             // Ramp up power
             //TODO: add the first time to minimum power
             if (currentPower < maxPower) {
-                //TODO: might not be right
-                rampUPrate = maxPower * (currentTime / rampUpTime);
-
-                currentPower = currentPower + rampUPrate;
+                currentPower = maxPower * (currentTime / rampUpTime);
             } else {
                 currentPower = maxPower;
             }
@@ -101,7 +86,7 @@ public class CatOdoPowerUpdate {
      * @return distance
      */
     private double distance(double currentX, double currentY, double targetX, double targetY) {
-        return Math.sqrt((targetX - currentX)*(targetX - currentX) + (targetY - currentY)*(targetY - currentY));
+        return Math.sqrt((targetX - currentX) *(targetX - currentX) + (targetY - currentY)*(targetY - currentY));
     }
 
 

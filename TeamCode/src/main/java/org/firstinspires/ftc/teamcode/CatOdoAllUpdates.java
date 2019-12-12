@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
- * Modified by Team #10273, The Cat in the Hat Comes Back.
+ * Created by Team #10273, The Cat in the Hat Comes Back.
  */
 public class CatOdoAllUpdates implements Runnable{
     // Thread run condition
