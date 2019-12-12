@@ -146,7 +146,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
         // Power update Thread:
-        updatesThread.powerUpdate.setTarget(x, y, theta, power);
+        updatesThread.powerUpdate.setTarget(x, y, power);
     }
 
     /**
@@ -256,7 +256,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                 // Calculate scale factor and motor powers
                 double SF = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
-                //TODO Add the get currentPower here from PowerUpdate
                 leftFrontMotor.setPower(lFrontPower  * getPower * SF);
                 rightFrontMotor.setPower(rFrontPower * getPower * SF);
                 leftRearMotor.setPower(lBackPower    * getPower * SF);

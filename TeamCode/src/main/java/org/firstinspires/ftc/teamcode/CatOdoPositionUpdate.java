@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 
 /**
- * Created by Sarthak on 6/1/2019.
+ * Original created by Sarthak (of Wizards.exe) on 6/1/2019.
  * Modified by Team #10273, The Cat in the Hat Comes Back.
  */
 public class CatOdoPositionUpdate {
