@@ -2,7 +2,7 @@
         Test_Autonomous.java
 
     A Linear OpMode class to be place to test code both old
-    and new.  We constantly edit this, taking OUT and adding
+    and new.  We constantly edit this, taking out and adding
     in code.  This is never the same at any given time.
 
 
@@ -130,21 +130,20 @@ public class Test_Autonomous extends LinearOpMode {
 
         /* Go! */
 
-        robot.driveOdo.translateDrive(36,36, CatHW_DriveBase.CHILL_SPEED, 0, .65, 5);
+        robot.driveOdo.translateDrive(0,36, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.CHILL_SPEED, 0, .65, 5);
+        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(36,36, CatHW_DriveBase.CHILL_SPEED, 0, .65, 5);
+        /*robot.driveOdo.translateDrive(0,72, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.CHILL_SPEED, 0, .65, 5);
+        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(36,36, CatHW_DriveBase.CHILL_SPEED, 0, .65, 5);
+        robot.driveOdo.translateDrive(0,72, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.CHILL_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();
-        robot.robotWait(1.5);
-        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.CREEP_SPEED, 0, .4, 5);
-        robot.driveOdo.waitUntilDone();
+        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
+        robot.driveOdo.waitUntilDone();*/
+
+
         // Testing the new mecTurn
         //robot.driveClassic.mecTurn(CatHW_DriveClassic.TURN_SPEED, 170, 3.0);
     }
