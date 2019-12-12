@@ -148,7 +148,6 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
             }
 
 
-
             /**
              * ---   _________   ---
              * ---   TELEMETRY   ---
