@@ -14,7 +14,7 @@ public class CatOdoPowerUpdate {
 
     // Variables:
     private double currentPower;
-    private double minPower = 0.10;
+    private double minPower = 0.15;
     private double maxPower;
 
     static final private double rampUpTime       = 400;  // In milliseconds
@@ -36,7 +36,7 @@ public class CatOdoPowerUpdate {
         minPower = power;
     }
     public  void powerNormal(){
-        minPower = .1;
+        minPower = .15;
     }
 
 

@@ -194,10 +194,10 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
         robot.jaws.intakeJaws();
         switch (skyStonePos) {
             case LEFT:
-                robot.driveOdo.translateDrive(2,28,.8,-38,.45,2.5);
+                robot.driveOdo.translateDrive(2,28,.8,-40,.45,2.5);
                 robot.driveOdo.waitUntilDone();
                 robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
-                robot.driveOdo.translateDrive(-6,45,.8,-66,.66,2);
+                robot.driveOdo.translateDrive(-6,47,.8,-70,.66,2);
                 robot.driveOdo.waitUntilDone();
                 robot.driveOdo.updatesThread.powerUpdate.powerNormal();
                 robot.driveOdo.translateDrive(7,24,.8,70,.75,3);
@@ -214,21 +214,27 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
                 robot.driveOdo.waitUntilDone();
                 break;
             case RIGHT:
-                robot.driveOdo.translateDrive(13,28,.8,-38,.45,2.5);
+                robot.driveOdo.translateDrive(15,28,.8,-20,.45,2.5);
                 robot.driveOdo.waitUntilDone();
-                robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
-                robot.driveOdo.translateDrive(6,44,.8,-55,.6,2);
+                robot.driveOdo.updatesThread.powerUpdate.powerBoast(.35);
+                //collect sky stone
+                robot.driveOdo.translateDrive(11,44,.56,-50,.65,2.5);
+                robot.driveOdo.waitUntilDone();
+                //back up from stones
+                robot.driveOdo.translateDrive(13,24,.8,60,.7,3);
                 robot.driveOdo.waitUntilDone();
                 robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                robot.driveOdo.translateDrive(19,24,.8,70,.75,3);
-                robot.driveOdo.waitUntilDone();
 
                 break;
         }
+
+        //drive under Sky bridge
+        robot.jaws.turnOffJaws();
         robot.driveOdo.translateDrive(41,26,.8,90,.5,2.5);
         robot.driveOdo.waitUntilDone();
+        //release sky stone while backing up
         robot.jaws.outputJaws();
-        robot.driveOdo.translateDrive(28,26,.8,90,.2,2);
+        robot.driveOdo.translateDrive(25.5,26,.8,90,.2,2);
         robot.driveOdo.waitUntilDone();
 
 
