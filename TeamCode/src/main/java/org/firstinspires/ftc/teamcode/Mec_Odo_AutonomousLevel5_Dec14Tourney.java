@@ -188,99 +188,88 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
     public void driveLoadingZone() throws InterruptedException {
 
         //go to block and pick it up
-
-        robot.driveOdo.translateDrive(0,6,CatHW_DriveBase.DRIVE_SPEED,0,.3,1.5);
+        robot.tail.openGrabber();
+        robot.driveOdo.translateDrive(0,6,.9,0,.2,1);
         robot.driveOdo.waitUntilDone();
+        robot.jaws.intakeJaws();
         switch (skyStonePos) {
             case LEFT:
-                robot.driveOdo.translateDrive(-9, 25, CatHW_DriveOdo.DRIVE_SPEED, -35, .4, 3);
+                robot.driveOdo.translateDrive(2,28,.8,-38,.45,2.5);
                 robot.driveOdo.waitUntilDone();
-                robot.jaws.intakeJaws();
-                robot.driveOdo.translateDrive(-9, 39, CatHW_DriveOdo.CHILL_SPEED, -35, .25, 1.5);
+                robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
+                robot.driveOdo.translateDrive(-6,45,.8,-66,.66,2);
                 robot.driveOdo.waitUntilDone();
-                robot.driveOdo.translateDrive(3, 24, CatHW_DriveOdo.DRIVE_SPEED, -35, .25, 1.5);
+                robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                robot.driveOdo.translateDrive(7,24,.8,70,.75,3);
+                robot.driveOdo.waitUntilDone();
                 break;
             case CENTER:
-                robot.driveOdo.translateDrive(0, 25, CatHW_DriveOdo.DRIVE_SPEED, -35, .4, 3);
+                robot.driveOdo.translateDrive(11,28,.8,-38,.45,2.5);
                 robot.driveOdo.waitUntilDone();
-                robot.jaws.intakeJaws();
-                robot.driveOdo.translateDrive(0, 39, CatHW_DriveOdo.CHILL_SPEED, -35, .25, 1.5);
+                robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
+                robot.driveOdo.translateDrive(4,44,.8,-55,.6,2);
                 robot.driveOdo.waitUntilDone();
-                robot.driveOdo.translateDrive(6, 24, CatHW_DriveOdo.DRIVE_SPEED, -35, .25, 1.5);
+                robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                robot.driveOdo.translateDrive(17,24,.8,70,.75,3);
+                robot.driveOdo.waitUntilDone();
                 break;
             case RIGHT:
-                robot.driveOdo.translateDrive(5, 25, CatHW_DriveOdo.DRIVE_SPEED, -35, .4, 3);
+                robot.driveOdo.translateDrive(13,28,.8,-38,.45,2.5);
                 robot.driveOdo.waitUntilDone();
-                robot.jaws.intakeJaws();
-                robot.driveOdo.translateDrive(5, 39, CatHW_DriveOdo.CHILL_SPEED, -35, .25, 1.5);
+                robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
+                robot.driveOdo.translateDrive(6,44,.8,-55,.6,2);
                 robot.driveOdo.waitUntilDone();
-                robot.driveOdo.translateDrive(9, 24, CatHW_DriveOdo.DRIVE_SPEED, -35, .25, 1.5);
+                robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                robot.driveOdo.translateDrive(19,24,.8,70,.75,3);
+                robot.driveOdo.waitUntilDone();
+
                 break;
         }
-
-        robot.driveOdo.waitUntilDone();
-        // go to build zone
-
-        robot.driveOdo.translateDrive(45,-20,.8,-105,.4,4);
+        robot.driveOdo.translateDrive(41,26,.8,90,.5,2.5);
         robot.driveOdo.waitUntilDone();
         robot.jaws.outputJaws();
-        robot.driveOdo.translateDrive(45,-13,CatHW_DriveBase.DRIVE_SPEED,-105,.55,2);
+        robot.driveOdo.translateDrive(28,26,.8,90,.2,2);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(45,-7,.55,-170,.65,5);
-        robot.driveOdo.waitUntilDone();
+
 
 
     }
     public void driveBuildZone() throws InterruptedException {
-        // Drive towards build site
-        robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED, isRedAlliance ? -18 : 15,1.5);
-        robot.driveClassic.waitUntilDone();
-        // Drive to Foundation
-        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, -25, 3.0);
-        robot.driveClassic.waitUntilDone();
-        // Latch on to foundation
-        robot.claw.extendClaws();
-        robot.robotWait(0.3);
-        // Drive back to Building Zone
-        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, 60, 3.0);
-        robot.driveClassic.waitUntilDone();
-        // Put some distance between wall and robot
-        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, -2, 0.5);
-        robot.driveClassic.waitUntilDone();
-        robot.robotWait(.1);
-        robot.claw.retractClaws();
-        robot.robotWait(.2);
-        //Rotate ourselves back square
-        robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED,0,1.0);
-        robot.driveClassic.waitUntilDone();
-        // Slide OUT to wall to line up
-        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? -14 : 0, 5.0);
-        robot.driveClassic.waitUntilDone();
-        // Slide OUT to towards the line
-        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? 42 : -25, 5.0);
-        robot.driveClassic.waitUntilDone();
-        // Drive ahead and line up with the foundation
-        robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, -13, 2);
-        robot.driveClassic.waitUntilDone();
 
-        if(!isRedAlliance) {
-            robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED, 175, 2);
-            robot.driveClassic.waitUntilDone();
+        // drive to the foundation slowly
+        robot.driveOdo.translateDrive( isRedAlliance ? -20 : 17,-35,.45,isRedAlliance ? 8 : -8,.2,4);
+        robot.driveOdo.waitUntilDone();
+        //lower the foundation claws
+        robot.claw.extendClaws();
+        robot.robotWait(.25);
+        //override the min power so we have enough power to move the foundation while driving
+        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.7);
+        //drive straight forward a little to simplify the turn
+        robot.driveOdo.translateDrive(isRedAlliance ? -13 : 13,-19,.9,0,.2,3);
+        robot.driveOdo.waitUntilDone();
+        //rotate the foundation while moving forward
+        robot.driveOdo.translateDrive(isRedAlliance ? -5 : 5,-6,.9,isRedAlliance ? 90 : -90,.7,4);
+        robot.driveOdo.waitUntilDone();
+        //push the foundation against the wall
+        robot.driveOdo.translateDrive(isRedAlliance ? -13 : 13,-6,.9,isRedAlliance ? 90 : -90,.67,3);
+        robot.driveOdo.waitUntilDone();
+        //reset min power to normal
+        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+        //lift up the claw
+        robot.claw.retractClaws();
+        robot.robotWait(.25);
+        if(isParkAtWall){
+            robot.driveOdo.translateDrive(isRedAlliance ? -5 : 5, -3, .8, isRedAlliance ? 90 : -90, .2, 2);
+            robot.driveOdo.waitUntilDone();
+            robot.driveOdo.translateDrive(isRedAlliance ? 25 : -26, isRedAlliance ? -3 : 0, .8, isRedAlliance ? 90 : -90, .2, 2);
+            robot.driveOdo.waitUntilDone();
         }
-        // Push the foundation further into the building zone
-        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? -11 : -17, 2);
-        robot.driveClassic.waitUntilDone();
-        // Back up and navigate (park on the taped line)
-        if (isParkAtWall) {
-            robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? 37 : -42, 1);
-            robot.driveClassic.waitUntilDone();
-            // Put some distance between wall and robot
-            robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? -2 : 2, 3.0);
-        } else {
-            robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? -5 : 5, 1);
+        else {
+            robot.driveOdo.translateDrive(isRedAlliance ? -5 : 5, -30, .8, isRedAlliance ? 90 : -90, .2, 2);
+            robot.driveOdo.waitUntilDone();
+            robot.driveOdo.translateDrive(isRedAlliance ? 22 : -26, isRedAlliance ? -33 : -28, .8, isRedAlliance ? 90 : -90, .2, 2);
+            robot.driveOdo.waitUntilDone();
         }
-        robot.driveClassic.waitUntilDone();
-        robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, 24, 2);
-        robot.driveClassic.waitUntilDone();
+
     }
 }

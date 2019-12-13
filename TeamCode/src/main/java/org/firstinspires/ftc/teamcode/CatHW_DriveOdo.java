@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class CatHW_DriveOdo extends CatHW_DriveBase
 {
     /* Wheel measurements */   //TODO:  Update these constants!
-    static final double     ODO_COUNTS_PER_REV        = 1440;     // 1440 for E4T from Andymark
+    static final double     ODO_COUNTS_PER_REV        = 8192;     // 8192 for rev encoder from rev robotics
     static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
     static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
@@ -89,14 +89,22 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
         // Define and Initialize Motors //
-        leftOdometry     = hwMap.dcMotor.get("left_jaw_motor");
-        rightOdometry    = hwMap.dcMotor.get("right_jaw_motor");
-        backOdometry     = hwMap.dcMotor.get("left_rear_motor");
+        //leftOdometry     = hwMap.dcMotor.get("left_jaw_motor");
+        //rightOdometry    = hwMap.dcMotor.get("right_jaw_motor");
+        //backOdometry     = hwMap.dcMotor.get("left_rear_motor");
+
+        //leftOdometry     = hwMap.dcMotor.get("right_jaw_motor");
+        //rightOdometry    = hwMap.dcMotor.get("left_rear_motor");
+        //backOdometry     = hwMap.dcMotor.get("left_jaw_motor");
+
+        leftOdometry     = hwMap.dcMotor.get("left_rear_motor");
+        rightOdometry    = hwMap.dcMotor.get("left_jaw_motor");
+        backOdometry     = hwMap.dcMotor.get("right_jaw_motor");
 
         // Set odometry directions //
         leftOdometry.setDirection(DcMotor.Direction.REVERSE);
-        rightOdometry.setDirection(DcMotor.Direction.REVERSE);
-        backOdometry.setDirection(DcMotor.Direction.REVERSE);
+        rightOdometry.setDirection(DcMotor.Direction.FORWARD);
+        backOdometry.setDirection(DcMotor.Direction.FORWARD);
 
         // Set odometry modes //
         resetOdometryEncoders();
@@ -190,7 +198,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                 // Check if ready to end
                 if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&
-                        (Math.abs(getTheta - strafeAngleEndTarget) < 5 )) {
+                        (Math.abs(getTheta - targetTheta) < 5 )) {
 
                     keepDriving = false;
                 }
@@ -216,9 +224,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 rBackPower = lFrontPower;
 
                 //adds turn
-                if ((getTheta - strafeAngleEndTarget) < 0) {
+                if ((getTheta - targetTheta) < 0) {
                     // Turn right
-                    if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
+                    if (Math.abs(getTheta - targetTheta) > 4) {
                         rFrontPower = rFrontPower - (strafeTurnPower);
                         rBackPower = rBackPower - (strafeTurnPower);
                         lFrontPower = lFrontPower + (strafeTurnPower);
@@ -226,7 +234,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                     }
                 } else {
                     // Turn left
-                    if (Math.abs(getTheta - strafeAngleEndTarget) > 4) {
+                    if (Math.abs(getTheta - targetTheta) > 4) {
                         rFrontPower = rFrontPower + (strafeTurnPower);
                         rBackPower = rBackPower + (strafeTurnPower);
                         lFrontPower = lFrontPower - (strafeTurnPower);
@@ -242,9 +250,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 leftRearMotor.setPower(lBackPower    * getPower * SF);
                 rightRearMotor.setPower(rBackPower   * getPower * SF);
 
-                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle/target angle: %.1f %.1f %.1f %.1f",
+                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y/Θ: %.2f %.2f %.1f; currentX/Y/Θ %.2f %.2f %.1f; pow %.2f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
-                        targetX, targetY, getX, getY, Math.toDegrees(ang1), Math.toDegrees(ang2), getTheta, strafeAngleEndTarget));
+                        targetX, targetY, targetTheta, getX, getY, getTheta, getPower));
                 break;
         }
 
