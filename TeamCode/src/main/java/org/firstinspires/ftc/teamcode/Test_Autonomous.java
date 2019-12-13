@@ -25,7 +25,7 @@ public class Test_Autonomous extends LinearOpMode {
     private double timeDelay;
     private boolean isRedAlliance = true;
 
-    private CatHW_Vision.skyStonePos skyStonePos = CatHW_Vision.skyStonePos.RIGHT;
+    private CatHW_Vision.skyStonePos skyStonePos = CatHW_Vision.skyStonePos.OUTSIDE;
 
     @Override
     public void runOpMode() throws InterruptedException {

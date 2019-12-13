@@ -49,9 +49,9 @@ public class CatHW_Vision extends CatHW_Subsystem
     HardwareMap hwMap   = null;
 
     enum skyStonePos {
-        LEFT,
+        INSIDE,
         CENTER,
-        RIGHT
+        OUTSIDE
     }
 
     Deque<skyStonePos> skyStoneValues;
@@ -90,7 +90,7 @@ public class CatHW_Vision extends CatHW_Subsystem
         int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.75;
+        tfodParameters.minimumConfidence = 0.7;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, STONE_LABEL, SKYSTONE_LABEL);
         // And now ACTIVATE!!!
@@ -125,22 +125,22 @@ public class CatHW_Vision extends CatHW_Subsystem
                         // Look for the Gold Pos and decide which side of the sampling field the gold lies
                         if (skyStoneX > 300) {
                             //***Inverted this since the camera was recently placed upside down***//
-                            skyStoneValues.add(skyStonePos.RIGHT);
+                            skyStoneValues.add(skyStonePos.OUTSIDE);
                             return;
                         } else if (skyStoneX > 135) {
                             skyStoneValues.add(skyStonePos.CENTER);
                             return;
                         } else {
-                            skyStoneValues.add(skyStonePos.LEFT);
+                            skyStoneValues.add(skyStonePos.INSIDE);
                             return;
                         }
 
                     }
-                    skyStoneValues.add(skyStonePos.LEFT);
+                    skyStoneValues.add(skyStonePos.INSIDE);
                     return;
                 }
         }
-        // Since camera is only looking at the LEFT and CENTER values, it will return RIGHT
+        // Since camera is only looking at the INSIDE and CENTER values, it will return OUTSIDE
         // if is doesn't see the gold (just basic logic)
         return;
     }
@@ -152,23 +152,23 @@ public class CatHW_Vision extends CatHW_Subsystem
          * occurrences.
          */
 
-        Log.d("catbot", String.format("giveSamplePos amounts:  LEFT: %d, CENTER: %d, RIGHT: &d",
-                Collections.frequency(skyStoneValues, skyStonePos.LEFT),
+        Log.d("catbot", String.format("giveSamplePos amounts:  INSIDE: %d, CENTER: %d, OUTSIDE: &d",
+                Collections.frequency(skyStoneValues, skyStonePos.INSIDE),
                 Collections.frequency(skyStoneValues, skyStonePos.CENTER),
-                Collections.frequency(skyStoneValues, skyStonePos.RIGHT)));
+                Collections.frequency(skyStoneValues, skyStonePos.OUTSIDE)));
 
         // Check to see which value has the most occurrences in the deque
-        if (Collections.frequency(skyStoneValues, skyStonePos.LEFT) > Collections.frequency(skyStoneValues, skyStonePos.CENTER) &&
-                Collections.frequency(skyStoneValues, skyStonePos.LEFT) > Collections.frequency(skyStoneValues, skyStonePos.RIGHT)) {
-            // If the amount of LEFT readings is the most in the past 30 readings, return LEFT
-            return skyStonePos.LEFT;
-        } else if (Collections.frequency(skyStoneValues, skyStonePos.CENTER) > Collections.frequency(skyStoneValues, skyStonePos.LEFT) &&
-                Collections.frequency(skyStoneValues, skyStonePos.CENTER) > Collections.frequency(skyStoneValues, skyStonePos.RIGHT)) {
+        if (Collections.frequency(skyStoneValues, skyStonePos.INSIDE) > Collections.frequency(skyStoneValues, skyStonePos.CENTER) &&
+                Collections.frequency(skyStoneValues, skyStonePos.INSIDE) > Collections.frequency(skyStoneValues, skyStonePos.OUTSIDE)) {
+            // If the amount of INSIDE readings is the most in the past 30 readings, return INSIDE
+            return skyStonePos.INSIDE;
+        } else if (Collections.frequency(skyStoneValues, skyStonePos.CENTER) > Collections.frequency(skyStoneValues, skyStonePos.INSIDE) &&
+                Collections.frequency(skyStoneValues, skyStonePos.CENTER) > Collections.frequency(skyStoneValues, skyStonePos.OUTSIDE)) {
             // If the amount of CENTER readings is the most in the past 30 readings, return CENTER
             return skyStonePos.CENTER;
         } else {
-            // Just return back RIGHT since it is the last possible value
-            return skyStonePos.RIGHT;
+            // Just return back OUTSIDE since it is the last possible value
+            return skyStonePos.OUTSIDE;
         }
     }
 }// End of class bracket
