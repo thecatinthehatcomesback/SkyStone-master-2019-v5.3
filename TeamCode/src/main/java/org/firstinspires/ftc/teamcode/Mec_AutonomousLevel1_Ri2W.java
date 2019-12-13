@@ -48,7 +48,7 @@ public class Mec_AutonomousLevel1_Ri2W extends LinearOpMode {
     static final int MOUTH_LATCH = -125;
     static final int MOUTH_RELEASE = 150;
 
-    private CatHW_Vision.skyStonePos skyStonePos = CatHW_Vision.skyStonePos.RIGHT;
+    private CatHW_Vision.skyStonePos skyStonePos = CatHW_Vision.skyStonePos.OUTSIDE;
 
     @Override
     public void runOpMode() throws InterruptedException {
