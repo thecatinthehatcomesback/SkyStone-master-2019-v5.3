@@ -86,7 +86,7 @@ public class CatOdoCalibrate extends LinearOpMode {
         double wheelBaseSeparation = (2*angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*robot.driveOdo.ODO_COUNTS_PER_INCH);
 
         // Negated this numberto move the robot center to the actual center instead of behind it
-        horizontalTickOffset = -robot.driveOdo.backOdometry.getCurrentPosition()/Math.toRadians(robot.driveOdo.getCurrentAngle());
+        horizontalTickOffset = robot.driveOdo.backOdometry.getCurrentPosition()/Math.toRadians(robot.driveOdo.getCurrentAngle());
 
         //Write the constants to text files
         ReadWriteFile.writeFile(wheelBaseSeparationFile, String.valueOf(wheelBaseSeparation));

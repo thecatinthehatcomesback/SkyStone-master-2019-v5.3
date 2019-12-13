@@ -36,8 +36,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class CatHW_Claw extends CatHW_Subsystem
 {
 
-    private static final double CLAW_UP     = -0.25;
-    private static final double CLAW_DOWN   = 0.6;
+    private static final double CLAW_UP     = -0.5;
+    private static final double CLAW_DOWN   = 0.5;
 
     /* Public OpMode members. */
     public Servo rightFoundationClaw = null;
@@ -70,12 +70,14 @@ public class CatHW_Claw extends CatHW_Subsystem
      * ---   \/ \/ \/ \/    ---
      */
     public void extendClaws() {
-        rightFoundationClaw.setPosition(CLAW_DOWN);
-        leftFoundationClaw.setPosition(CLAW_DOWN);
+        rightFoundationClaw.setPosition(0.46);
+        leftFoundationClaw.setPosition(.18);
     }
     public void retractClaws() {
-        rightFoundationClaw.setPosition(CLAW_UP);
-        leftFoundationClaw.setPosition(CLAW_UP);
+        //right starts at 1 and moves to .46 for a total movement of .54
+        rightFoundationClaw.setPosition(1);
+        //left starts at 0 and moves to .18 for a total movement of .18
+        leftFoundationClaw.setPosition(0);
     }
 
 
