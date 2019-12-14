@@ -36,7 +36,7 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
     CatHW_Async robot  = new CatHW_Async();    // All the hardwares init here
     private ElapsedTime delayTimer = new ElapsedTime();
     private double timeDelay;
-    private boolean isRedAlliance = false;
+    private boolean isRedAlliance = true;
     private boolean isBuildZone = false;
     private boolean isParkAtWall = false;
 
@@ -199,37 +199,37 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
             robot.tail.openGrabber();
             robot.driveOdo.translateDrive(0, 6, .9, 0, .2, 1);
             robot.driveOdo.waitUntilDone();
-            robot.jaws.intakeJaws();
+            robot.jaws.intakeJawsRed();
             switch (skyStonePos) {
                 case INSIDE:
-                    robot.driveOdo.translateDrive(isRedAlliance ? 3 : 0, 28, .65, isRedAlliance ? -38 : 38, .45, 2.5);
+                    robot.driveOdo.translateDrive( 3, 28, .65, -38, .45, 2.5);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerBoast(.5);
-                    robot.driveOdo.translateDrive(isRedAlliance ? -7 : 4, 46, .7, isRedAlliance ? -55 : 55, .5, 2);
+                    robot.driveOdo.translateDrive( -7, 46, .7,  -55, .5, 2);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.translateDrive(isRedAlliance ? 7 : -4, 24, .8, isRedAlliance ? 70 : -70, .75, 3);
+                    robot.driveOdo.translateDrive( 7, 24, .8, 70, .75, 3);
                     robot.driveOdo.waitUntilDone();
                     break;
                 case CENTER:
-                    robot.driveOdo.translateDrive(isRedAlliance ? 11 : -11, 28, .8, isRedAlliance ? -38 : 38, .45, 2.5);
+                    robot.driveOdo.translateDrive( 11, 28, .8, -38, .45, 2.5);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
-                    robot.driveOdo.translateDrive(isRedAlliance ? 4 : -4, 44, .8, isRedAlliance ? -55 : 55, .6, 2);
+                    robot.driveOdo.translateDrive( 4, 44, .8, -55, .6, 2);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.translateDrive(isRedAlliance ? 17 : -17, 24, .8, isRedAlliance ? 70 : -70, .75, 3);
+                    robot.driveOdo.translateDrive( 17, 24, .8, 70, .75, 3);
                     robot.driveOdo.waitUntilDone();
                     break;
                 case OUTSIDE:
-                    robot.driveOdo.translateDrive(isRedAlliance ? 15 : -15, 28, .8, isRedAlliance ? -20 : 20, .45, 2.5);
+                    robot.driveOdo.translateDrive( 15, 28, .8, -28, .45, 2.5);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerBoast(.35);
                     //collect sky stone
-                    robot.driveOdo.translateDrive(isRedAlliance ? 11 : -11, 44, .56, isRedAlliance ? -50 : 50, .65, 2.5);
+                    robot.driveOdo.translateDrive( 11, 44, .56, -55 , .65, 2.5);
                     robot.driveOdo.waitUntilDone();
                     //back up from stones
-                    robot.driveOdo.translateDrive(isRedAlliance ? 13 : -13, 24, .8, isRedAlliance ? 60 : -60, .7, 3);
+                    robot.driveOdo.translateDrive( 13 , 24, .8, 60 , .7, 3);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerNormal();
 
@@ -238,53 +238,51 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
 
             //drive under Sky bridge
             robot.jaws.turnOffJaws();
-            robot.driveOdo.translateDrive(isRedAlliance ? 41 : -41, 26, .8, isRedAlliance ? 90 : -90, .5, 2.5);
+            robot.driveOdo.translateDrive( 41, 26, .8, 90 , .5, 2.5);
             robot.driveOdo.waitUntilDone();
             //release sky stone while backing up
             robot.jaws.outputJaws();
-            //robot.driveOdo.translateDrive(25.5,26,.8,90,.2,2);
-            //robot.driveOdo.waitUntilDone();
 
             switch (skyStonePos) {
                 case INSIDE:
                     //go to center position
-                    robot.driveOdo.translateDrive(isRedAlliance ? -29 : 29, 20, .8, isRedAlliance ? -40 : 40, .55, 4);
+                    robot.driveOdo.translateDrive( -28, 20, .8,  -40, .55, 4);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
                     //collect sky stone
-                    robot.jaws.intakeJaws();
-                    robot.driveOdo.translateDrive(isRedAlliance ? -32 : 32, 47, .8, isRedAlliance ? -70 : 70, .66, 2);
+                    robot.jaws.intakeJawsRed();
+                    robot.driveOdo.translateDrive( -31 , 47, .8,  -70 , .66, 2);
                     robot.driveOdo.waitUntilDone();
                     //back up from stones
                     robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.translateDrive(isRedAlliance ? -17 : 17, 18, .8, isRedAlliance ? 70 : -70, .75, 3);
+                    robot.driveOdo.translateDrive( -17 , 18, .8, 70 , .75, 3);
                     robot.driveOdo.waitUntilDone();
                     break;
                 case CENTER:
                     //go to center position
-                    robot.driveOdo.translateDrive(isRedAlliance ? -21 : 21, 28, .8, isRedAlliance ? -37 : 37, .45, 4);
+                    robot.driveOdo.translateDrive( -21 , 28, .8, -37 , .45, 4);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerBoast(.5);
                     //collect sky stone
-                    robot.jaws.intakeJaws();
-                    robot.driveOdo.translateDrive(isRedAlliance ? -25.5 : 25.5, 49, .7, isRedAlliance ? -52 : 52, .6, 2);
+                    robot.jaws.intakeJawsRed();
+                    robot.driveOdo.translateDrive(-25.5 , 49, .7, -52 , .6, 2);
                     robot.driveOdo.waitUntilDone();
                     //back up from stones
                     robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.translateDrive(isRedAlliance ? -7 : 7, 22, .8, isRedAlliance ? 70 : -70, .75, 4);
+                    robot.driveOdo.translateDrive( -7 , 22, .8, 70 , .75, 4);
                     robot.driveOdo.waitUntilDone();
                     break;
                 case OUTSIDE:
                     //go to right position
-                    robot.driveOdo.translateDrive(isRedAlliance ? -16 : 16, 28, .8, isRedAlliance ? -20 : 20, .45, 3);
+                    robot.driveOdo.translateDrive(  -15 , 28, .8, -20 , .45, 3);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerBoast(.35);
                     //collect sky stone
-                    robot.jaws.intakeJaws();
-                    robot.driveOdo.translateDrive(isRedAlliance ? -18 : 18, 47, .56, isRedAlliance ? -55 : 55, .65, 3);
+                    robot.jaws.intakeJawsRed();
+                    robot.driveOdo.translateDrive(-17 , 47, .56,-55 , .65, 3);
                     robot.driveOdo.waitUntilDone();
                     //back up from stones
-                    robot.driveOdo.translateDrive(isRedAlliance ? -11 : 11, 22, .8, isRedAlliance ? 60 : -60, .7, 4);
+                    robot.driveOdo.translateDrive( -11, 22, .8, 60 , .7, 4);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerNormal();
                     break;
@@ -293,23 +291,23 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
             if (skyStonePos == CatHW_Vision.skyStonePos.INSIDE) {
                 //drive under Sky bridge and deliver sky stone
                 robot.jaws.turnOffJaws();
-                robot.driveOdo.translateDrive(isRedAlliance ? 41 : -41, 16.5, .80, isRedAlliance ? 96 : -96, .5, 2.5);
+                robot.driveOdo.translateDrive(41 , 16.5, .80,96 , .5, 2.5);
                 robot.driveOdo.waitUntilDone();
                 //release sky stone while backing up
                 robot.jaws.outputJaws();
                 //park under sky bridge
-                robot.driveOdo.translateDrive(isRedAlliance ? 25.5 : -25.5, 16.5, .85, isRedAlliance ? 96 : -96, .2, 2);
+                robot.driveOdo.translateDrive(25 , 16.5, .85,96, .2, 2);
                 robot.driveOdo.waitUntilDone();
 
             } else {
                 //drive under Sky bridge and deliver sky stone
                 robot.jaws.turnOffJaws();
-                robot.driveOdo.translateDrive(isRedAlliance ? 41 : -41, 17, .85, isRedAlliance ? 96 : -96, .5, 2.5);
+                robot.driveOdo.translateDrive(41 , 21, .85,  96 , .5, 2.5);
                 robot.driveOdo.waitUntilDone();
                 //release sky stone while backing up
                 robot.jaws.outputJaws();
                 //park under sky bridge
-                robot.driveOdo.translateDrive(isRedAlliance ? 25.5 : -25.5, 17, .85, isRedAlliance ? 96 : -96, .2, 2);
+                robot.driveOdo.translateDrive(23.5, 20, .85,96, .2, 2);
                 robot.driveOdo.waitUntilDone();
 
             }
@@ -327,7 +325,7 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
             robot.tail.openGrabber();
             robot.driveOdo.translateDrive(0, 6, .9, 0, .2, 1);
             robot.driveOdo.waitUntilDone();
-            robot.jaws.intakeJaws();
+            robot.jaws.intakeJawsBlue();
             switch (skyStonePos) {
                 case INSIDE:
                     robot.driveOdo.translateDrive( -4, 26, .65,  38, .45, 2.5);
@@ -340,13 +338,13 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
                     robot.driveOdo.waitUntilDone();
                     break;
                 case CENTER:
-                    robot.driveOdo.translateDrive( -11, 26, .8, 38, .45, 2.5);
+                    robot.driveOdo.translateDrive( -13, 26, .8, 38, .45, 2.5);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
-                    robot.driveOdo.translateDrive( -4, 42, .8, 55, .6, 2);
+                    robot.driveOdo.translateDrive( -7, 42, .8, 55, .6, 2);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.translateDrive( -17, 22, .8, -70, .75, 3);
+                    robot.driveOdo.translateDrive( -19, 22, .8, -70, .75, 3);
                     robot.driveOdo.waitUntilDone();
                     break;
                 case OUTSIDE:
@@ -374,43 +372,43 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
             switch (skyStonePos) {
                 case INSIDE:
                     //go to center position
-                    robot.driveOdo.translateDrive( 29, 18, .8, 40, .55, 4);
+                    robot.driveOdo.translateDrive( 26, 18, .8, 40, .55, 4);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
                     //collect sky stone
-                    robot.jaws.intakeJaws();
-                    robot.driveOdo.translateDrive( 32, 45, .8, 70, .66, 2);
+                    robot.jaws.intakeJawsBlue();
+                    robot.driveOdo.translateDrive( 29, 40, .8, 60, .66, 2);
                     robot.driveOdo.waitUntilDone();
                     //back up from stones
                     robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.translateDrive( 17, 16, .8, -70, .75, 3);
+                    robot.driveOdo.translateDrive( 14, 16, .8, -70, .75, 3);
                     robot.driveOdo.waitUntilDone();
                     break;
                 case CENTER:
                     //go to center position
-                    robot.driveOdo.translateDrive( 21, 26, .8, 37, .45, 4);
+                    robot.driveOdo.translateDrive( 15, 20, .8, 37, .45, 4);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerBoast(.5);
                     //collect sky stone
-                    robot.jaws.intakeJaws();
-                    robot.driveOdo.translateDrive( 25.5, 47, .7, 52, .6, 2);
+                    robot.jaws.intakeJawsBlue();
+                    robot.driveOdo.translateDrive( 20, 40, .7, 52, .6, 2);
                     robot.driveOdo.waitUntilDone();
                     //back up from stones
                     robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.translateDrive( 7, 20, .8, -70, .75, 4);
+                    robot.driveOdo.translateDrive( 1, 18, .8, -70, .75, 4);
                     robot.driveOdo.waitUntilDone();
                     break;
                 case OUTSIDE:
                     //go to right position
-                    robot.driveOdo.translateDrive( 16, 26, .8, 20, .45, 3);
+                    robot.driveOdo.translateDrive( 16, 20, .8, 20, .45, 3);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerBoast(.35);
                     //collect sky stone
-                    robot.jaws.intakeJaws();
-                    robot.driveOdo.translateDrive( 18, 45, .56, 55, .65, 3);
+                    robot.jaws.intakeJawsBlue();
+                    robot.driveOdo.translateDrive( 18, 40, .56, 55, .65, 3);
                     robot.driveOdo.waitUntilDone();
                     //back up from stones
-                    robot.driveOdo.translateDrive( 11, 20, .8, -60, .7, 4);
+                    robot.driveOdo.translateDrive( 11, 18, .8, -60, .7, 4);
                     robot.driveOdo.waitUntilDone();
                     robot.driveOdo.updatesThread.powerUpdate.powerNormal();
                     break;
@@ -419,23 +417,23 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
             if (skyStonePos == CatHW_Vision.skyStonePos.INSIDE) {
                 //drive under Sky bridge and deliver sky stone
                 robot.jaws.turnOffJaws();
-                robot.driveOdo.translateDrive( -41, 14.5, .80, -96, .5, 2.5);
+                robot.driveOdo.translateDrive( -41, 12.5, .80, -96, .5, 2.5);
                 robot.driveOdo.waitUntilDone();
                 //release sky stone while backing up
                 robot.jaws.outputJaws();
                 //park under sky bridge
-                robot.driveOdo.translateDrive( -25.5, 14.5, .85, -96, .2, 2);
+                robot.driveOdo.translateDrive( -25.5, 12.5, .85, -96, .2, 2);
                 robot.driveOdo.waitUntilDone();
 
             } else {
                 //drive under Sky bridge and deliver sky stone
                 robot.jaws.turnOffJaws();
-                robot.driveOdo.translateDrive( -41, 15, .85, -96, .5, 2.5);
+                robot.driveOdo.translateDrive( -41, 17, .85, -96, .5, 2.5);
                 robot.driveOdo.waitUntilDone();
                 //release sky stone while backing up
                 robot.jaws.outputJaws();
                 //park under sky bridge
-                robot.driveOdo.translateDrive( -25.5, 15, .85, -96, .2, 2);
+                robot.driveOdo.translateDrive( -25.5, 17, .85, -96, .2, 2);
                 robot.driveOdo.waitUntilDone();
 
             }
