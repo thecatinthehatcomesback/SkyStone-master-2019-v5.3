@@ -82,9 +82,28 @@ public class CatHW_Jaws extends CatHW_Subsystem
          * Turn on both jaws motors to suck in:
          */
 
-        leftJawMotor.setPower(-JAW_POWER );
-        rightJawMotor.setPower(JAW_POWER- .15);
+        leftJawMotor.setPower(-JAW_POWER);
+        rightJawMotor.setPower(JAW_POWER);
     }
+    public void intakeJawsBlue() {
+        /**
+         * Turn on both jaws motors to suck in:
+         has the left motor slightly faster to improve pick up chance on blue side
+         */
+
+        leftJawMotor.setPower(-JAW_POWER );
+        rightJawMotor.setPower(JAW_POWER - .15);
+    }
+    public void intakeJawsRed() {
+        /**
+         * Turn on both jaws motors to suck in:
+         has the right motor slightly faster to improve pick up chance on red side
+         */
+
+        leftJawMotor.setPower(-JAW_POWER  + .15);
+        rightJawMotor.setPower(JAW_POWER);
+    }
+
     public void outputJaws() {
         /**
          * Turn on both jaws motors to spit OUT:
