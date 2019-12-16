@@ -8,81 +8,91 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class CatOdoPowerUpdate {
 
-    private CatOdoPositionUpdate positionUpdate;
-
-    private ElapsedTime powerTime = new ElapsedTime();
-
+    // Constants:
+    static final private double RAMP_UP_TIME = 400;  // In milliseconds
+    static final private double RAMP_DOWN_DISTANCE = 10;  // In inches
     // Variables:
     private double currentPower;
     private double minPower = 0.15;
     private double maxPower;
-
-    static final private double rampUpTime       = 400;  // In milliseconds
-    static final private double rampDownDistance = 10;
-
     private double targetX;
     private double targetY;
-
+    // Constructors:
+    private CatOdoPositionUpdate positionUpdate;
+    // Timer:
+    private ElapsedTime powerTime = new ElapsedTime();
 
     /**
-     * Constructor which also has access to the values and such in CatOdoPositionUpdate
-     * @param inPositionUpdate Create an instance of the CatOdoPositionUpdate
+     * Constructor which also has access to the values and such in CatOdoPositionUpdate.
+     *
+     * @param inPositionUpdate Create an instance of the CatOdoPositionUpdate.
      */
     CatOdoPowerUpdate(CatOdoPositionUpdate inPositionUpdate) {
         positionUpdate = inPositionUpdate;
     }
 
-    public  void powerBoast(double power){
-        minPower = power;
-    }
-    public  void powerNormal(){
+    public void powerNormal() {
         minPower = .15;
     }
 
+    public void powerBoast(double power) {
+        minPower = power;
+    }
 
+    /**
+     * This method will set local variables in this class to the same values used in autonomous by
+     * being called inside the CatHW_DriveOdo.translateDrive method.  This allows us to have the
+     * information available in order to perform the motion profiling calculations.
+     *
+     * @param x     The new X coordinate the robot is traveling to.
+     * @param y     The new X coordinate the robot is traveling to.
+     * @param power Sets the new max power.
+     */
     public void setTarget(double x, double y, double power) {
-        targetX     = x;
-        targetY     = y;
-        maxPower    = power;
+        targetX = x;
+        targetY = y;
+        maxPower = power;
         currentPower = minPower;
         powerTime.reset();
     }
 
     /**
-     * Use this method to continually update the powers for the
-     * @return The power based on our motion profiling equations
+     * Use this method to continually update the power calculation for our motion profiling.
+     *
+     * @return The power based on our motion profiling equations.
      */
     public double updatePower() {
 
-        // Update the current position
-        double  currentX    = positionUpdate.returnXInches();
-        double currentY    = positionUpdate.returnYInches();
+        // Update the current position and time:
+        double currentX = positionUpdate.returnXInches();
+        double currentY = positionUpdate.returnYInches();
         double currentTime = powerTime.milliseconds();
 
-        // Distance left to target calculation
+        // Distance left to target calculation:
         double distanceToTarget = distance(currentX, currentY, targetX, targetY);
 
-        if (currentPower >= (maxPower * (distanceToTarget / rampDownDistance))) {
-            // Ramp down if within the rampDownDistance
+        if (currentPower >= (maxPower * (distanceToTarget / RAMP_DOWN_DISTANCE))) {
+            // Ramp down if within the RAMP_DOWN_DISTANCE.
             if (currentPower > minPower) {
-                currentPower = maxPower * (distanceToTarget / rampDownDistance);
+                currentPower = maxPower * (distanceToTarget / RAMP_DOWN_DISTANCE);
             } else {
                 currentPower = minPower;
             }
         } else {
-            // Ramp up power
-            //TODO: add the first time to minimum power
+            // Ramp up power.
             if (currentPower < maxPower) {
-                currentPower = maxPower * (currentTime / rampUpTime);
+                currentPower = maxPower * (currentTime / RAMP_UP_TIME);
 
             } else {
                 currentPower = maxPower;
             }
         }
-        if(currentPower < minPower){
+
+        // Make sure the power never goes above or below the min and max powers.
+        if (currentPower < minPower) {
             currentPower = minPower;
         }
-        if(currentPower > maxPower){
+        if (currentPower > maxPower) {
             currentPower = maxPower;
         }
 
@@ -91,16 +101,17 @@ public class CatOdoPowerUpdate {
     }
 
     /**
-     * Just a simple distance formula so that we know how long until robot reaches
-     * the target with motion profiling.
-     * @param currentX Enter in the positionUpdate.returnXInches()
-     * @param currentY Enter in the positionUpdate.returnYInches()
-     * @param targetX Set by the setTarget method inside the CatHW_DriveOdo.translateDrive
-     * @param targetY Set by the setTarget method inside the CatHW_DriveOdo.translateDrive
-     * @return distance
+     * Just a simple distance formula so that we know how long until robot reaches the target with
+     * motion profiling.
+     *
+     * @param currentX Enter in the positionUpdate.returnXInches().
+     * @param currentY Enter in the positionUpdate.returnYInches().
+     * @param targetX  Set by the setTarget method inside the CatHW_DriveOdo.translateDrive.
+     * @param targetY  Set by the setTarget method inside the CatHW_DriveOdo.translateDrive.
+     * @return distance left to target.
      */
     private double distance(double currentX, double currentY, double targetX, double targetY) {
-        return Math.sqrt((targetX - currentX) *(targetX - currentX) + (targetY - currentY)*(targetY - currentY));
+        return Math.sqrt((targetX - currentX) * (targetX - currentX) + (targetY - currentY) * (targetY - currentY));
     }
 
 
