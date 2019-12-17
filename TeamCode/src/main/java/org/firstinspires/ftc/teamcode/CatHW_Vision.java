@@ -1,16 +1,14 @@
 /*
         CatHW_Vision.java
 
-    A "hardware" class intended to contain common code for accessing
-    camera and vision related situations.  While previous versions were
-    made to mostly to test various forms of machine vision, this version
-    uses the Tensor Flow system from the FTC SDK to detect the Gold
-    mineral during init in our Autonomous routines. Previous versions
-    also used the DogeCV library which uses OpenCV.
+    A "hardware" class intended to contain common code for accessing camera and other vision related
+    situations.  While previous versions were made to mostly to test various forms of machine
+    vision, this version uses the Tensor Flow system from the FTC SDK to detect the SkyStones during
+    init in our autonomous routines. We've also tested Vuforia.
 
 
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file has been modified from the original FTC SkyStone SDK.
+    Written by FTC Team #10273, The Cat in the Hat Comes Back.
 */
 
 package org.firstinspires.ftc.teamcode;
@@ -31,7 +29,7 @@ import java.util.Deque;
 import java.util.List;
 
 /**
- * This is NOT an opmode.
+ * This is NOT an opMode.
  *
  * This class can be used to define all vision coding we use.
  *

@@ -1,15 +1,13 @@
 /*
         CatHW_DriveClassic.java
 
-    A "hardware" class containing common code accessing hardware specific
-    to the movement and rotation of the setDrivePowers train.  This is a
-    modified or stripped down version of CatSingleOverallHW to run all
-    the drive train overall.  This file is used by the new autonomous
+    A "hardware" class containing common code accessing hardware specific to the movement and
+    rotation of the drive train with motor drive encoders.  This file is used by the new autonomous
     OpModes to run multiple operations at once.
 
 
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file has been modified from the original FTC SkyStone SDK.
+    Written by FTC Team #10273, The Cat in the Hat Comes Back.
 */
 
 package org.firstinspires.ftc.teamcode;

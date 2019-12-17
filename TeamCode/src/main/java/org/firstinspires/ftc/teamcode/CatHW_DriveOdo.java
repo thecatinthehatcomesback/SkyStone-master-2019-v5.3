@@ -1,15 +1,13 @@
 /*
         CatHW_DriveOdo.java
 
-    A "hardware" class containing common code accessing hardware specific
-    to the movement and rotation of the setDrivePowers train.  This is a
-    modified or stripped down version of CatSingleOverallHW to run all
-    the drive train overall.  This file is used by the new autonomous
-    OpModes to run multiple operations at once.
+    A "hardware" class containing common code accessing hardware specific to the movement and
+    rotation of the drive train using odometry modules and encoders.  This file is used by the new
+    autonomous OpModes to run multiple operations at once.
 
 
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file has been modified from the original FTC SkyStone SDK.
+    Written by FTC Team #10273, The Cat in the Hat Comes Back.
 */
 
 package org.firstinspires.ftc.teamcode;
@@ -35,17 +33,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 public class CatHW_DriveOdo extends CatHW_DriveBase
 {
-    /* Wheel measurements */   //TODO:  Update these constants!
-    static final double     ODO_COUNTS_PER_REV        = 8192;     // 8192 for rev encoder from rev robotics
-    static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
-    static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
+    /* Wheel measurements */        //TODO:  Update these constants!
+    private static final double     ODO_COUNTS_PER_REV        = 8192;     // 8192 for rev encoder from rev robotics
+    private static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
+    private static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
 
-    double  targetX;
-    double  targetY;
-    double  strafePower;
-    double  targetTheta;
-    double  strafeTurnPower;
+    private double targetX;
+    private double targetY;
+    double strafePower;
+    private double targetTheta;
+    private double strafeTurnPower;
 
 
     /* Enums */
@@ -71,9 +69,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     public DcMotor  backOdometry    = null;
 
     CatOdoAllUpdates updatesThread;
-
-    /* local OpMode members. */
-    LinearOpMode opMode = null;
 
     /* Constructor */
     public CatHW_DriveOdo(CatHW_Async mainHardware){
@@ -137,7 +132,18 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         backOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
+
     // Driving Methods:
+    /**
+     * A single method that can turn and/or move the robot to an (x, y) position on the
+     *
+     * @param x Target X position.
+     * @param y Target Y position.
+     * @param power Max power motors can reach using motion profiling.
+     * @param theta The angle the robot will finish the drive facing.
+     * @param turnSpeed
+     * @param timeoutS The method will end when the timeout is reached.
+     */
     public void translateDrive(double x, double y, double power, double theta, double turnSpeed, double timeoutS){
 
         currentMethod = DRIVE_METHOD.translate;
@@ -223,7 +229,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 lBackPower = rFrontPower;
                 rBackPower = lFrontPower;
 
-                //adds turn
+                // Adds turn
                 if ((getTheta - targetTheta) < 0) {
                     // Turn right
                     if (Math.abs(getTheta - targetTheta) > 4) {
@@ -267,10 +273,4 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         }
         return false;
     }
-
-    /**
-     * ---   __________________   ---
-     * ---   End of Our Methods   ---
-     * ---   \/ \/ \/ \/ \/ \/    ---
-     */
 }// End of class bracket

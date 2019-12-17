@@ -1,12 +1,12 @@
 /*
         CatHW_Async.java
 
-    An "hardware" class that acts as the master in which all the other
-    "hardwares" run through.
+    An "hardware" class that acts as the master in which all the other "hardware" classes run
+    through.
 
 
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file has been modified from the original FTC SkyStone SDK.
+    Written by FTC Team #10273, The Cat in the Hat Comes Back.
 */
 
 package org.firstinspires.ftc.teamcode;

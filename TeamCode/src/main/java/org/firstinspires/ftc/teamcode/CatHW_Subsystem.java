@@ -1,14 +1,13 @@
 /*
         CatHW_Subsystem.java
 
-    A "hardware" class containing common code accessing hardware objects
-    and processes.  It detects if the subclasses are busy and can/should
-    continue to the next step/segment of code.  This file is used by
-    CatHW_Async to run multiple processes at once.
+    A "hardware" class containing common code accessing hardware objects and processes.  It detects
+    if the subclasses are busy and can/should continue to the next step/segment of code.  This file
+    is used by CatHW_Async to run multiple processes at once.
 
 
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file has been modified from the original FTC SkyStone SDK.
+    Written by FTC Team #10273, The Cat in the Hat Comes Back.
 */
 
 package org.firstinspires.ftc.teamcode;
