@@ -148,7 +148,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         strafeAngle = angle;
         strafeTurnPower = turnSpeed;
 
-
         // Reset timer once called
         runTime.reset();
     }
