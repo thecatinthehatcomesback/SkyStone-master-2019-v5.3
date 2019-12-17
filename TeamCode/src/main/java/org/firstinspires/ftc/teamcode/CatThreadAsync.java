@@ -1,8 +1,8 @@
 /*
         CatThreadAsync.java
 
-    An helper class containing code to be used when a thread is needed that
-    keeps polling the waitUntilDone() method of a subsystem.
+    An helper class containing code to be used when a thread is needed that keeps polling the
+    waitUntilDone() method of a subsystem.
 
 */
 

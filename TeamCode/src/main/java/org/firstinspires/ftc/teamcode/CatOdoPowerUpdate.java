@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * Written by Team #10273, The Cat in the Hat Comes Back.
+ * Created by Team #10273, The Cat in the Hat Comes Back.
  */
 public class CatOdoPowerUpdate {
 

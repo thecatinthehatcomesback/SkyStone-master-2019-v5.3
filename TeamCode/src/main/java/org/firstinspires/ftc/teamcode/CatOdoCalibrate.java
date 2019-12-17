@@ -10,9 +10,12 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 
 /**
- * Created by Sarthak on 6/1/2019.
- * Odometry system calibration. Run this OpMode to generate the necessary constants to calculate the robot's global position on the field.
- * The Global Positioning Algorithm will not function and will throw an error if this program is not run first
+ * Original created by Sarthak (of Wizards.exe) on 6/1/2019.
+ * Modified by Team #10273, The Cat in the Hat Comes Back.
+ *
+ * Odometry system calibration.  Run this OpMode to generate the necessary constants to calculate
+ * the robot's global position on the field.  The Global Positioning Algorithm will not function
+ * and will throw an error if this program is not run first.
  */
 @TeleOp(name = "Cat Odometry Calibrate", group = "Calibration")
 public class CatOdoCalibrate extends LinearOpMode {

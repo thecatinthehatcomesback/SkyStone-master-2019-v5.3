@@ -36,7 +36,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     /* Wheel measurements */        //TODO:  Update these constants!
     private static final double     ODO_COUNTS_PER_REV        = 8192;     // 8192 for rev encoder from rev robotics
     private static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
-    private static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double             ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
 
     private double targetX;
