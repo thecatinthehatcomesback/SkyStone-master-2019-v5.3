@@ -156,6 +156,11 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         // Power update Thread:
         updatesThread.powerUpdate.setTarget(x, y, power);
     }
+    public void quickDrive(double x, double y, double power, double theta, double turnSpeed, double timeoutS){
+
+        translateDrive(x,y,power,theta,turnSpeed,timeoutS);
+        waitUntilDone();
+    }
 
     /**
      * ---   _____________   ---
