@@ -46,6 +46,7 @@ public class CatHW_Tail extends CatHW_Subsystem
 
     // Motors:
     public DcMotor tailLift     = null;
+    public DcMotor tailLift2     = null;
     public DcMotor tailExtend   = null;
 
     public Servo grabberServo   = null;
@@ -68,14 +69,17 @@ public class CatHW_Tail extends CatHW_Subsystem
 
         // Define and Initialize Motors and Servos//
         tailLift        = hwMap.dcMotor.get("tail_lift");
+        tailLift2       = hwMap.dcMotor.get("tail_lift2");
         tailExtend      = hwMap.dcMotor.get("tail_extend");
         grabberServo    = hwMap.servo.get("grabber_servo");
 
         tailLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        tailLift2.setDirection(DcMotorSimple.Direction.REVERSE);
         tailExtend.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set Motor and Servo Modes //
         tailLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        tailLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         tailExtend.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 

@@ -135,6 +135,7 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
 
             // Tail/Stacker lift motor controls:
             robot.tail.tailLift.setPower(-gamepad2.right_stick_y);
+            robot.tail.tailLift2.setPower(-gamepad2.right_stick_y);
             // Extend controls:
             robot.tail.tailExtend.setPower(-gamepad2.left_stick_y);
 
@@ -157,7 +158,7 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
             telemetry.addData("Right Front Power:", "%.2f", rightFront);
             telemetry.addData("Left Back Power:", "%.2f", leftBack);
             telemetry.addData("Right Back Power:", "%.2f", rightBack);
-            telemetry.addData("Intake Power:","%.2f", robot.jaws.leftJawMotor.getPower());
+            //telemetry.addData("Intake Power:","%.2f", robot.jaws.leftJawMotor.getPower());
 
             telemetry.addData("Encoder lf/lr rf/rr", "%5d %5d   %5d %5d",
                     robot.driveClassic.leftFrontMotor.getCurrentPosition(),
