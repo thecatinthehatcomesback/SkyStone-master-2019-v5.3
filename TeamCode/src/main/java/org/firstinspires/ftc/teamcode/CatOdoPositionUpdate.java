@@ -80,6 +80,7 @@ public class CatOdoPositionUpdate {
         //Calculate Angle
         changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
         robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
+        double robotOrientationRadiansHalf = robotOrientationRadians - (changeInRobotOrientation / 2);
 
         //Get the components of the motion
         normalEncoderWheelPosition = (horizontalEncoder.getCurrentPosition()*normalEncoderPositionMultiplier);
@@ -90,8 +91,8 @@ public class CatOdoPositionUpdate {
         double n = horizontalChange;
 
         //Calculate and update the position values
-        robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
-        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
+        robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (p*Math.sin(robotOrientationRadiansHalf) + n*Math.cos(robotOrientationRadiansHalf));
+        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p*Math.cos(robotOrientationRadiansHalf) - n*Math.sin(robotOrientationRadiansHalf));
 
         previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
