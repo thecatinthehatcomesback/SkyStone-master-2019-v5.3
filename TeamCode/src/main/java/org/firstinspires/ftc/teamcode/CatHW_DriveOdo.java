@@ -120,6 +120,26 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     }
 
     /**
+     * ---   ____________________   ---
+     * ---   Pure Pursuit Methods   ---
+     * ---   \/ \/ \/ \/ \/ \/ \/   ---
+     */
+    public void goToPosition(double pointX, double pointY, double movementSpeed) {
+        double distanceToTarget = Math.hypot(pointX - updatesThread.positionUpdate.returnXInches(),
+                pointY - updatesThread.positionUpdate.returnYInches());
+
+        double absAngleToTarget = Math.atan2(targetY - updatesThread.positionUpdate.returnYInches(),
+                targetX - updatesThread.positionUpdate.returnXInches());
+        double relativeAngleToTarget = absAngleToTarget - Math.toRadians(updatesThread.positionUpdate.returnOrientation());
+
+
+        double relativeXToPoint = Math.cos(relativeAngleToTarget) * distanceToTarget;
+        double relativeYToPoint = Math.sin(relativeAngleToTarget) * distanceToTarget;
+
+        //TODO: Now, use all these numbers to move around.
+    }
+
+    /**
      * ---   _______________________   ---
      * ---   Driving Chassis Methods   ---
      * ---   \/ \/ \/ \/ \/ \/ \/ \/   ---

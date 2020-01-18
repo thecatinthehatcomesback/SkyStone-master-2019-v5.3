@@ -20,8 +20,8 @@ public class CatOdoPowerUpdate {
     static final private double rampUpTime       = 400;  // In milliseconds
     static final private double rampDownDistance = 10;
 
-    private double targetX;
-    private double targetY;
+    private double finalX;
+    private double finalY;
 
 
     /**
@@ -41,9 +41,9 @@ public class CatOdoPowerUpdate {
 
 
     public void setTarget(double x, double y, double power) {
-        targetX     = x;
-        targetY     = y;
-        maxPower    = power;
+        finalX = x;
+        finalY = y;
+        maxPower = power;
         currentPower = minPower;
         powerTime.reset();
     }
@@ -60,7 +60,7 @@ public class CatOdoPowerUpdate {
         double currentTime = powerTime.milliseconds();
 
         // Distance left to target calculation
-        double distanceToTarget = distance(currentX, currentY, targetX, targetY);
+        double distanceToTarget = distance(currentX, currentY, finalX, finalY);
 
         if (currentPower >= (maxPower * (distanceToTarget / rampDownDistance))) {
             // Ramp down if within the rampDownDistance
@@ -71,7 +71,6 @@ public class CatOdoPowerUpdate {
             }
         } else {
             // Ramp up power
-            //TODO: add the first time to minimum power
             if (currentPower < maxPower) {
                 currentPower = maxPower * (currentTime / rampUpTime);
 
@@ -100,7 +99,7 @@ public class CatOdoPowerUpdate {
      * @return distance
      */
     private double distance(double currentX, double currentY, double targetX, double targetY) {
-        return Math.sqrt((targetX - currentX) *(targetX - currentX) + (targetY - currentY)*(targetY - currentY));
+        return Math.hypot((targetX - currentX), (targetY - currentY));
     }
 
 
