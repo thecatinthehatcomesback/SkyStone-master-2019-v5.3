@@ -210,17 +210,12 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                 /**
                  * Calc robot angles:
-                 *
-                 *
-                 * ang1 is the calculation of the angle
-                 *
-                 * ang2 is the 0 of the target angle with the current needed angles
                   */
-                double ang1 = (Math.atan2(targetX - getX, targetY - getY));
-                double ang2 = ang1 - Math.toRadians(getTheta);
+                double absAngleToTarget         = (Math.atan2(targetX - getX, targetY - getY));
+                double relativeAngleToTarget    = absAngleToTarget - Math.toRadians(getTheta);
 
-                double lFrontPower = (Math.cos(ang2) + Math.sin(ang2));
-                double rFrontPower = (Math.cos(ang2) - Math.sin(ang2));
+                double lFrontPower = (Math.cos(relativeAngleToTarget) + Math.sin(relativeAngleToTarget));
+                double rFrontPower = (Math.cos(relativeAngleToTarget) - Math.sin(relativeAngleToTarget));
                 double lBackPower;
                 double rBackPower;
 

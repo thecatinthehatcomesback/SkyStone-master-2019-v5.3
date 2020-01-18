@@ -55,7 +55,7 @@ public class CatOdoPowerUpdate {
     public double updatePower() {
 
         // Update the current position
-        double  currentX    = positionUpdate.returnXInches();
+        double currentX    = positionUpdate.returnXInches();
         double currentY    = positionUpdate.returnYInches();
         double currentTime = powerTime.milliseconds();
 
