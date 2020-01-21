@@ -21,6 +21,7 @@ public class CatOdoAllUpdates implements Runnable{
     public CatOdoAllUpdates(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH) {
         positionUpdate = new CatOdoPositionUpdate(verticalEncoderLeft, verticalEncoderRight, horizontalEncoder, COUNTS_PER_INCH);
         powerUpdate = new CatOdoPowerUpdate(positionUpdate);
+        //positionUpdate.reverseLeftEncoder();
     }
 
 

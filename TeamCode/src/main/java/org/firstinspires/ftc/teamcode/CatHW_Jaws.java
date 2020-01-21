@@ -43,7 +43,6 @@ public class CatHW_Jaws extends CatHW_Subsystem
 
 
     // Motors:
-   // public DcMotor leftJawMotor     = null;
     public DcMotor rightJawMotor    = null;
 
     /* local OpMode members. */
@@ -63,18 +62,14 @@ public class CatHW_Jaws extends CatHW_Subsystem
     public void init()  throws InterruptedException  {
 
         // Define and Initialize Motors //
-        //leftJawMotor    = hwMap.dcMotor.get("left_jaw_motor");
         rightJawMotor   = hwMap.dcMotor.get("right_jaw_motor");
 
-        //leftJawMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightJawMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightJawMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set Motor and Servo Modes //
-        //leftJawMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightJawMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void setJawPower(double power) {
-        //leftJawMotor.setPower(power);
         rightJawMotor.setPower(power);
     }
     public void intakeJaws() {
@@ -82,7 +77,6 @@ public class CatHW_Jaws extends CatHW_Subsystem
          * Turn on both jaws motors to suck in:
          */
 
-        //leftJawMotor.setPower(-JAW_POWER);
         rightJawMotor.setPower(JAW_POWER);
     }
     public void intakeJawsBlue() {
@@ -91,16 +85,13 @@ public class CatHW_Jaws extends CatHW_Subsystem
          has the left motor slightly faster to improve pick up chance on blue side
          */
 
-        //leftJawMotor.setPower(-JAW_POWER );
-        rightJawMotor.setPower(JAW_POWER - .15);
+        rightJawMotor.setPower(-JAW_POWER - .15);
     }
     public void intakeJawsRed() {
         /**
          * Turn on both jaws motors to suck in:
          has the right motor slightly faster to improve pick up chance on red side
          */
-
-        //leftJawMotor.setPower(-JAW_POWER  + .15);
         rightJawMotor.setPower(JAW_POWER);
     }
 
@@ -108,16 +99,12 @@ public class CatHW_Jaws extends CatHW_Subsystem
         /**
          * Turn on both jaws motors to spit OUT:
          */
-
-        //leftJawMotor.setPower(JAW_POWER*0.3);
-        rightJawMotor.setPower(-JAW_POWER*0.3);
+        rightJawMotor.setPower(JAW_POWER*0.3);
     }
     public void turnOffJaws() {
         /**
          * Turn off both jaws motors:
          */
-
-        //leftJawMotor.setPower(0.0);
         rightJawMotor.setPower(0.0);
     }
 
