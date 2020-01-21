@@ -18,6 +18,13 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.internal.opengl.models.Geometry;
+
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This is NOT an OpMode.
@@ -124,19 +131,90 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * ---   Pure Pursuit Methods   ---
      * ---   \/ \/ \/ \/ \/ \/ \/   ---
      */
-    public void goToPosition(double pointX, double pointY, double movementSpeed) {
-        double distanceToTarget = Math.hypot(pointX - updatesThread.positionUpdate.returnXInches(),
+    public void goToPosition(double pointX, double pointY, double preferredAngle, double turnSpeed) {
+        double distanceToPoint = Math.hypot(pointX - updatesThread.positionUpdate.returnXInches(),
                 pointY - updatesThread.positionUpdate.returnYInches());
 
-        double absAngleToTarget = Math.atan2(targetY - updatesThread.positionUpdate.returnYInches(),
+        double absAngleToPoint = Math.atan2(targetY - updatesThread.positionUpdate.returnYInches(),
                 targetX - updatesThread.positionUpdate.returnXInches());
-        double relativeAngleToTarget = absAngleToTarget - Math.toRadians(updatesThread.positionUpdate.returnOrientation());
+
+        double relativeAngleToPoint = absAngleToPoint - Math.toRadians(updatesThread.positionUpdate.returnOrientation());
 
 
-        double relativeXToPoint = Math.cos(relativeAngleToTarget) * distanceToTarget;
-        double relativeYToPoint = Math.sin(relativeAngleToTarget) * distanceToTarget;
 
-        //TODO: Now, use all these numbers to move around.
+        double relativeXToPoint = Math.cos(relativeAngleToPoint) * distanceToPoint;
+        double relativeYToPoint = Math.sin(relativeAngleToPoint) * distanceToPoint;
+
+        double movementXPower = relativeXToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
+        double movementYPower = relativeYToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
+        //TODO: Now, use all these numbers to move around (NB: They will always be limited to 1.0).
+
+
+        double relativeTurnAngle = relativeAngleToPoint + preferredAngle;
+
+        // This is mod used to limit the amount the robot turns.  The 30 is how fast it will turn...
+        double turnMod = Range.clip(relativeTurnAngle / 30, -1, 1) * turnSpeed;
+        // In the case that the target point is really close, robot won't turn
+        if (distanceToPoint < 6) {
+            turnMod = 0;
+        }
+    }
+    public ArrayList<Double> lineCircleIntersection(double circleCenterX, double circleCenterY, double radius,
+                                                    double linePoint1X, double linePoint1Y,
+                                                    double linePoint2X, double linePoint2Y) {
+        // Make sure we don't have a
+        if (Math.abs(linePoint1X - linePoint2X) < 0.003) {
+            linePoint1X = linePoint2X + 0.003;
+        }
+        if (Math.abs(linePoint1Y - linePoint2Y) < 0.003) {
+            linePoint1Y = linePoint2Y + 0.003;
+        }
+
+        // Slope of line
+        double m1 = (linePoint2Y - linePoint1Y) / (linePoint2X - linePoint1X);
+        // Zeros around the robot/circle's center
+        double x1 = linePoint1X - circleCenterX;
+        double y1 = linePoint1Y - circleCenterY;
+
+        // Quadratics Stuff
+        double quadraticA = 1.0 + Math.pow(m1, 2);
+        double quadraticB = (2.0 * m1 * y1) - (2.0 * Math.pow(m1, 2) * x1);
+        double quadraticC = (Math.pow(m1, 2) * Math.pow(x1, 2)) - (2.0*m1*x1*y1) + Math.pow(y1, 2) - Math.pow(radius, 2);
+
+        ArrayList<Double> allPoints = new ArrayList<>();
+
+        try {
+            // Do math for quadratic formula:
+            double xRoot1 = (-quadraticB + (Math.sqrt(Math.pow(quadraticB, 2) - (4.0 * quadraticA * quadraticC))))
+                    / (2.0 * quadraticA);
+            double yRoot1 = m1 * (xRoot1 - x1) + y1;
+
+            double xRoot2 = (-quadraticB - (Math.sqrt(Math.pow(quadraticB, 2) - (4.0 * quadraticA * quadraticC))))
+                    / (2.0 * quadraticA);
+            double yRoot2 = m1 * (xRoot2 - x1) + y1;
+
+
+            // Add the offset of the robot/circle's center
+            xRoot1 += circleCenterX;
+            yRoot1 += circleCenterY;
+
+            xRoot2 += circleCenterX;
+            yRoot2 += circleCenterY;
+
+
+            double minX = linePoint1X < linePoint2X ? linePoint1X : linePoint2X;
+            double maxX = linePoint1X > linePoint2X ? linePoint1X : linePoint2X;
+
+            if (xRoot1 > minX && xRoot1 < maxX) {
+                //allPoints.add();  X1 Y1
+            }
+            if (xRoot2 > minX && xRoot2 < maxX) {
+                //allPoints.add();  X2 Y2
+            }
+        } catch (Exception e) {
+
+        }
+        return allPoints;
     }
 
     /**
@@ -146,7 +224,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      */
     /* Basic methods for setting all four setDrivePowers motor powers and setModes: */
     public void resetOdometryEncoders(){
-        /**
+        /*
          * Set the odometry wheels to STOP_AND_RESET_ENCODER
          */
         leftOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
