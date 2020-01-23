@@ -16,8 +16,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.odometry.OdometryGlobalCoordinatePosition;
-
 
 @TeleOp(name="Test Tele", group="CatTest TeleOp")
 public class Test_TeleOp extends LinearOpMode {
@@ -26,7 +24,7 @@ public class Test_TeleOp extends LinearOpMode {
     private ElapsedTime runTime = new ElapsedTime();
     private ElapsedTime elapsedGameTime = new ElapsedTime();
 
-    CatOdoPositionUpdate globalPositionUpdate;
+    //CatOdoPositionUpdate globalPositionUpdate;
 
 
     /* Declare OpMode members. */
@@ -64,9 +62,9 @@ public class Test_TeleOp extends LinearOpMode {
         runTime.reset();
         elapsedGameTime.reset();
 
-        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.driveOdo.leftOdometry, robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, CatHW_DriveOdo.ODO_COUNTS_PER_INCH, 75);
-        Thread positionThread = new Thread(globalPositionUpdate);
-        positionThread.start();
+//        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.driveOdo.leftOdometry, robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, CatHW_DriveOdo.ODO_COUNTS_PER_INCH, 75);
+//        Thread positionThread = new Thread(globalPositionUpdate);
+//        positionThread.start();
 
         double driveSpeed;
         double leftFront;
@@ -122,20 +120,18 @@ public class Test_TeleOp extends LinearOpMode {
 
             // Tell us the odometry encoder ticks
             telemetry.addData("OdoTicks", "L/R/B  :%7.0f  :%7.0f  :%7.0f",
-                    globalPositionUpdate.returnVerticalLeftEncoderPosition(),
-                    globalPositionUpdate.returnVerticalRightEncoderPosition(),
-                    globalPositionUpdate.returnNormalEncoderPosition() );
+                    robot.driveOdo.updatesThread.positionUpdate.returnVerticalLeftEncoderPosition(),
+                    robot.driveOdo.updatesThread.positionUpdate.returnVerticalRightEncoderPosition(),
+                    robot.driveOdo.updatesThread.positionUpdate.returnNormalEncoderPosition() );
             //Display Global (x, y, theta) coordinates
-            telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / CatHW_DriveOdo.ODO_COUNTS_PER_INCH);
-            telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / CatHW_DriveOdo.ODO_COUNTS_PER_INCH);
-            telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
-            telemetry.addData("Thread Active", positionThread.isAlive());
+            telemetry.addData("X Position", robot.driveOdo.updatesThread.positionUpdate.returnXInches());
+            telemetry.addData("Y Position", robot.driveOdo.updatesThread.positionUpdate.returnYInches());
+            telemetry.addData("Orientation (Degrees)", robot.driveOdo.updatesThread.positionUpdate.returnOrientation());
 
             telemetry.update();
         }
 
         //Stop the thread
-        globalPositionUpdate.stop();
 
     }
 }

@@ -30,7 +30,7 @@ public class CatOdoPositionUpdate {
 
     private int verticalLeftEncoderPositionMultiplier = -1;
     private int verticalRightEncoderPositionMultiplier = 1;
-    private int normalEncoderPositionMultiplier = 1;
+    private int normalEncoderPositionMultiplier = -1;
 
     private double count_per_in;
 
@@ -80,7 +80,7 @@ public class CatOdoPositionUpdate {
         //Calculate Angle
         changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
         robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
-        double robotOrientationRadiansHalf = robotOrientationRadians - (changeInRobotOrientation / 2);
+        double robotOrientationRadiansHalf = robotOrientationRadians ;//- (changeInRobotOrientation / 2);
 
         //Get the components of the motion
         normalEncoderWheelPosition = (horizontalEncoder.getCurrentPosition()*normalEncoderPositionMultiplier);

@@ -145,10 +145,10 @@ public class OdoPositionTest extends LinearOpMode {
     public void driveAndTwist() throws InterruptedException {
 
         //go to block and pick it up
-        robot.driveOdo.quickDrive(0, 72, .9, 90, .3, 2);
-        robot.driveOdo.quickDrive(0, 0, .9, 0, .3, 2);
-        robot.driveOdo.quickDrive(0, 72, .9, 90, .3, 2);
-        robot.driveOdo.quickDrive(0, 0, .9, 0, .3, 2);
+        robot.driveOdo.quickDrive(0, 72, .9, 90, .3, 4);
+        robot.driveOdo.quickDrive(0, 0, .9, 0, .3, 4);
+        robot.driveOdo.quickDrive(0, 72, .9, 90, .3, 4);
+        robot.driveOdo.quickDrive(0, 0, .9, 0, .3, 4);
         //Display Global (x, y, theta) coordinates
         telemetry.addData("X Position", robot.driveOdo.updatesThread.positionUpdate.returnXInches());
         telemetry.addData("Y Position", robot.driveOdo.updatesThread.positionUpdate.returnYInches());
@@ -159,10 +159,10 @@ public class OdoPositionTest extends LinearOpMode {
     public void bigSquare() throws InterruptedException {
 
         //go to block and pick it up
-        robot.driveOdo.quickDrive(0, 72, .9, 0, .3, 2);
-        robot.driveOdo.quickDrive(48, 72, .9, 0, .3, 2);
-        robot.driveOdo.quickDrive(48, 0, .9, 0, .3, 2);
-        robot.driveOdo.quickDrive(0, 0, .9, 0, .3, 2);
+        robot.driveOdo.quickDrive(0, 72, .9, 0, .3, 4);
+        robot.driveOdo.quickDrive(48, 72, .9, 0, .3, 4);
+        robot.driveOdo.quickDrive(48, 0, .9, 0, .3, 4);
+        robot.driveOdo.quickDrive(0, 0, .9, 0, .3, 4);
         //Display Global (x, y, theta) coordinates
         telemetry.addData("X Position", robot.driveOdo.updatesThread.positionUpdate.returnXInches());
         telemetry.addData("Y Position", robot.driveOdo.updatesThread.positionUpdate.returnYInches());
