@@ -45,7 +45,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     double  targetY;
     double  strafePower;
     double  targetTheta;
-    double  strafeTurnPower;
+    double turnPower;
 
 
     /* Enums */
@@ -147,7 +147,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetY = y;
         strafePower = power;
         targetTheta = theta;
-        strafeTurnPower = turnSpeed;
 
         // Reset timer once called
         runTime.reset();
@@ -223,32 +222,54 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 lBackPower = rFrontPower;
                 rBackPower = lFrontPower;
 
-                //adds turn
-                if ((getTheta - targetTheta) < 0) {
-                    // Turn right
-                    if (Math.abs(getTheta - targetTheta) > 4) {
-                        rFrontPower = rFrontPower - (strafeTurnPower);
-                        rBackPower = rBackPower - (strafeTurnPower);
-                        lFrontPower = lFrontPower + (strafeTurnPower);
-                        lBackPower = lBackPower + (strafeTurnPower);
-                    }
-                } else {
-                    // Turn left
-                    if (Math.abs(getTheta - targetTheta) > 4) {
-                        rFrontPower = rFrontPower + (strafeTurnPower);
-                        rBackPower = rBackPower + (strafeTurnPower);
-                        lFrontPower = lFrontPower - (strafeTurnPower);
-                        lBackPower = lBackPower - (strafeTurnPower);
-                    }
+                double minTP;
+                minTP = (updatesThread.powerUpdate.getDistanceToTarget() - 10.0)/-30.0;
+
+                if (minTP < 0){
+                    minTP = 0;
+                }
+                if (minTP > .2){
+                    minTP = .2;
                 }
 
+                turnPower = Math.abs((getTheta - targetTheta)/120.0);
+
+                if (turnPower < minTP){
+                    turnPower = minTP;
+                }
+                if (turnPower > .5){
+                    turnPower = .5;
+                }
+                Log.d("catbot",  String.format("minTP: %.2f , TP: %.2f",minTP,turnPower));
 
                 // Calculate scale factor and motor powers
                 double SF = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
-                leftFrontMotor.setPower(lFrontPower  * getPower * SF);
-                rightFrontMotor.setPower(rFrontPower * getPower * SF);
-                leftRearMotor.setPower(lBackPower    * getPower * SF);
-                rightRearMotor.setPower(rBackPower   * getPower * SF);
+                lFrontPower = lFrontPower  * getPower * SF;
+                rFrontPower = rFrontPower  * getPower * SF;
+                lBackPower = lBackPower  * getPower * SF;
+                rBackPower = rBackPower  * getPower * SF;
+
+                //adds turn
+                if ((getTheta - targetTheta) < 0) {
+                    // Turn right
+                        rFrontPower = rFrontPower - (turnPower);
+                        rBackPower = rBackPower - (turnPower);
+                        lFrontPower = lFrontPower + (turnPower);
+                        lBackPower = lBackPower + (turnPower);
+                } else {
+                    // Turn left
+                        rFrontPower = rFrontPower + (turnPower);
+                        rBackPower = rBackPower + (turnPower);
+                        lFrontPower = lFrontPower - (turnPower);
+                        lBackPower = lBackPower - (turnPower);
+                }
+
+                // Calculate scale factor and motor powers
+                double SF2 = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
+                leftFrontMotor.setPower(lFrontPower  * SF2);
+                rightFrontMotor.setPower(rFrontPower * SF2);
+                leftRearMotor.setPower(lBackPower    * SF2);
+                rightRearMotor.setPower(rBackPower   * SF2);
 
                 Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y/Θ: %.2f %.2f %.1f; currentX/Y/Θ %.2f %.2f %.1f; pow %.2f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),

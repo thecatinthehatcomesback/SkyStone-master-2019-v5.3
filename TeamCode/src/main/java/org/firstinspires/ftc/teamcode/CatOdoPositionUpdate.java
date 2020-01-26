@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -80,7 +82,7 @@ public class CatOdoPositionUpdate {
         //Calculate Angle
         changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
         robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
-        double robotOrientationRadiansHalf = robotOrientationRadians ;//- (changeInRobotOrientation / 2);
+        double robotOrientationRadiansHalf = robotOrientationRadians - (changeInRobotOrientation / 2);
 
         //Get the components of the motion
         normalEncoderWheelPosition = (horizontalEncoder.getCurrentPosition()*normalEncoderPositionMultiplier);
@@ -97,6 +99,14 @@ public class CatOdoPositionUpdate {
         previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
         prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
+
+        Log.d("catbot", String.format("OdoTicks L/R/B  :%7d  :%7d  :%7d   X: %5.2f  Y: %5.2f  theta: %5.2f",
+                returnVerticalLeftEncoderPosition(),
+                returnVerticalRightEncoderPosition(),
+                returnNormalEncoderPosition(),
+                returnXInches(),
+                returnYInches(),
+                returnOrientation()));
     }
 
     public double returnXInches(){ return robotGlobalXCoordinatePosition/count_per_in; }
@@ -121,15 +131,15 @@ public class CatOdoPositionUpdate {
      */
     public double returnOrientation(){ return Math.toDegrees(robotOrientationRadians); }
 
-    public double returnVerticalLeftEncoderPosition(){
+    public int returnVerticalLeftEncoderPosition(){
         return (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
     }
 
-    public double returnVerticalRightEncoderPosition(){
+    public int returnVerticalRightEncoderPosition(){
         return (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
     }
 
-    public double returnNormalEncoderPosition(){
+    public int returnNormalEncoderPosition(){
         return (horizontalEncoder.getCurrentPosition() * normalEncoderPositionMultiplier);
     }
 

@@ -119,7 +119,7 @@ public class Test_TeleOp extends LinearOpMode {
 
 
             // Tell us the odometry encoder ticks
-            telemetry.addData("OdoTicks", "L/R/B  :%7.0f  :%7.0f  :%7.0f",
+            telemetry.addData("OdoTicks", "L/R/B  :%7d  :%7d  :%7d",
                     robot.driveOdo.updatesThread.positionUpdate.returnVerticalLeftEncoderPosition(),
                     robot.driveOdo.updatesThread.positionUpdate.returnVerticalRightEncoderPosition(),
                     robot.driveOdo.updatesThread.positionUpdate.returnNormalEncoderPosition() );
@@ -132,6 +132,7 @@ public class Test_TeleOp extends LinearOpMode {
         }
 
         //Stop the thread
+        robot.driveOdo.updatesThread.stop();
 
     }
 }

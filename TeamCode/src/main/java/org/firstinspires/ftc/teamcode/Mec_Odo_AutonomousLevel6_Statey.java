@@ -29,7 +29,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="Dec 14 Odo Autonomous", group="CatAuto")
+@Autonomous(name="State Odo Autonomous", group="CatAuto")
 public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
 
     /* Declare OpMode members. */
