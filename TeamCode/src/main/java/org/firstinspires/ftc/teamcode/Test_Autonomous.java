@@ -137,9 +137,7 @@ public class Test_Autonomous extends LinearOpMode {
         allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
         allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
         allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
+
+        robot.driveOdo.followCurve(allPoints, 90);
     }
 }

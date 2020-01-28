@@ -192,11 +192,14 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 new Point(updatesThread.positionUpdate.returnXInches(), updatesThread.positionUpdate.returnYInches()),
                 allPoints.get(0).followDistance);
 
+        //TODO:  Going to want to want to think about how we use the followAngle here...
         goToPosition(followThisPoint.x, followThisPoint.y, followAngle);
+
+        //TODO:  Add logic to atop at the final point in the array list.
     }
     public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints, Point robotLocation,
                                          double followRadius) {
-        //TODO: Improve this later...
+        //TODO: Improve this later...  Use a line perpendicular perhaps?
         CurvePoint followThisPoint = new CurvePoint(pathPoints.get(0));
 
         // Go through all the CurvePoints and stop one early since a line needs at least two points.
@@ -210,12 +213,12 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
             // Choose point that the robot is facing.
             double closestAngle = 1000000;
 
+            // Set the robot to follow the point ahead of it/closest to its current heading angle.
             for (Point thisIntersection : intersections) {
                 //TODO: Make sure this is all in Rads.
                 double angle = Math.atan2(thisIntersection.y - updatesThread.positionUpdate.returnYInches(),
                         thisIntersection.x - updatesThread.positionUpdate.returnXInches());
                 double deltaAngle = Math.abs(angle - Math.toRadians(updatesThread.positionUpdate.returnOrientation()));
-
 
                 if (deltaAngle < closestAngle) {
                     closestAngle = deltaAngle;
