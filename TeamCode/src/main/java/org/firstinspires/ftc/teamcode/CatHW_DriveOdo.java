@@ -127,76 +127,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * ---   Pure Pursuit Methods   ---
      * ---   \/ \/ \/ \/ \/ \/ \/   ---
      */
-    public void followCurve(ArrayList<CurvePoint> allPoints, double followAngle) {
-        //TODO:  Add some debug logs here...
-
-        CurvePoint followThisPoint = getFollowPointPath(allPoints,
-                new Point(updatesThread.positionUpdate.returnXInches(), updatesThread.positionUpdate.returnYInches()),
-                allPoints.get(0).followDistance);
-
-        goToPosition(followThisPoint.x, followThisPoint.y, followThisPoint.moveSpeed, followThisPoint.turnSpeed);
-    }
-    public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints, Point robotLocation,
-                                         double followRadius) {
-        //TODO: Improve this later...
-        CurvePoint followThisPoint = new CurvePoint(pathPoints.get(0));
-
-        // Go through all the CurvePoints and stop one early since a line needs at least two points.
-        for (int i = 0; i < pathPoints.size() - 1; i++) {
-            CurvePoint startLine = pathPoints.get(i);
-            CurvePoint endLine = pathPoints.get(i + 1);
-
-            ArrayList<Point> intersections = lineCircleIntersection(robotLocation, followRadius,
-                    startLine.toPoint(), endLine.toPoint());
-
-            // Choose point that the robot is facing.
-            double closestAngle = 1000000;
-
-            for (Point thisIntersection : intersections) {
-                //TODO: Make sure this is all in Rads.
-                double angle = Math.atan2(thisIntersection.y - updatesThread.positionUpdate.returnYInches(),
-                        thisIntersection.x - updatesThread.positionUpdate.returnXInches());
-                double deltaAngle = Math.abs(angle - Math.toRadians(updatesThread.positionUpdate.returnOrientation()));
-
-
-                if (deltaAngle < closestAngle) {
-                    closestAngle = deltaAngle;
-                    followThisPoint.setPoint(thisIntersection);
-                }
-            }
-        }
-        return followThisPoint;
-    }
-    public void goToPosition(double pointX, double pointY, double preferredAngle, double turnSpeed) {
-        double distanceToPoint = Math.hypot(pointX - updatesThread.positionUpdate.returnXInches(),
-                pointY - updatesThread.positionUpdate.returnYInches());
-
-        double absAngleToPoint = Math.atan2(targetY - updatesThread.positionUpdate.returnYInches(),
-                targetX - updatesThread.positionUpdate.returnXInches());
-
-        double relativeAngleToPoint = absAngleToPoint - Math.toRadians(updatesThread.positionUpdate.returnOrientation());
-
-
-
-        double relativeXToPoint = Math.cos(relativeAngleToPoint) * distanceToPoint;
-        double relativeYToPoint = Math.sin(relativeAngleToPoint) * distanceToPoint;
-
-        double movementXPower = relativeXToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
-        double movementYPower = relativeYToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
-        //TODO: Now, use all these numbers to move around (NB: They will always be limited to 1.0).
-
-
-        double relativeTurnAngle = relativeAngleToPoint + preferredAngle;
-
-        // This is mod used to limit the amount the robot turns.  The 30 is how fast it will turn...
-        double turnMod = Range.clip(relativeTurnAngle / 30, -1, 1) * turnSpeed;
-        // In the case that the target point is really close, robot won't turn
-        if (distanceToPoint < 6) {
-            turnMod = 0;
-        }
-    }
     public ArrayList<Point> lineCircleIntersection(Point circleCenter, double radius,
-                                                    Point linePoint1, Point linePoint2) {
+                                                   Point linePoint1, Point linePoint2) {
         // Make sure we don't have a slope of 1 or 0.
         /*if (Math.abs(linePoint1.x - linePoint2.x) < 0.003) {
             linePoint1.x = linePoint2.x + 0.003;
@@ -252,6 +184,74 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
             //TODO:  Wha?
         }
         return allPoints;
+    }
+    public void followCurve(ArrayList<CurvePoint> allPoints, double followAngle) {
+        //TODO:  Add some debug logs here...
+
+        CurvePoint followThisPoint = getFollowPointPath(allPoints,
+                new Point(updatesThread.positionUpdate.returnXInches(), updatesThread.positionUpdate.returnYInches()),
+                allPoints.get(0).followDistance);
+
+        goToPosition(followThisPoint.x, followThisPoint.y, followAngle);
+    }
+    public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints, Point robotLocation,
+                                         double followRadius) {
+        //TODO: Improve this later...
+        CurvePoint followThisPoint = new CurvePoint(pathPoints.get(0));
+
+        // Go through all the CurvePoints and stop one early since a line needs at least two points.
+        for (int i = 0; i < pathPoints.size() - 1; i++) {
+            CurvePoint startLine = pathPoints.get(i);
+            CurvePoint endLine = pathPoints.get(i + 1);
+
+            ArrayList<Point> intersections = lineCircleIntersection(robotLocation, followRadius,
+                    startLine.toPoint(), endLine.toPoint());
+
+            // Choose point that the robot is facing.
+            double closestAngle = 1000000;
+
+            for (Point thisIntersection : intersections) {
+                //TODO: Make sure this is all in Rads.
+                double angle = Math.atan2(thisIntersection.y - updatesThread.positionUpdate.returnYInches(),
+                        thisIntersection.x - updatesThread.positionUpdate.returnXInches());
+                double deltaAngle = Math.abs(angle - Math.toRadians(updatesThread.positionUpdate.returnOrientation()));
+
+
+                if (deltaAngle < closestAngle) {
+                    closestAngle = deltaAngle;
+                    followThisPoint.setPoint(thisIntersection);
+                }
+            }
+        }
+        return followThisPoint;
+    }
+    public void goToPosition(double pointX, double pointY, double preferredAngle) {
+        double distanceToPoint = Math.hypot(pointX - updatesThread.positionUpdate.returnXInches(),
+                pointY - updatesThread.positionUpdate.returnYInches());
+
+        double absAngleToPoint = Math.atan2(targetY - updatesThread.positionUpdate.returnYInches(),
+                targetX - updatesThread.positionUpdate.returnXInches());
+
+        double relativeAngleToPoint = absAngleToPoint - Math.toRadians(updatesThread.positionUpdate.returnOrientation());
+
+
+
+        double relativeXToPoint = Math.cos(relativeAngleToPoint) * distanceToPoint;
+        double relativeYToPoint = Math.sin(relativeAngleToPoint) * distanceToPoint;
+
+        double movementXPower = relativeXToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
+        double movementYPower = relativeYToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
+        //TODO: Now, use all these numbers to move around (NB: They will always be limited to 1.0).
+
+
+        double relativeTurnAngle = relativeAngleToPoint + preferredAngle;
+
+        // This is mod used to limit the amount the robot turns.  The 30 is how fast it will turn...
+        double turnMod = Range.clip(relativeTurnAngle / 30, -1, 1);
+        // In the case that the target point is really close, robot won't turn
+        if (distanceToPoint < 6) {
+            turnMod = 0;
+        }
     }
 
     /**

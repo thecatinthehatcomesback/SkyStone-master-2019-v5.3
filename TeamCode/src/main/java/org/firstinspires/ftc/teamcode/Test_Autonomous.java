@@ -134,11 +134,12 @@ public class Test_Autonomous extends LinearOpMode {
 
         ArrayList<CurvePoint> allPoints = new ArrayList<>();
 
-        allPoints.add(new CurvePoint(0, 0, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 10, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 20, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 30, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 40, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 50, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
     }
 }
