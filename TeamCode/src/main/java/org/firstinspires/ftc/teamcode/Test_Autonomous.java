@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.ArrayList;
+
 
 @Autonomous(name="Test_Autonomous", group="CatTest Auto")
 public class Test_Autonomous extends LinearOpMode {
@@ -130,22 +132,13 @@ public class Test_Autonomous extends LinearOpMode {
 
         /* Go! */
 
-        robot.driveOdo.translateDrive(0,36, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();
-        /*robot.driveOdo.translateDrive(36,36, CatHW_DriveBase.CHILL_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,72, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.CHILL_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();*/
-        robot.robotWait(1.5);
-        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.CREEP_SPEED, 0, .4, 5);
-        robot.driveOdo.waitUntilDone();
-        // Testing the new mecTurn
-        //robot.driveClassic.mecTurn(CatHW_DriveClassic.TURN_SPEED, 170, 3.0);
+        ArrayList<CurvePoint> allPoints = new ArrayList<>();
+
+        allPoints.add(new CurvePoint(0, 0, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 10, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 20, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 30, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 40, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 50, 1.0, 1.0, 10.0, 1.0, Math.toRadians(0), 1.0));
     }
 }

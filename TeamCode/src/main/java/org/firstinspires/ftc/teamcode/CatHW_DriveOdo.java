@@ -20,11 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.internal.opengl.models.Geometry;
-
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This is NOT an OpMode.
@@ -131,6 +127,46 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * ---   Pure Pursuit Methods   ---
      * ---   \/ \/ \/ \/ \/ \/ \/   ---
      */
+    public void followCurve(ArrayList<CurvePoint> allPoints, double followAngle) {
+        //TODO:  Add some debug logs here...
+
+        CurvePoint followThisPoint = getFollowPointPath(allPoints,
+                new Point(updatesThread.positionUpdate.returnXInches(), updatesThread.positionUpdate.returnYInches()),
+                allPoints.get(0).followDistance);
+
+        goToPosition(followThisPoint.x, followThisPoint.y, followThisPoint.moveSpeed, followThisPoint.turnSpeed);
+    }
+    public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints, Point robotLocation,
+                                         double followRadius) {
+        //TODO: Improve this later...
+        CurvePoint followThisPoint = new CurvePoint(pathPoints.get(0));
+
+        // Go through all the CurvePoints and stop one early since a line needs at least two points.
+        for (int i = 0; i < pathPoints.size() - 1; i++) {
+            CurvePoint startLine = pathPoints.get(i);
+            CurvePoint endLine = pathPoints.get(i + 1);
+
+            ArrayList<Point> intersections = lineCircleIntersection(robotLocation, followRadius,
+                    startLine.toPoint(), endLine.toPoint());
+
+            // Choose point that the robot is facing.
+            double closestAngle = 1000000;
+
+            for (Point thisIntersection : intersections) {
+                //TODO: Make sure this is all in Rads.
+                double angle = Math.atan2(thisIntersection.y - updatesThread.positionUpdate.returnYInches(),
+                        thisIntersection.x - updatesThread.positionUpdate.returnXInches());
+                double deltaAngle = Math.abs(angle - Math.toRadians(updatesThread.positionUpdate.returnOrientation()));
+
+
+                if (deltaAngle < closestAngle) {
+                    closestAngle = deltaAngle;
+                    followThisPoint.setPoint(thisIntersection);
+                }
+            }
+        }
+        return followThisPoint;
+    }
     public void goToPosition(double pointX, double pointY, double preferredAngle, double turnSpeed) {
         double distanceToPoint = Math.hypot(pointX - updatesThread.positionUpdate.returnXInches(),
                 pointY - updatesThread.positionUpdate.returnYInches());
@@ -159,60 +195,61 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
             turnMod = 0;
         }
     }
-    public ArrayList<Double> lineCircleIntersection(double circleCenterX, double circleCenterY, double radius,
-                                                    double linePoint1X, double linePoint1Y,
-                                                    double linePoint2X, double linePoint2Y) {
-        // Make sure we don't have a
-        if (Math.abs(linePoint1X - linePoint2X) < 0.003) {
-            linePoint1X = linePoint2X + 0.003;
+    public ArrayList<Point> lineCircleIntersection(Point circleCenter, double radius,
+                                                    Point linePoint1, Point linePoint2) {
+        // Make sure we don't have a slope of 1 or 0.
+        /*if (Math.abs(linePoint1.x - linePoint2.x) < 0.003) {
+            linePoint1.x = linePoint2.x + 0.003;
         }
-        if (Math.abs(linePoint1Y - linePoint2Y) < 0.003) {
-            linePoint1Y = linePoint2Y + 0.003;
-        }
+        if (Math.abs(linePoint1.y - linePoint2.y) < 0.003) {
+            linePoint1.y = linePoint2.y + 0.003;
+        }*/
 
         // Slope of line
-        double m1 = (linePoint2Y - linePoint1Y) / (linePoint2X - linePoint1X);
-        // Zeros around the robot/circle's center
-        double x1 = linePoint1X - circleCenterX;
-        double y1 = linePoint1Y - circleCenterY;
+        double m1 = (linePoint2.y - linePoint1.y) / (linePoint2.x - linePoint1.x);
+        // Zeros around the robot/circle's center (remove offset of robot)
+        double x1 = linePoint1.x - circleCenter.x;
+        double y1 = linePoint1.y - circleCenter.y;
 
         // Quadratics Stuff
         double quadraticA = 1.0 + Math.pow(m1, 2);
         double quadraticB = (2.0 * m1 * y1) - (2.0 * Math.pow(m1, 2) * x1);
         double quadraticC = (Math.pow(m1, 2) * Math.pow(x1, 2)) - (2.0*m1*x1*y1) + Math.pow(y1, 2) - Math.pow(radius, 2);
 
-        ArrayList<Double> allPoints = new ArrayList<>();
+        ArrayList<Point> allPoints = new ArrayList<>();
 
         try {
             // Do math for quadratic formula:
             double xRoot1 = (-quadraticB + (Math.sqrt(Math.pow(quadraticB, 2) - (4.0 * quadraticA * quadraticC))))
                     / (2.0 * quadraticA);
             double yRoot1 = m1 * (xRoot1 - x1) + y1;
-
+            // Do math for other side of quadratic formula
             double xRoot2 = (-quadraticB - (Math.sqrt(Math.pow(quadraticB, 2) - (4.0 * quadraticA * quadraticC))))
                     / (2.0 * quadraticA);
             double yRoot2 = m1 * (xRoot2 - x1) + y1;
 
 
-            // Add the offset of the robot/circle's center
-            xRoot1 += circleCenterX;
-            yRoot1 += circleCenterY;
+            // Add back the offset of the robot/circle's center
+            xRoot1 += circleCenter.x;
+            yRoot1 += circleCenter.y;
+            // Add back the offset to the other set of X and Y roots.
+            xRoot2 += circleCenter.x;
+            yRoot2 += circleCenter.y;
 
-            xRoot2 += circleCenterX;
-            yRoot2 += circleCenterY;
 
+            double minX = linePoint1.x < linePoint2.x ? linePoint1.x : linePoint2.x;
+            double maxX = linePoint1.x > linePoint2.x ? linePoint1.x : linePoint2.x;
 
-            double minX = linePoint1X < linePoint2X ? linePoint1X : linePoint2X;
-            double maxX = linePoint1X > linePoint2X ? linePoint1X : linePoint2X;
-
+            // Add point if the robot is on the first set of X and Y roots.
             if (xRoot1 > minX && xRoot1 < maxX) {
-                //allPoints.add();  X1 Y1
+                allPoints.add(new Point(xRoot1, yRoot1));
             }
+            // Add point if the robot is on the second set of X and Y roots.
             if (xRoot2 > minX && xRoot2 < maxX) {
-                //allPoints.add();  X2 Y2
+                allPoints.add(new Point(xRoot2, yRoot2));
             }
         } catch (Exception e) {
-
+            //TODO:  Wha?
         }
         return allPoints;
     }
