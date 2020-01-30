@@ -18,6 +18,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -44,7 +45,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
 
     // Motors:
     public DcMotor rightJawMotor    = null;
-
+    public DigitalChannel intakeSensor = null;
     /* local OpMode members. */
 
     // Timers:
@@ -63,11 +64,12 @@ public class CatHW_Jaws extends CatHW_Subsystem
 
         // Define and Initialize Motors //
         rightJawMotor   = hwMap.dcMotor.get("right_jaw_motor");
-
         rightJawMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set Motor and Servo Modes //
         rightJawMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        intakeSensor = hwMap.digitalChannel.get("intakeSensor");
     }
     public void setJawPower(double power) {
         rightJawMotor.setPower(power);
@@ -106,6 +108,9 @@ public class CatHW_Jaws extends CatHW_Subsystem
          * Turn off both jaws motors:
          */
         rightJawMotor.setPower(0.0);
+    }
+    public boolean hasStone(){
+        return intakeSensor.getState();
     }
 
 

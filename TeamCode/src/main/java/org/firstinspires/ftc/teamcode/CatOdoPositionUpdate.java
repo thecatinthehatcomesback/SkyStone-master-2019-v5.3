@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.RevBulkData;
 
 import java.io.File;
-
 /**
  * Original created by Sarthak (of Wizards.exe) on 6/1/2019.
  * Modified by Team #10273, The Cat in the Hat Comes Back.
@@ -16,6 +17,7 @@ import java.io.File;
 public class CatOdoPositionUpdate {
     //Odometry wheels
     private DcMotor verticalEncoderLeft, verticalEncoderRight, horizontalEncoder;
+    private ExpansionHubEx expansionHub;
 
     //Position variables used for storage and calculations
     double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0,  changeInRobotOrientation = 0;
@@ -33,6 +35,10 @@ public class CatOdoPositionUpdate {
     private int verticalLeftEncoderPositionMultiplier = -1;
     private int verticalRightEncoderPositionMultiplier = 1;
     private int normalEncoderPositionMultiplier = -1;
+    private int leftEncoderValue = 0;
+    private int rightEncoderValue = 0;
+    private int horizontalEncoderValue = 0;
+    private RevBulkData bulkData;
 
     private double count_per_in;
 
@@ -42,8 +48,9 @@ public class CatOdoPositionUpdate {
      * @param verticalEncoderRight right odometry encoder, facing the vertical direction
      * @param horizontalEncoder horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      */
-    public CatOdoPositionUpdate(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH){
+    public CatOdoPositionUpdate(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH){
         count_per_in = COUNTS_PER_INCH;
+        expansionHub = inExpansionHub;
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
         this.horizontalEncoder = horizontalEncoder;
@@ -53,9 +60,10 @@ public class CatOdoPositionUpdate {
 
     }
 
-    public CatOdoPositionUpdate(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, double startingX,
+    public CatOdoPositionUpdate(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, double startingX,
                                 double startingY, double startingOrientation){
         count_per_in = COUNTS_PER_INCH;
+        expansionHub = inExpansionHub;
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
         this.horizontalEncoder = horizontalEncoder;
@@ -72,9 +80,14 @@ public class CatOdoPositionUpdate {
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
      */
     public void globalCoordinatePositionUpdate(){
+        //do a bulk read of encoders
+        bulkData = expansionHub.getBulkInputData();
+        leftEncoderValue = bulkData.getMotorCurrentPosition(verticalEncoderLeft);
+        rightEncoderValue = bulkData.getMotorCurrentPosition(rightEncoderValue);
+        horizontalEncoderValue = bulkData.getMotorCurrentPosition(horizontalEncoder);
         //Get Current Positions
-        verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
-        verticalRightEncoderWheelPosition = (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
+        verticalLeftEncoderWheelPosition = (leftEncoderValue * verticalLeftEncoderPositionMultiplier);
+        verticalRightEncoderWheelPosition = (rightEncoderValue * verticalRightEncoderPositionMultiplier);
 
         double leftChange = verticalLeftEncoderWheelPosition - previousVerticalLeftEncoderWheelPosition;
         double rightChange = verticalRightEncoderWheelPosition - previousVerticalRightEncoderWheelPosition;
@@ -85,7 +98,7 @@ public class CatOdoPositionUpdate {
         double robotOrientationRadiansHalf = robotOrientationRadians - (changeInRobotOrientation / 2);
 
         //Get the components of the motion
-        normalEncoderWheelPosition = (horizontalEncoder.getCurrentPosition()*normalEncoderPositionMultiplier);
+        normalEncoderWheelPosition = (horizontalEncoderValue*normalEncoderPositionMultiplier);
         double rawHorizontalChange = normalEncoderWheelPosition - prevNormalEncoderWheelPosition;
         double horizontalChange = rawHorizontalChange - (changeInRobotOrientation*horizontalEncoderTickPerDegreeOffset);
 
@@ -132,15 +145,15 @@ public class CatOdoPositionUpdate {
     public double returnOrientation(){ return Math.toDegrees(robotOrientationRadians); }
 
     public int returnVerticalLeftEncoderPosition(){
-        return (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
+        return (leftEncoderValue * verticalLeftEncoderPositionMultiplier);
     }
 
     public int returnVerticalRightEncoderPosition(){
-        return (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
+        return (rightEncoderValue * verticalRightEncoderPositionMultiplier);
     }
 
     public int returnNormalEncoderPosition(){
-        return (horizontalEncoder.getCurrentPosition() * normalEncoderPositionMultiplier);
+        return (horizontalEncoderValue * normalEncoderPositionMultiplier);
     }
 
     public void reverseLeftEncoder(){

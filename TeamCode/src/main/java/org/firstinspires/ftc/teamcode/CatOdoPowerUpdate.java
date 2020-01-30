@@ -19,7 +19,7 @@ public class CatOdoPowerUpdate {
     private double distanceToTarget;
 
     static final private double rampUpTime       = 400;  // In milliseconds
-    static final private double rampDownDistance = 18;
+    static final private double rampDownDistance = 40;
 
     private double targetX;
     private double targetY;

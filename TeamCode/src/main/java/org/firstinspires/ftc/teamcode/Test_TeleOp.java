@@ -54,9 +54,9 @@ public class Test_TeleOp extends LinearOpMode {
         waitForStart();
 
         if(robot.isRedAlliance) {
-            robot.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
+            robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
         } else {
-            robot.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
+            robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
         }
         // Go!
         runTime.reset();
@@ -127,7 +127,7 @@ public class Test_TeleOp extends LinearOpMode {
             telemetry.addData("X Position", robot.driveOdo.updatesThread.positionUpdate.returnXInches());
             telemetry.addData("Y Position", robot.driveOdo.updatesThread.positionUpdate.returnYInches());
             telemetry.addData("Orientation (Degrees)", robot.driveOdo.updatesThread.positionUpdate.returnOrientation());
-
+            telemetry.addData("intakeSensor ", robot.jaws.hasStone());
             telemetry.update();
         }
 

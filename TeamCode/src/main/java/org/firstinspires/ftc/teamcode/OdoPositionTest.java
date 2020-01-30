@@ -147,7 +147,9 @@ public class OdoPositionTest extends LinearOpMode {
     public void driveAndTwist() throws InterruptedException {
 
         //go to block and pick it up
-        robot.driveOdo.quickDrive(0, 72, .9, 90, .4, 4);
+        robot.driveOdo.quickDrive(0, 72, .9, 0, .4, 4);
+        //robot.driveOdo.quickDrive(0, 72, .9, 90, .4, 4);
+       // robot.driveOdo.quickDrive(0, 0, .9, 90, .4, 4);
         robot.driveOdo.quickDrive(0, 0, .9, 0, .4, 4);
        // robot.driveOdo.quickDrive(0, 72, .9, 90, .3, 4);
         //robot.driveOdo.quickDrive(0, 0, .9, 0, .3, 4);
@@ -161,10 +163,10 @@ public class OdoPositionTest extends LinearOpMode {
     public void bigSquare() throws InterruptedException {
 
         //go to block and pick it up
-        robot.driveOdo.quickDrive(0, 96, .9, 0, .3, 4);
+        robot.driveOdo.quickDrive(0, 96, .4, 0, .3, 4);
         robot.driveOdo.quickDrive(48+14, 96, .9, 0, .3, 4);
         robot.driveOdo.quickDrive(48+14, 0, .9, 0, .3, 4);
-        robot.driveOdo.quickDrive(0, 0, .9, 0, .3, 4);
+        robot.driveOdo.quickDrive(0, 0, .4, 0, .3, 4);
         robot.robotWait(1.5);
         //attemt to improve
         //robot.driveOdo.quickDrive(0, 0, .4, 0, 0, 4);

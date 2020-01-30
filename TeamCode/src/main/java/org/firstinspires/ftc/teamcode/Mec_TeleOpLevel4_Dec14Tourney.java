@@ -51,11 +51,9 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         if(robot.isRedAlliance) {
-            robot.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
-            robot.underLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
         } else {
-            robot.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
-            robot.underLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
         }
 
         // Go! (Presses PLAY)
@@ -167,5 +165,7 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
                     robot.driveClassic.rightRearMotor.getCurrentPosition()  );
             telemetry.update();
         }
+
+        robot.driveOdo.updatesThread.stop();
     }
 }

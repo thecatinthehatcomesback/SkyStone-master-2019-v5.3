@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.openftc.revextensions2.ExpansionHubEx;
+
 /**
  * Created by Team #10273, The Cat in the Hat Comes Back.
  */
@@ -18,8 +20,8 @@ public class CatOdoAllUpdates implements Runnable{
      */
     public void stop(){ isRunning = false; }
 
-    public CatOdoAllUpdates(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH) {
-        positionUpdate = new CatOdoPositionUpdate(verticalEncoderLeft, verticalEncoderRight, horizontalEncoder, COUNTS_PER_INCH);
+    public CatOdoAllUpdates(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH) {
+        positionUpdate = new CatOdoPositionUpdate(inExpansionHub, verticalEncoderLeft, verticalEncoderRight, horizontalEncoder, COUNTS_PER_INCH);
         powerUpdate = new CatOdoPowerUpdate(positionUpdate);
         //positionUpdate.reverseLeftEncoder();
     }
