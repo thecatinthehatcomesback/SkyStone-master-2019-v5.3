@@ -34,7 +34,9 @@ public class CatOdoAllUpdates implements Runnable{
         if (singleInstance == null) {
             singleInstance = new CatOdoAllUpdates(inExpansionHubIn,verticalEncoderLeftIn,verticalEncoderRightIn,horizontalEncoderIn,COUNTS_PER_INCHIn);
         }
+
         return singleInstance;
+
     }
 
     public void resetThreads(){

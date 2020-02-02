@@ -14,7 +14,8 @@ public class CatOdoPowerUpdate {
 
     // Variables:
     private double currentPower;
-    private double minPower = 0.27;
+    private final double defaultMinPower = 0.27;
+    private double minPower = defaultMinPower;
     private double maxPower;
     private double distanceToTarget;
 
@@ -34,14 +35,14 @@ public class CatOdoPowerUpdate {
     }
 
     public void reset(){
-        minPower = 0.27;
+        minPower = defaultMinPower;
     }
 
     public  void powerBoast(double power){
         minPower = power;
     }
     public  void powerNormal(){
-        minPower = .15;
+        minPower = defaultMinPower;
     }
 
 

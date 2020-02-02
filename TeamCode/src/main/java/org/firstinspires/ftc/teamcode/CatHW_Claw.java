@@ -59,9 +59,11 @@ public class CatHW_Claw extends CatHW_Subsystem
     public void init()  throws InterruptedException  {
         rightFoundationClaw = hwMap.servo.get("right_claw_servo");
         leftFoundationClaw  = hwMap.servo.get("left_claw_servo");
+        capstoneClaw = hwMap.servo.get("capstone_servo");
 
         // Pull the claw in to fit within sizing cube:
         retractClaws();
+        grabCapstone();
     }
 
     /**
@@ -81,11 +83,11 @@ public class CatHW_Claw extends CatHW_Subsystem
     }
 
     public void releaseCapstone(){
-    capstoneClaw.setPosition(1);
+        capstoneClaw.setPosition(0.1);
     }
 
     public void grabCapstone(){
-        capstoneClaw.setPosition(0);
+        capstoneClaw.setPosition(0.7);
     }
 
 

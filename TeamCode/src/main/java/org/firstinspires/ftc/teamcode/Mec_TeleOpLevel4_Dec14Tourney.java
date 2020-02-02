@@ -28,7 +28,6 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
     CatHW_Async robot = new CatHW_Async();  // Use our new mecanum async hardware
 
 
-
     // Our constructor for this class
     public Mec_TeleOpLevel4_Dec14Tourney() {
         robot = new CatHW_Async();
@@ -129,9 +128,7 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
 
             //release the capstone
             if(gamepad2.y) {
-
-            robot.claw.releaseCapstone();
-
+                robot.claw.releaseCapstone();
             }
 
             // Open/Close Foundation Fingers:
@@ -156,6 +153,7 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
             robot.tail.tailExtend.setPower(-gamepad2.left_stick_y);
 
 
+
             // Grabber controls:
             if (gamepad2.left_bumper) {
                 robot.tail.closeGrabber();
@@ -163,6 +161,8 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
             if (gamepad2.right_bumper){
                 robot.tail.openGrabber();
             }
+
+
 
 
             /**

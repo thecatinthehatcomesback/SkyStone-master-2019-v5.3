@@ -39,6 +39,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
     private boolean isRedAlliance = true;
     private boolean isBuildZone = false;
     private boolean isParkAtWall = false;
+    private boolean isFoundation = true;
 
     private CatHW_Vision.skyStonePos skyStonePos = CatHW_Vision.skyStonePos.OUTSIDE;
 
@@ -126,6 +127,15 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                 }
                 delayTimer.reset();
             }
+            if (((gamepad1.dpad_right) && delayTimer.seconds() > 0.8)) {
+                // Changes Alliance Sides
+                if (isFoundation) {
+                    isFoundation = false;
+                } else {
+                    isFoundation = true;
+                }
+                delayTimer.reset();
+            }
 
             /**
              * LED code:
@@ -162,8 +172,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                 telemetry.addData("Alliance: ", "Blue");
             }
 
-            telemetry.addData("isBuildZone Side?", isBuildZone);
-            telemetry.addData("isParkAtWall", isParkAtWall);
+            telemetry.addData("isBuildZone Side? ", isBuildZone);
+            telemetry.addData("isParkAtWall ", isParkAtWall);
+            telemetry.addData("isFoundation ", isFoundation);
             telemetry.update();
 
             /**
@@ -206,23 +217,44 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                     robot.driveOdo.quickDrive(3, 32, .9, -30,  2);
                     //pick up stone
                     robot.driveOdo.quickDrive(-1, 38, .9, -50, 2);
-                    //back up and turn part way
-                    robot.driveOdo.quickDrive(0,28, .9, 30, 2);
-                    robot.jaws.turnOffJaws();
-                    //drive under bridge
-                    robot.driveOdo.quickDrive(42, 28, .9, 90, 3.5);
-                    //output stone
-                    robot.jaws.outputJaws();
+                    if (isFoundation) {
+                        //go under skybridge backwards
+                        robot.driveOdo.quickDrive(-1, 20, .9, -90, 1);
+                        robot.driveOdo.quickDrive(60, 22, .9, -90, 3);
+                        //turn toward foundation and latch on
+                        robot.driveOdo.quickDrive(84, 40, .9, -180, 2);
+                        robot.claw.extendClaws();
+                        robot.robotWait(1);
+                        //move foundation and release stone
+                        robot.jaws.outputJaws();
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.quickDrive(74, 10, .9, -40, 4);
+                        robot.driveOdo.quickDrive(78, 8, .9, -90, 1);
+                        //release foundation
+                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.claw.retractClaws();
+                        robot.robotWait(1);
+                        robot.driveOdo.quickDrive(84, 28, .9, -90, 2);
+                    }
+                    else {
+                        //back up and turn part way
+                        robot.driveOdo.quickDrive(0, 28, .9, 30, 2);
+                        robot.jaws.turnOffJaws();
+                        //drive under bridge
+                        robot.driveOdo.quickDrive(42, 28, .9, 90, 3.5);
+                        //output stone
+                        robot.jaws.outputJaws();
+                    }
                     //back up
-                    robot.driveOdo.quickDrive(-10, 34, .9, -90, 4);
+                    robot.driveOdo.quickDrive(-14, 30, .9, -90, 4);
                     //pick up second skystone
                     robot.jaws.intakeJaws();
                     robot.driveOdo.quickDrive(-22, 62, .9, -50, 1.5);
                     //back up and drive under bridge
                     robot.driveOdo.quickDrive(-16, 30, .9, 30, 2);
-                    robot.driveOdo.quickDrive(42, 28, .9, 90, 4);
+                    robot.driveOdo.quickDrive(42, 34, .9, 90, 4);
                     robot.jaws.outputJaws();
-                    robot.driveOdo.quickDrive(30, 28, .9, 90, 2);
+                    robot.driveOdo.quickDrive(30, 36, .9, 90, 2);
 
                     break;
                 case CENTER:
@@ -261,7 +293,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                     robot.jaws.turnOffJaws();
                     //drive under bridge
                     robot.driveOdo.quickDrive(42, 32, .9, 90, 3.5);
-                    //place stone on foundation
+                    //place stone on isFoundation
                     robot.jaws.outputJaws();
                     //back up
                     robot.driveOdo.quickDrive(1, 34, .9, -90, 4);
@@ -452,18 +484,18 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
     public void driveBuildZone() throws InterruptedException {
 
         /*
-        // drive to the foundation slowly
+        // drive to the isFoundation slowly
         robot.driveOdo.quickDrive( isRedAlliance ? -20 : 17,-35,.45,isRedAlliance ? 8 : -8,.2,4);
-        //lower the foundation claws
+        //lower the isFoundation claws
         robot.claw.extendClaws();
         robot.robotWait(.25);
-        //override the min power so we have enough power to move the foundation while driving
+        //override the min power so we have enough power to move the isFoundation while driving
         robot.driveOdo.updatesThread.powerUpdate.powerBoast(.7);
         //drive straight forward a little to simplify the turn
         robot.driveOdo.quickDrive(isRedAlliance ? -13 : 13,-19,.9,0,.2,3);
-        //rotate the foundation while moving forward
+        //rotate the isFoundation while moving forward
         robot.driveOdo.quickDrive(isRedAlliance ? -5 : 5,-6,.9,isRedAlliance ? 90 : -90,.7,4);
-        //push the foundation against the wall
+        //push the isFoundation against the wall
         robot.driveOdo.quickDrive(isRedAlliance ? -13 : 13,-6,.9,isRedAlliance ? 90 : -90,.67,3);
         //reset min power to normal
         robot.driveOdo.updatesThread.powerUpdate.powerNormal();
