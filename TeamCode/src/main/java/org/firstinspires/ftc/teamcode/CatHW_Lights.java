@@ -37,10 +37,16 @@ import java.util.ArrayList;
 public class CatHW_Lights implements Runnable
 {
 
+    // static variable singleInstance of type Singleton
+    private static CatHW_Lights singleInstance = null;
+
     // Thread run condition
     private boolean isRunning   = true;
     private int     sleepTime   = 25;
     private LightPattern defaultPattern = new LightPattern(sleepTime,RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+
+    //list
+    private ArrayList<LightPattern> patternList = new ArrayList<>();
 
     // blinkin objects:
     public RevBlinkinLedDriver lights = null;
@@ -52,16 +58,22 @@ public class CatHW_Lights implements Runnable
     //hw map
     HardwareMap hwMap;
 
-    //list
-    private ArrayList<LightPattern> patternList = new ArrayList<LightPattern>();
 
     /* Constructor */
-    public CatHW_Lights(CatHW_Async mainHardware){
 
-    hwMap = mainHardware.hwMap;
+    // private constructor restricted to this class itself
+    private CatHW_Lights(CatHW_Async mainHardware) {
+        hwMap = mainHardware.hwMap;
 
     }
 
+    // static method to create instance of Singleton class
+    public static CatHW_Lights getInstanceAndInit(CatHW_Async mainHardwareIn ) {
+        if (singleInstance == null) {
+            singleInstance = new CatHW_Lights(mainHardwareIn);
+        }
+        return singleInstance;
+    }
 
     public void init(){
 
@@ -72,13 +84,17 @@ public class CatHW_Lights implements Runnable
         underPattern     = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
         lights.setPattern(pattern);
         underLights.setPattern(underPattern);
-
+        Thread lightsThread = new Thread(this);
+        lightsThread.start();
+        isRunning = true;
+        defaultPattern = new LightPattern(sleepTime,RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+        patternList.clear();
     }
 
-    public void blink (int num, RevBlinkinLedDriver.BlinkinPattern color, int timeperblink){
+    public void blink (int num, RevBlinkinLedDriver.BlinkinPattern color, int timeperblinkMS){
         for (int i = 0; i < num; i++){
-            addQueue(new LightPattern(timeperblink,color));
-            addQueue(new LightPattern(timeperblink, RevBlinkinLedDriver.BlinkinPattern.BLACK));
+            addQueue(new LightPattern(timeperblinkMS,color));
+            addQueue(new LightPattern(timeperblinkMS, RevBlinkinLedDriver.BlinkinPattern.BLACK));
 
         }
 

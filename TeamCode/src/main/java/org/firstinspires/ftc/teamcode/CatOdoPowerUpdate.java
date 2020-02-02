@@ -14,12 +14,12 @@ public class CatOdoPowerUpdate {
 
     // Variables:
     private double currentPower;
-    private double minPower = 0.2;
+    private double minPower = 0.27;
     private double maxPower;
     private double distanceToTarget;
 
     static final private double rampUpTime       = 400;  // In milliseconds
-    static final private double rampDownDistance = 40;
+    static final private double rampDownDistance = 23;
 
     private double targetX;
     private double targetY;
@@ -31,6 +31,10 @@ public class CatOdoPowerUpdate {
      */
     CatOdoPowerUpdate(CatOdoPositionUpdate inPositionUpdate) {
         positionUpdate = inPositionUpdate;
+    }
+
+    public void reset(){
+        minPower = 0.27;
     }
 
     public  void powerBoast(double power){

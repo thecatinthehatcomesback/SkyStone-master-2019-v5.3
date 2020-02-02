@@ -106,8 +106,10 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         resetOdometryEncoders();
 
         // Odometry Setup
-        updatesThread = new CatOdoAllUpdates(expansionHub, leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
+
+        updatesThread = updatesThread.getInstanceAndInit(expansionHub, leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
         Thread allUpdatesThread = new Thread(updatesThread);
+        updatesThread.resetThreads();
         allUpdatesThread.start();
 
         // Sets enums to a default value
@@ -134,7 +136,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
     }
     // Driving Methods:
-    public void translateDrive(double x, double y, double power, double theta, double turnSpeed, double timeoutS){
+    public void translateDrive(double x, double y, double power, double theta, double timeoutS){
 
         currentMethod = DRIVE_METHOD.translate;
         timeout = timeoutS;
@@ -151,9 +153,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         // Power update Thread:
         updatesThread.powerUpdate.setTarget(x, y, power);
     }
-    public void quickDrive(double x, double y, double power, double theta, double turnSpeed, double timeoutS){
+    public void quickDrive(double x, double y, double power, double theta, double timeoutS){
 
-        translateDrive(x,y,power,theta,turnSpeed,timeoutS);
+        translateDrive(x,y,power,theta,timeoutS);
         waitUntilDone();
     }
 
@@ -219,13 +221,17 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 rBackPower = lFrontPower;
 
                 double minTP;
-                minTP = (updatesThread.powerUpdate.getDistanceToTarget() - 10.0)/-30.0;
+                minTP = (updatesThread.powerUpdate.getDistanceToTarget() - 6.0)/-20.0;
 
                 if (minTP < 0){
                     minTP = 0;
                 }
                 if (minTP > .2){
                     minTP = .2;
+                }
+
+                if((getTheta - targetTheta)<2){
+                    minTP = 0;
                 }
 
                 turnPower = Math.abs((getTheta - targetTheta)/120.0);

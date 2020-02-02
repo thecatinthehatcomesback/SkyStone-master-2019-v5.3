@@ -58,6 +58,8 @@ public class Test_TeleOp extends LinearOpMode {
         } else {
             robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
         }
+
+
         // Go!
         runTime.reset();
         elapsedGameTime.reset();

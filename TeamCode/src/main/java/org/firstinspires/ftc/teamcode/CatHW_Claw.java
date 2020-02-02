@@ -42,7 +42,7 @@ public class CatHW_Claw extends CatHW_Subsystem
     /* Public OpMode members. */
     public Servo rightFoundationClaw = null;
     public Servo leftFoundationClaw  = null;
-
+    public Servo capstoneClaw        = null;
 
     /* local OpMode members. */
     LinearOpMode opMode     = null;
@@ -78,6 +78,14 @@ public class CatHW_Claw extends CatHW_Subsystem
         rightFoundationClaw.setPosition(1);
         //left starts at 0 and moves to .18 for a total movement of .18
         leftFoundationClaw.setPosition(0);
+    }
+
+    public void releaseCapstone(){
+    capstoneClaw.setPosition(1);
+    }
+
+    public void grabCapstone(){
+        capstoneClaw.setPosition(0);
     }
 
 

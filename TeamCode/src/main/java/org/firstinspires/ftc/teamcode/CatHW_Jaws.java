@@ -101,7 +101,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
         /**
          * Turn on both jaws motors to spit OUT:
          */
-        rightJawMotor.setPower(JAW_POWER*0.3);
+        rightJawMotor.setPower(-JAW_POWER*0.5);
     }
     public void turnOffJaws() {
         /**

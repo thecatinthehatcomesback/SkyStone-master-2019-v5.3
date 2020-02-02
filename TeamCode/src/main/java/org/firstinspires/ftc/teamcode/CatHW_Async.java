@@ -83,7 +83,7 @@ public class CatHW_Async
 
         opMode.telemetry.addData("Initialize","Lights...");
         opMode.telemetry.update();
-        lights = new CatHW_Lights(this);
+        lights = CatHW_Lights.getInstanceAndInit(this);
         lights.init();
 
         if (isInitOdo) {

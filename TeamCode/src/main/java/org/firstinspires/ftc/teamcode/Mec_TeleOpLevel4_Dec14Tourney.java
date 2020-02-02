@@ -22,6 +22,8 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
     /* Declare OpMode members. */
     private ElapsedTime elapsedGameTime = new ElapsedTime();
 
+    private ElapsedTime XButtonTime = new ElapsedTime();
+
     /* Declare OpMode members. */
     CatHW_Async robot = new CatHW_Async();  // Use our new mecanum async hardware
 
@@ -58,12 +60,14 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
 
         // Go! (Presses PLAY)
         elapsedGameTime.reset();
+        XButtonTime.reset();
         double driveSpeed;
         double leftFront;
         double rightFront;
         double leftBack;
         double rightBack;
         double SF;
+        boolean hooksDown = false;
 
         // Run infinitely until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -123,12 +127,26 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
              */
 
 
-            // Open/Close Foundation Fingers:
+            //release the capstone
             if(gamepad2.y) {
-                robot.claw.retractClaws();
+
+            robot.claw.releaseCapstone();
+
             }
-            if (gamepad2.x) {
-                robot.claw.extendClaws();
+
+            // Open/Close Foundation Fingers:
+            if (gamepad2.x && XButtonTime.seconds() > 0.17) {
+                XButtonTime.reset();
+                if (hooksDown){
+                    //if hooks are down bring them up
+                    robot.claw.retractClaws();
+                    hooksDown = false;
+                }else {
+                    //if hooks are up put them down
+                    robot.claw.extendClaws();
+                    hooksDown = true;
+                }
+
             }
 
             // Tail/Stacker lift motor controls:

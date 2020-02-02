@@ -83,7 +83,7 @@ public class CatOdoPositionUpdate {
         //do a bulk read of encoders
         bulkData = expansionHub.getBulkInputData();
         leftEncoderValue = bulkData.getMotorCurrentPosition(verticalEncoderLeft);
-        rightEncoderValue = bulkData.getMotorCurrentPosition(rightEncoderValue);
+        rightEncoderValue = bulkData.getMotorCurrentPosition(verticalEncoderRight);
         horizontalEncoderValue = bulkData.getMotorCurrentPosition(horizontalEncoder);
         //Get Current Positions
         verticalLeftEncoderWheelPosition = (leftEncoderValue * verticalLeftEncoderPositionMultiplier);
@@ -125,6 +125,23 @@ public class CatOdoPositionUpdate {
     public double returnXInches(){ return robotGlobalXCoordinatePosition/count_per_in; }
 
     public double returnYInches(){ return robotGlobalYCoordinatePosition/count_per_in; }
+
+    public void resetPos(){
+        verticalRightEncoderWheelPosition = 0;
+        verticalLeftEncoderWheelPosition = 0;
+        normalEncoderWheelPosition = 0;
+        changeInRobotOrientation = 0;
+        robotGlobalXCoordinatePosition = 0;
+        robotGlobalYCoordinatePosition = 0;
+        robotOrientationRadians = 0;
+        previousVerticalRightEncoderWheelPosition = 0;
+        previousVerticalLeftEncoderWheelPosition = 0;
+        prevNormalEncoderWheelPosition = 0;
+        leftEncoderValue = 0;
+        rightEncoderValue = 0;
+        horizontalEncoderValue = 0;
+
+    }
 
     /**
      * Returns the robot's global x coordinate

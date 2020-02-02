@@ -24,6 +24,7 @@
  */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -147,10 +148,10 @@ public class OdoPositionTest extends LinearOpMode {
     public void driveAndTwist() throws InterruptedException {
 
         //go to block and pick it up
-        robot.driveOdo.quickDrive(0, 72, .9, 0, .4, 4);
+        robot.driveOdo.quickDrive(0, 72, .9, 90,  4);
         //robot.driveOdo.quickDrive(0, 72, .9, 90, .4, 4);
        // robot.driveOdo.quickDrive(0, 0, .9, 90, .4, 4);
-        robot.driveOdo.quickDrive(0, 0, .9, 0, .4, 4);
+        robot.driveOdo.quickDrive(0, 0, .9, 0,  4);
        // robot.driveOdo.quickDrive(0, 72, .9, 90, .3, 4);
         //robot.driveOdo.quickDrive(0, 0, .9, 0, .3, 4);
         //Display Global (x, y, theta) coordinates
@@ -158,15 +159,19 @@ public class OdoPositionTest extends LinearOpMode {
         telemetry.addData("Y Position", robot.driveOdo.updatesThread.positionUpdate.returnYInches());
         telemetry.addData("Orientation (Degrees)", robot.driveOdo.updatesThread.positionUpdate.returnOrientation());
         telemetry.update();
+        robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+        robot.robotWait(5.0);
+        //robot.lights.addQueue(new LightPattern(1000, RevBlinkinLedDriver.BlinkinPattern.RED));
+        robot.lights.blink(3, RevBlinkinLedDriver.BlinkinPattern.RED,250);
         robot.robotWait(10.0);
     }
     public void bigSquare() throws InterruptedException {
 
         //go to block and pick it up
-        robot.driveOdo.quickDrive(0, 96, .4, 0, .3, 4);
-        robot.driveOdo.quickDrive(48+14, 96, .9, 0, .3, 4);
-        robot.driveOdo.quickDrive(48+14, 0, .9, 0, .3, 4);
-        robot.driveOdo.quickDrive(0, 0, .4, 0, .3, 4);
+        robot.driveOdo.quickDrive(0, 96, .9, 0,  4);
+        robot.driveOdo.quickDrive(70, 96, .9, 0,  4);
+        robot.driveOdo.quickDrive(70, 0, .9, 0,  4);
+        robot.driveOdo.quickDrive(0, 0, .9, 0,  4);
         robot.robotWait(1.5);
         //attemt to improve
         //robot.driveOdo.quickDrive(0, 0, .4, 0, 0, 4);
