@@ -46,7 +46,7 @@ public class CatHW_Tail extends CatHW_Subsystem
 
     // Motors:
     public DcMotor tailLift     = null;
-    public DcMotor tailLift2     = null;
+    public DcMotor tailLift2    = null;
     public DcMotor tailExtend   = null;
 
     public Servo grabberServo   = null;

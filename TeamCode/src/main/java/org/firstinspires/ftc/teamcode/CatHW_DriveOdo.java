@@ -16,7 +16,6 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
@@ -39,9 +38,9 @@ import java.util.ArrayList;
 public class CatHW_DriveOdo extends CatHW_DriveBase
 {
     /* Wheel measurements */   //TODO:  Update these constants!
-    static final double     ODO_COUNTS_PER_REV        = 8192;     // 8192 for rev encoder from rev robotics
-    static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
-    static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
+    private static final double     ODO_COUNTS_PER_REV        = 8192;     // 8192 for rev encoder from rev robotics
+    private static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
+    static final double             ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
 
     double  targetX;
@@ -75,14 +74,13 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
     CatOdoAllUpdates updatesThread;
 
-    /* local OpMode members. */
-    LinearOpMode opMode = null;
 
     /* Constructor */
     public CatHW_DriveOdo(CatHW_Async mainHardware){
         super(mainHardware);
 
     }
+
 
     /* Initialize standard Hardware interfaces */
     public void init()  throws InterruptedException  {
@@ -92,14 +90,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
         // Define and Initialize Motors //
-        //leftOdometry     = hwMap.dcMotor.get("left_jaw_motor");
-        //rightOdometry    = hwMap.dcMotor.get("right_jaw_motor");
-        //backOdometry     = hwMap.dcMotor.get("left_rear_motor");
-
-        //leftOdometry     = hwMap.dcMotor.get("right_jaw_motor");
-        //rightOdometry    = hwMap.dcMotor.get("left_rear_motor");
-        //backOdometry     = hwMap.dcMotor.get("left_jaw_motor");
-
         leftOdometry     = hwMap.dcMotor.get("left_rear_motor");
         rightOdometry    = hwMap.dcMotor.get("left_jaw_motor");
         backOdometry     = hwMap.dcMotor.get("right_jaw_motor");
@@ -130,12 +120,12 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     public ArrayList<Point> lineCircleIntersection(Point circleCenter, double radius,
                                                    Point linePoint1, Point linePoint2) {
         // Make sure we don't have a slope of 1 or 0.
-        /*if (Math.abs(linePoint1.x - linePoint2.x) < 0.003) {
+        if (Math.abs(linePoint1.x - linePoint2.x) < 0.003) {
             linePoint1.x = linePoint2.x + 0.003;
         }
         if (Math.abs(linePoint1.y - linePoint2.y) < 0.003) {
             linePoint1.y = linePoint2.y + 0.003;
-        }*/
+        }
 
         // Slope of line
         double m1 = (linePoint2.y - linePoint1.y) / (linePoint2.x - linePoint1.x);

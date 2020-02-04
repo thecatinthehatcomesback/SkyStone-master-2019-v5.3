@@ -34,7 +34,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class CatHW_Async
 {
     /* Public OpMode members. */
-    public boolean isInitOdo = false;
 
     // LED stuff:
     public RevBlinkinLedDriver lights = null;
@@ -45,15 +44,16 @@ public class CatHW_Async
 
 
     /* local OpMode members. */
+
     HardwareMap hwMap           = null;
     LinearOpMode opMode         = null;
 
 
     /* Other Hardware subSystems */
-    CatHW_Jaws          jaws            = null;
     CatHW_Claw          claw            = null;
     CatHW_DriveClassic  driveClassic    = null;
     CatHW_DriveOdo      driveOdo        = null;
+    CatHW_Jaws          jaws            = null;
     CatHW_Tail          tail            = null;
     CatHW_Vision        eyes            = null;
 
@@ -64,10 +64,10 @@ public class CatHW_Async
 
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap, LinearOpMode theOpMode, boolean isInitOdo)  throws InterruptedException  {
+    public void init(HardwareMap hwMap, LinearOpMode theOpMode, boolean isInitOdo)  throws InterruptedException  {
 
         // Save Reference to Hardware map
-        hwMap = ahwMap;
+        this.hwMap = hwMap;
         opMode = theOpMode;
 
         // Give Telemetry for each system we begin to init:
@@ -100,15 +100,15 @@ public class CatHW_Async
         opMode.telemetry.addData("Initialize","Eyes...");
         opMode.telemetry.update();
         eyes = new CatHW_Vision(this);
-        eyes.initVision(hwMap);
+        eyes.initVision(this.hwMap);
 
         opMode.telemetry.addData("Initialize","All Done...  BOOM!");
         opMode.telemetry.update();
 
         // Blinkin LED stuff //
-        lights           = hwMap.get(RevBlinkinLedDriver.class, "blinky");
+        lights           = this.hwMap.get(RevBlinkinLedDriver.class, "blinky");
         pattern          = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
-        underLights      = hwMap.get(RevBlinkinLedDriver.class, "under_blinky");
+        underLights      = this.hwMap.get(RevBlinkinLedDriver.class, "under_blinky");
         underPattern     = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
         lights.setPattern(pattern);
         underLights.setPattern(underPattern);
@@ -128,9 +128,6 @@ public class CatHW_Async
         while (opMode.opModeIsActive()  &&  (delayTimer.seconds() < seconds)) {
             opMode.idle();
         }
-    }
-    public double limitRange(double number, double min, double max) {
-        return Math.min(Math.max(number, min), max);
     }
 
     /**

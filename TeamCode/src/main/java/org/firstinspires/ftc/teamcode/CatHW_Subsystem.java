@@ -26,8 +26,8 @@ public class CatHW_Subsystem
 {
 
     /* local OpMode members. */
-    public HardwareMap hwMap        = null;
-    public CatHW_Async mainHW        = null;
+    public HardwareMap hwMap    = null;
+    public CatHW_Async mainHW   = null;
 
     /* Constructor */
     public CatHW_Subsystem(CatHW_Async mainHardware){

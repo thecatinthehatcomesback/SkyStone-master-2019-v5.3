@@ -60,7 +60,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
 
 
     /* Initialize standard Hardware interfaces */
-    public void init()  throws InterruptedException  {
+    public void init() throws InterruptedException  {
 
         // Define and Initialize Motors //
         //leftJawMotor    = hwMap.dcMotor.get("left_jaw_motor");

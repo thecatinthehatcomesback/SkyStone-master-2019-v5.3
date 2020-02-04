@@ -66,7 +66,6 @@ public class CatHW_Vision extends CatHW_Subsystem
 
     public CatHW_Vision(CatHW_Async mainHardware){
         super(mainHardware);
-
     }
 
     public void initVision(HardwareMap ahwMap) {
