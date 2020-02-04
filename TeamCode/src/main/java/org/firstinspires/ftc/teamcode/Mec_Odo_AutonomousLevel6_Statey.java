@@ -39,7 +39,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
     private boolean isRedAlliance = true;
     private boolean isBuildZone = false;
     private boolean isParkAtWall = false;
-    private boolean isFoundation = true;
+    private boolean isFoundation = false;
 
     private CatHW_Vision.skyStonePos skyStonePos = CatHW_Vision.skyStonePos.OUTSIDE;
 
@@ -207,280 +207,409 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
     public void driveLoadingZone() throws InterruptedException {
 
         if(isRedAlliance) {
-            //go to block and pick it up
+            //move away from wall
             robot.tail.openGrabber();
             robot.driveOdo.quickDrive(0, 6, .9, 0,  1);
             robot.jaws.intakeJawsRed();
-            switch (skyStonePos) {
-                case INSIDE:
-                    //drive to stone
-                    robot.driveOdo.quickDrive(3, 32, .9, -30,  2);
-                    //pick up stone
-                    robot.driveOdo.quickDrive(-1, 38, .9, -50, 2);
-                    if (isFoundation) {
+            if (isFoundation) {
+                //2 skystones, move foundation and park
+                switch (skyStonePos) {
+                    case INSIDE:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(3, 32, .9, -30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(-1, 38, .9, -50, 2);
+                        //go under skybridge backwards
+                        robot.driveOdo.quickDrive(-1, 22, .9, -90, 1);
+                        robot.driveOdo.quickDrive(70, 24, .9, -90, 3);
+                        //turn toward foundation and latch on
+                        robot.driveOdo.quickDrive(84, 42, .9, -175, 2);
+                        robot.claw.extendClaws();
+                        robot.robotWait(1);
+                        //move foundation and release stone
+                        robot.jaws.outputJaws();
+                        robot.robotWait(.2);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.quickDrive(72, 8, .9, -10, 3);
+                        robot.driveOdo.quickDrive(78, 8, .9, -90, 1);
+                        //release foundation
+                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.claw.retractClaws();
+                        robot.robotWait(.75);
+                        robot.driveOdo.quickDrive(84, 30, .9, -90, 2);
+                        //back up
+                        robot.driveOdo.quickDrive(-12, 30, .9, -90, 4);
+                        //pick up second skystone
+                        robot.jaws.intakeJaws();
+                        robot.driveOdo.quickDrive(-22, 62, .9, -40, 1.5);
+                        //back up and drive under bridge
+                        robot.driveOdo.quickDrive(-16, 34, .9, 30, 2);
+                        robot.driveOdo.quickDrive(42, 34, .9, 90, 4);
+                        robot.jaws.outputJaws();
+                        robot.driveOdo.quickDrive(30, 36, .9, 90, 2);
+
+                    break;
+                    case CENTER:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(11, 32, .9, -30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(6, 38, .9, -55, 2);
+                            //go under skybridge backwards
+                            robot.driveOdo.quickDrive(-1, 20, .9, -90, 1);
+                            robot.driveOdo.quickDrive(60, 22, .9, -90, 3);
+                            //turn toward foundation and latch on
+                            robot.driveOdo.quickDrive(84, 42, .9, -180, 2);
+                            robot.claw.extendClaws();
+                            robot.robotWait(1);
+                            //move foundation and release stone
+                            robot.jaws.outputJaws();
+                            robot.robotWait(.75);
+                            robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                            robot.driveOdo.quickDrive(72, 10, .9, -115, 3);
+                            robot.driveOdo.quickDrive(78, 8, .9, -90, 1);
+                            //release foundation
+                            robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                            robot.claw.retractClaws();
+                            robot.robotWait(.75);
+                            robot.driveOdo.quickDrive(84, 28, .9, -90, 2);
+                            //back up
+                            robot.driveOdo.quickDrive(-6, 26, .9, -90, 4);
+                            //pick up second skystone
+                            robot.jaws.intakeJaws();
+                            robot.driveOdo.quickDrive(-15, 58, .9, -40, 1.5);
+                            //back up and drive under bridge
+                            robot.driveOdo.quickDrive(-8, 30, .9, 30, 2);
+                            robot.driveOdo.quickDrive(42, 30, .9, 90, 4);
+                            robot.jaws.outputJaws();
+                            robot.driveOdo.quickDrive(30, 32, .9, 90, 2);
+
+                        break;
+                    case OUTSIDE:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(19, 32, .9, -30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(15, 42, .9, -50, 2);
+                            //go under skybridge backwards
+                            robot.driveOdo.quickDrive(-1, 22, .9, -90, 1);
+                            robot.driveOdo.quickDrive(60, 24, .9, -90, 3);
+                            //turn toward foundation and latch on
+                            robot.driveOdo.quickDrive(84, 40, .9, -180, 2);
+                            robot.claw.extendClaws();
+                            robot.robotWait(1);
+                            //move foundation and release stone
+                            robot.jaws.outputJaws();
+                            robot.robotWait(.75);
+                            robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                            robot.driveOdo.quickDrive(72, 10, .9, -115, 3);
+                            robot.driveOdo.quickDrive(78, 8, .9, -90, 1);
+                            //release foundation
+                            robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                            robot.claw.retractClaws();
+                            robot.robotWait(.75);
+                            robot.driveOdo.quickDrive(84, 30, .9, -90, 2);
+                            //back up
+                            robot.driveOdo.quickDrive(1, 30, .9, -90, 4);
+                            //pick up second skystone
+                            robot.jaws.intakeJaws();
+                            robot.driveOdo.quickDrive(-8, 55, .9, -40, 1.5);
+                            //back up and drive under bridge
+                            robot.driveOdo.quickDrive(0, 32, .9, 30, 2);
+                            robot.driveOdo.quickDrive(42, 32, .9, 90, 4);
+                            robot.jaws.outputJaws();
+                            robot.driveOdo.quickDrive(30, 30, .9, 90, 2);
+
+                        break;
+                }
+            }
+            else {
+                //2 skystones and park
+                switch (skyStonePos) {
+                    case INSIDE:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(3, 32, .9, -30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(-1, 38, .9, -50, 2);
+                        //back up and turn part way
+                        robot.driveOdo.quickDrive(0, 30, .9, 30, 2);
+                        robot.jaws.turnOffJaws();
+                        //drive under bridge
+                        robot.driveOdo.quickDrive(38, 30, .9, 90, 3.5);
+                        //output stone
+                        robot.jaws.outputJaws();
+                        //back up
+                        robot.driveOdo.quickDrive(-10, 38, .9, -90, 4);
+                        //pick up second skystone
+                        robot.jaws.intakeJaws();
+                        //robot.driveOdo.quickDrive(-11, 58, .9, -90, 1.5);
+                        robot.driveOdo.quickDrive(-18, 58, .9, -55, 1);
+                        //back up and drive under bridge
+                        robot.driveOdo.quickDrive(-16, 34, .9, 30, 2);
+                        robot.driveOdo.quickDrive(38, 34, .9, 90, 4);
+                        robot.jaws.outputJaws();
+                        robot.driveOdo.quickDrive(30, 36, .9, 90, 2);
+
+                        break;
+                    case CENTER:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(11, 32, .9, -30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(7, 40, .9, -55, 2);
+                        //back up and turn part way
+                        robot.driveOdo.quickDrive(8, 30, .9, 30, 2);
+                        robot.jaws.turnOffJaws();
+                        //drive under bridge
+                        robot.driveOdo.quickDrive(38, 30, .9, 90, 3.5);
+                        //output stone
+                        robot.jaws.outputJaws();
+                        //back up
+                        robot.driveOdo.quickDrive(-2, 38, .9, -90, 4);
+                        //pick up second skystone
+                        robot.jaws.intakeJaws();
+                        robot.driveOdo.quickDrive(-11, 58, .9, -55, 1);
+                        //back up and drive under bridge
+                        robot.driveOdo.quickDrive(-16, 34, .9, 30, 2);
+                        robot.driveOdo.quickDrive(38, 34, .9, 90, 4);
+                        robot.jaws.outputJaws();
+                        robot.driveOdo.quickDrive(30, 36, .9, 90, 2);
+
+                        break;
+                    case OUTSIDE:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(19, 32, .9, -30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(15, 42, .9, -50, 2);
+                        //back up and turn part way
+                        robot.driveOdo.quickDrive(0, 28, .9, 30, 2);
+                        robot.jaws.turnOffJaws();
+                        //drive under bridge
+                        robot.driveOdo.quickDrive(38, 28, .9, 90, 3.5);
+                        //output stone
+                        robot.jaws.outputJaws();
+                        //back up
+                        robot.driveOdo.quickDrive(5, 34, .9, -90, 4);
+                        //pick up second skystone
+                        robot.driveOdo.quickDrive(1, 40, .9, -90, 1);
+                        robot.jaws.intakeJaws();
+                        robot.driveOdo.quickDrive(-8, 60, .9, -60, 1.5);
+                        //back up and drive under bridge
+                        robot.driveOdo.quickDrive(0, 34, .9, 30, 2);
+                        robot.driveOdo.quickDrive(38, 38, .9, 90, 4);
+                        robot.jaws.outputJaws();
+                        robot.driveOdo.quickDrive(30, 40, .9, 90, 2);
+
+                }
+            }
+
+            }
+        else {
+            //if not red alliance
+            //move away from wall
+            robot.tail.openGrabber();
+            robot.driveOdo.quickDrive(0, 6, .9, 0,  1);
+            robot.jaws.intakeJawsRed();
+            if (isFoundation) {
+                //2 skystones, move foundation and park
+                switch (skyStonePos) {
+                    case INSIDE:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(3, 32, .9, -30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(-1, 38, .9, -50, 2);
+                        //go under skybridge backwards
+                        robot.driveOdo.quickDrive(-1, 22, .9, -90, 1);
+                        robot.driveOdo.quickDrive(70, 24, .9, -90, 3);
+                        //turn toward foundation and latch on
+                        robot.driveOdo.quickDrive(84, 42, .9, -175, 2);
+                        robot.claw.extendClaws();
+                        robot.robotWait(1);
+                        //move foundation and release stone
+                        robot.jaws.outputJaws();
+                        robot.robotWait(.2);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.quickDrive(72, 8, .9, -10, 3);
+                        robot.driveOdo.quickDrive(78, 8, .9, -90, 1);
+                        //release foundation
+                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.claw.retractClaws();
+                        robot.robotWait(.75);
+                        robot.driveOdo.quickDrive(84, 30, .9, -90, 2);
+                        //back up
+                        robot.driveOdo.quickDrive(-12, 30, .9, -90, 4);
+                        //pick up second skystone
+                        robot.jaws.intakeJaws();
+                        robot.driveOdo.quickDrive(-22, 62, .9, -40, 1.5);
+                        //back up and drive under bridge
+                        robot.driveOdo.quickDrive(-16, 34, .9, 30, 2);
+                        robot.driveOdo.quickDrive(42, 34, .9, 90, 4);
+                        robot.jaws.outputJaws();
+                        robot.driveOdo.quickDrive(30, 36, .9, 90, 2);
+
+                        break;
+                    case CENTER:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(11, 32, .9, -30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(6, 38, .9, -55, 2);
                         //go under skybridge backwards
                         robot.driveOdo.quickDrive(-1, 20, .9, -90, 1);
                         robot.driveOdo.quickDrive(60, 22, .9, -90, 3);
+                        //turn toward foundation and latch on
+                        robot.driveOdo.quickDrive(84, 42, .9, -180, 2);
+                        robot.claw.extendClaws();
+                        robot.robotWait(1);
+                        //move foundation and release stone
+                        robot.jaws.outputJaws();
+                        robot.robotWait(.75);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.quickDrive(72, 10, .9, -115, 3);
+                        robot.driveOdo.quickDrive(78, 8, .9, -90, 1);
+                        //release foundation
+                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.claw.retractClaws();
+                        robot.robotWait(.75);
+                        robot.driveOdo.quickDrive(84, 28, .9, -90, 2);
+                        //back up
+                        robot.driveOdo.quickDrive(-6, 26, .9, -90, 4);
+                        //pick up second skystone
+                        robot.jaws.intakeJaws();
+                        robot.driveOdo.quickDrive(-15, 58, .9, -40, 1.5);
+                        //back up and drive under bridge
+                        robot.driveOdo.quickDrive(-8, 30, .9, 30, 2);
+                        robot.driveOdo.quickDrive(42, 30, .9, 90, 4);
+                        robot.jaws.outputJaws();
+                        robot.driveOdo.quickDrive(30, 32, .9, 90, 2);
+
+                        break;
+                    case OUTSIDE:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(19, 32, .9, -30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(15, 42, .9, -50, 2);
+                        //go under skybridge backwards
+                        robot.driveOdo.quickDrive(-1, 22, .9, -90, 1);
+                        robot.driveOdo.quickDrive(60, 24, .9, -90, 3);
                         //turn toward foundation and latch on
                         robot.driveOdo.quickDrive(84, 40, .9, -180, 2);
                         robot.claw.extendClaws();
                         robot.robotWait(1);
                         //move foundation and release stone
                         robot.jaws.outputJaws();
+                        robot.robotWait(.75);
                         robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
-                        robot.driveOdo.quickDrive(74, 10, .9, -40, 4);
+                        robot.driveOdo.quickDrive(72, 10, .9, -115, 3);
                         robot.driveOdo.quickDrive(78, 8, .9, -90, 1);
                         //release foundation
                         robot.driveOdo.updatesThread.powerUpdate.powerNormal();
                         robot.claw.retractClaws();
-                        robot.robotWait(1);
-                        robot.driveOdo.quickDrive(84, 28, .9, -90, 2);
-                    }
-                    else {
+                        robot.robotWait(.75);
+                        robot.driveOdo.quickDrive(84, 30, .9, -90, 2);
+                        //back up
+                        robot.driveOdo.quickDrive(1, 30, .9, -90, 4);
+                        //pick up second skystone
+                        robot.jaws.intakeJaws();
+                        robot.driveOdo.quickDrive(-8, 55, .9, -40, 1.5);
+                        //back up and drive under bridge
+                        robot.driveOdo.quickDrive(0, 32, .9, 30, 2);
+                        robot.driveOdo.quickDrive(42, 32, .9, 90, 4);
+                        robot.jaws.outputJaws();
+                        robot.driveOdo.quickDrive(30, 30, .9, 90, 2);
+
+                        break;
+                }
+            }
+            else {
+
+                //is blue and no foundation
+                //2 skystones and park
+                switch (skyStonePos) {
+                    case INSIDE:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(-4, 30, .9, 40, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(6, 41, .9, 50, 2);
                         //back up and turn part way
-                        robot.driveOdo.quickDrive(0, 28, .9, 30, 2);
-                        robot.jaws.turnOffJaws();
+                        robot.driveOdo.quickDrive(3, 27, .9, -35, 2);
+                        //robot.jaws.turnOffJaws();
                         //drive under bridge
-                        robot.driveOdo.quickDrive(42, 28, .9, 90, 3.5);
+                        robot.driveOdo.quickDrive(-42, 34, .9, -75, 2.5);
                         //output stone
                         robot.jaws.outputJaws();
-                    }
-                    //back up
-                    robot.driveOdo.quickDrive(-14, 30, .9, -90, 4);
-                    //pick up second skystone
-                    robot.jaws.intakeJaws();
-                    robot.driveOdo.quickDrive(-22, 62, .9, -50, 1.5);
-                    //back up and drive under bridge
-                    robot.driveOdo.quickDrive(-16, 30, .9, 30, 2);
-                    robot.driveOdo.quickDrive(42, 34, .9, 90, 4);
-                    robot.jaws.outputJaws();
-                    robot.driveOdo.quickDrive(30, 36, .9, 90, 2);
+                        robot.robotWait(.5);
+                        //back up
 
-                    break;
-                case CENTER:
-                    //drive to stone
-                    robot.driveOdo.quickDrive(11, 32, .9, -30,  2);
-                    //pick up stone
-                    robot.driveOdo.quickDrive(6, 38, .9, -55, 2);
-                    //back up and turn part way
-                    robot.driveOdo.quickDrive(8,28, .9, 30, 2);
-                    robot.jaws.turnOffJaws();
-                    //drive under bridge
-                    robot.driveOdo.quickDrive(42, 32, .9, 90, 3.5);
-                    //output stone
-                    robot.jaws.outputJaws();
-                    //back up
-                    robot.driveOdo.quickDrive(-6, 34, .9, -90, 4);
-                    //pick up second skystone
-                    robot.jaws.intakeJaws();
-                    robot.driveOdo.quickDrive(-15, 58, .9, -40, 1.5);
-                    //back up and drive under bridge
-                    robot.driveOdo.quickDrive(-8, 34, .9, 30, 2);
-                    robot.driveOdo.quickDrive(42, 34, .9, 90, 4);
-                    robot.jaws.outputJaws();
-                    robot.driveOdo.quickDrive(30, 34, .9, 90, 2);
+                        robot.driveOdo.quickDrive(18, 28, .9, 67, 4);
+                        //pick up second skystone
+                        //robot.driveOdo.quickDrive(-11, 58, .9, -90, 1.5);
+                        robot.jaws.intakeJaws();
+                        robot.driveOdo.quickDrive(28, 38, .9, 48, 2);
+                        //back up and drive under bridge
+                        robot.driveOdo.quickDrive(16, 30, .9, -37, 3);
+                        robot.driveOdo.quickDrive(-40, 39, .9, -77, 4);
+                        robot.jaws.outputJaws();
+                        robot.robotWait(.5);
+                        robot.driveOdo.quickDrive(-27, 45, .9, -77, 2);
 
+                        break;
+                    case CENTER:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(-11, 30, .9, 30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(-7, 40, .9, 55, 2);
+                        //back up and turn part way
+                        robot.driveOdo.quickDrive(-8, 27, .9, -30, 2);
+                        //robot.jaws.turnOffJaws();
+                        //drive under bridge
+                        robot.driveOdo.quickDrive(-40, 34, .9, -80, 3.5);
+                        //output stone
+                        robot.jaws.outputJaws();
+                        robot.robotWait(.5);
+                        //back up
+                        robot.driveOdo.quickDrive(6, 34, .9, 90, 4);
+                        //pick up second skystone
+                        robot.jaws.intakeJaws();
+                        robot.driveOdo.quickDrive(17, 48, .9, 55, 2);
+                        //back up and drive under bridge
+                        robot.driveOdo.quickDrive(16, 29, .9, -30, 2);
+                        robot.driveOdo.quickDrive(-40, 41, .9, -80, 4);
+                        robot.jaws.outputJaws();
+                        robot.robotWait(.5);
+                        robot.driveOdo.quickDrive(-30, 42, .9, -80, 2);
 
+                        break;
+                    case OUTSIDE:
+                        //drive to stone
+                        robot.driveOdo.quickDrive(-17, 32, .9, 30, 2);
+                        //pick up stone
+                        robot.driveOdo.quickDrive(-12, 42, .9, 50, 2);
+                        //back up and turn part way
+                        robot.driveOdo.quickDrive(0, 27, .9, -30, 2);
+                        //robot.jaws.turnOffJaws();
+                        //drive under bridge
+                        robot.driveOdo.quickDrive(-38, 33, .9, -80, 3.5);
+                        //output stone
+                        robot.jaws.outputJaws();
+                        robot.robotWait(.5);
+                        //back up
+                        robot.driveOdo.quickDrive(-5, 31, .9, 70, 4);
+                        //pick up second skystone
+                        robot.driveOdo.quickDrive(6, 32, .9, 70, 2);
+                        robot.jaws.intakeJaws();
+                        robot.driveOdo.quickDrive(14, 43, .9, 60, 2);
+                        //back up and drive under bridge
+                        robot.driveOdo.quickDrive(0, 28, .9, -30, 2);
+                        robot.driveOdo.quickDrive(-38, 42, .9, -77, 4);
+                        robot.jaws.outputJaws();
+                        robot.robotWait(.5);
+                        robot.driveOdo.quickDrive(-30, 42, .9, -77, 2);
 
-                    break;
-                case OUTSIDE:
-                    //drive to stone
-                    robot.driveOdo.quickDrive(19, 32, .9, -30,  2);
-                    //pick up stone
-                    robot.driveOdo.quickDrive(15, 38, .9, -50, 2);
-                    //back up and turn part way
-                    robot.driveOdo.quickDrive(16,28, .9, 30, 2);
-                    robot.jaws.turnOffJaws();
-                    //drive under bridge
-                    robot.driveOdo.quickDrive(42, 32, .9, 90, 3.5);
-                    //place stone on isFoundation
-                    robot.jaws.outputJaws();
-                    //back up
-                    robot.driveOdo.quickDrive(1, 34, .9, -90, 4);
-                    //pick up second skystone
-                    robot.jaws.intakeJaws();
-                    robot.driveOdo.quickDrive(-8, 55, .9, -40, 1.5);
-                    //back up and drive under bridge
-                    robot.driveOdo.quickDrive(0, 34, .9, 30, 2);
-                    robot.driveOdo.quickDrive(42, 30, .9, 90, 4);
-                    robot.jaws.outputJaws();
-                    robot.driveOdo.quickDrive(30, 30, .9, 90, 2);
-
-
-
-
-
-                    break;
-            }
-/*
-            //drive under Sky bridge
-            robot.jaws.turnOffJaws();
-            robot.driveOdo.quickDrive( 41, 26, .8, 90 , .5, 2.5);
-            //release sky stone while backing up
-            robot.jaws.outputJaws();
-
-            switch (skyStonePos) {
-                case INSIDE:
-                    //go to center position
-                    robot.driveOdo.quickDrive( -28, 20, .8,  -40, .55, 4);
-                    robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
-                    //collect sky stone
-                    robot.jaws.intakeJawsRed();
-                    robot.driveOdo.quickDrive( -31 , 47, .8,  -70 , .66, 2);
-                    //back up from stones
-                    robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.quickDrive( -17 , 18, .8, 70 , .75, 3);
-                    break;
-                case CENTER:
-                    //go to center position
-                    robot.driveOdo.quickDrive( -21 , 28, .8, -37 , .45, 4);
-                    robot.driveOdo.updatesThread.powerUpdate.powerBoast(.5);
-                    //collect sky stone
-                    robot.jaws.intakeJawsRed();
-                    robot.driveOdo.quickDrive(-25.5 , 49, .7, -52 , .6, 2);
-                    //back up from stones
-                    robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.quickDrive( -7 , 22, .8, 70 , .75, 4);
-                    break;
-                case OUTSIDE:
-                    //go to right position
-                    robot.driveOdo.quickDrive(  -15 , 28, .8, -20 , .45, 3);
-                    robot.driveOdo.updatesThread.powerUpdate.powerBoast(.35);
-                    //collect sky stone
-                    robot.jaws.intakeJawsRed();
-                    robot.driveOdo.quickDrive(-17 , 47, .56,-55 , .65, 3);
-                    //back up from stones
-                    robot.driveOdo.quickDrive( -11, 22, .8, 60 , .7, 4);
-                    robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    break;
-
-            }
-            if (skyStonePos == CatHW_Vision.skyStonePos.INSIDE) {
-                //drive under Sky bridge and deliver sky stone
-                robot.jaws.turnOffJaws();
-                robot.driveOdo.quickDrive(41 , 16.5, .80,96 , .5, 2.5);
-                //release sky stone while backing up
-                robot.jaws.outputJaws();
-                //park under sky bridge
-                robot.driveOdo.quickDrive(25 , 16.5, .85,96, .2, 2);
-
-            } else {
-                //drive under Sky bridge and deliver sky stone
-                robot.jaws.turnOffJaws();
-                robot.driveOdo.quickDrive(41 , 21, .85,  96 , .5, 2.5);
-                //release sky stone while backing up
-                robot.jaws.outputJaws();
-                //park under sky bridge
-                robot.driveOdo.quickDrive(23.5, 20, .85,96, .2, 2);
-
+                }
             }
 
-*/
-
-        }else {
-
-
-            //if is blue
-
-/*
-
-            //go to block and pick it up
-            robot.tail.openGrabber();
-            robot.driveOdo.quickDrive(0, 6, .9, 0, .2, 1);
-            robot.jaws.intakeJawsBlue();
-            switch (skyStonePos) {
-                case INSIDE:
-                    robot.driveOdo.quickDrive( -4, 26, .65,  38, .45, 2.5);
-                    robot.driveOdo.updatesThread.powerUpdate.powerBoast(.5);
-                    robot.driveOdo.quickDrive( 0, 44, .7, 55, .5, 2);
-                    robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.quickDrive( -8, 22, .8, -70, .75, 3);
-                    break;
-                case CENTER:
-                    robot.driveOdo.quickDrive( -13, 26, .8, 38, .45, 2.5);
-                    robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
-                    robot.driveOdo.quickDrive( -7, 42, .8, 55, .6, 2);
-                    robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.quickDrive( -19, 22, .8, -70, .75, 3);
-                    break;
-                case OUTSIDE:
-                    robot.driveOdo.quickDrive( -17, 26, .8,  20, .45, 2.5);
-                    robot.driveOdo.updatesThread.powerUpdate.powerBoast(.35);
-                    //collect sky stone
-                    robot.driveOdo.quickDrive( -17, 42, .56,  50, .65, 2.5);
-                    //back up from stones
-                    robot.driveOdo.quickDrive( -15, 22, .8, -60, .7, 3);
-                    robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-
-                    break;
-            }
-
-            //drive under Sky bridge
-            robot.jaws.turnOffJaws();
-            robot.driveOdo.quickDrive( -41, 24, .8, -90, .5, 2.5);
-            //release sky stone while backing up
-            robot.jaws.outputJaws();
-
-            switch (skyStonePos) {
-                case INSIDE:
-                    //go to center position
-                    robot.driveOdo.quickDrive( 26, 18, .8, 40, .55, 4);
-                    robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
-                    //collect sky stone
-                    robot.jaws.intakeJawsBlue();
-                    robot.driveOdo.quickDrive( 29, 40, .8, 60, .66, 2);
-                    //back up from stones
-                    robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.quickDrive( 14, 16, .8, -70, .75, 3);
-                    break;
-                case CENTER:
-                    //go to center position
-                    robot.driveOdo.quickDrive( 15, 20, .8, 37, .45, 4);
-                    robot.driveOdo.updatesThread.powerUpdate.powerBoast(.5);
-                    //collect sky stone
-                    robot.jaws.intakeJawsBlue();
-                    robot.driveOdo.quickDrive( 20, 40, .7, 52, .6, 2);
-                    //back up from stones
-                    robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    robot.driveOdo.quickDrive( 1, 18, .8, -70, .75, 4);
-                    break;
-                case OUTSIDE:
-                    //go to right position
-                    robot.driveOdo.quickDrive( 16, 20, .8, 20, .45, 3);
-                    robot.driveOdo.updatesThread.powerUpdate.powerBoast(.35);
-                    //collect sky stone
-                    robot.jaws.intakeJawsBlue();
-                    robot.driveOdo.quickDrive( 18, 40, .56, 55, .65, 3);
-                    //back up from stones
-                    robot.driveOdo.quickDrive( 11, 18, .8, -60, .7, 4);
-                    robot.driveOdo.updatesThread.powerUpdate.powerNormal();
-                    break;
-
-            }
-            if (skyStonePos == CatHW_Vision.skyStonePos.INSIDE) {
-                //drive under Sky bridge and deliver sky stone
-                robot.jaws.turnOffJaws();
-                robot.driveOdo.quickDrive( -41, 12.5, .80, -96, .5, 2.5);
-                //release sky stone while backing up
-                robot.jaws.outputJaws();
-                //park under sky bridge
-                robot.driveOdo.quickDrive( -25.5, 12.5, .85, -96, .2, 2);
-
-            } else {
-                //drive under Sky bridge and deliver sky stone
-                robot.jaws.turnOffJaws();
-                robot.driveOdo.quickDrive( -41, 17, .85, -96, .5, 2.5);
-                //release sky stone while backing up
-                robot.jaws.outputJaws();
-                //park under sky bridge
-                robot.driveOdo.quickDrive( -25.5, 17, .85, -96, .2, 2);
-
-            }
-            */
+        }
         }
 
 
-    }
+
     public void driveBuildZone() throws InterruptedException {
 
         /*
