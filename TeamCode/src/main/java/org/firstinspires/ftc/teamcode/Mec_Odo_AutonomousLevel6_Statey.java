@@ -236,17 +236,17 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         robot.driveOdo.updatesThread.powerUpdate.powerNormal();
                         robot.claw.retractClaws();
                         robot.robotWait(.75);
-                        robot.driveOdo.quickDrive(84, 30, .9, -90, 2);
+                        robot.driveOdo.quickDrive(84, 26, .9, -90, 2);
                         //back up
-                        robot.driveOdo.quickDrive(-12, 30, .9, -90, 4);
+                        robot.driveOdo.quickDrive(-12, 26, .9, -90, 4);
                         //pick up second skystone
                         robot.jaws.intakeJaws();
-                        robot.driveOdo.quickDrive(-22, 62, .9, -40, 1.5);
+                        robot.driveOdo.quickDrive(-22, 50, .9, -40, 1.5);
                         //back up and drive under bridge
-                        robot.driveOdo.quickDrive(-16, 34, .9, 30, 2);
-                        robot.driveOdo.quickDrive(42, 34, .9, 90, 4);
+                        robot.driveOdo.quickDrive(-16, 30, .9, 30, 2);
+                        robot.driveOdo.quickDrive(42, 30, .9, 90, 4);
                         robot.jaws.outputJaws();
-                        robot.driveOdo.quickDrive(30, 36, .9, 90, 2);
+                        robot.driveOdo.quickDrive(30, 40, .9, 90, 2);
 
                     break;
                     case CENTER:
@@ -255,33 +255,33 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         //pick up stone
                         robot.driveOdo.quickDrive(6, 38, .9, -55, 2);
                             //go under skybridge backwards
-                            robot.driveOdo.quickDrive(-1, 20, .9, -90, 1);
-                            robot.driveOdo.quickDrive(60, 22, .9, -90, 3);
+                            robot.driveOdo.quickDrive(-1, 24, .9, -90, 1);
+                            robot.driveOdo.quickDrive(66, 24, .9, -90, 3);
                             //turn toward foundation and latch on
-                            robot.driveOdo.quickDrive(84, 42, .9, -180, 2);
+                            robot.driveOdo.quickDrive(84, 42, .9, -170, 2);
                             robot.claw.extendClaws();
                             robot.robotWait(1);
                             //move foundation and release stone
                             robot.jaws.outputJaws();
                             robot.robotWait(.75);
                             robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
-                            robot.driveOdo.quickDrive(72, 10, .9, -115, 3);
+                            robot.driveOdo.quickDrive(72, 10, .9, -10, 2);
                             robot.driveOdo.quickDrive(78, 8, .9, -90, 1);
                             //release foundation
                             robot.driveOdo.updatesThread.powerUpdate.powerNormal();
                             robot.claw.retractClaws();
                             robot.robotWait(.75);
-                            robot.driveOdo.quickDrive(84, 28, .9, -90, 2);
+                            robot.driveOdo.quickDrive(84, 29, .9, -90, 2);
                             //back up
-                            robot.driveOdo.quickDrive(-6, 26, .9, -90, 4);
+                            robot.driveOdo.quickDrive(0, 28, .9, -90, 4);
                             //pick up second skystone
                             robot.jaws.intakeJaws();
                             robot.driveOdo.quickDrive(-15, 58, .9, -40, 1.5);
                             //back up and drive under bridge
-                            robot.driveOdo.quickDrive(-8, 30, .9, 30, 2);
-                            robot.driveOdo.quickDrive(42, 30, .9, 90, 4);
+                            robot.driveOdo.quickDrive(-8, 36, .9, 30, 2);
+                            robot.driveOdo.quickDrive(42, 36, .9, 90, 4);
                             robot.jaws.outputJaws();
-                            robot.driveOdo.quickDrive(30, 32, .9, 90, 2);
+                            robot.driveOdo.quickDrive(30, 40, .9, 90, 2);
 
                         break;
                     case OUTSIDE:
@@ -322,7 +322,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                 }
             }
             else {
-                //2 skystones and park
+                //2 skystones and park (is redAlliance)
                 switch (skyStonePos) {
                     case INSIDE:
                         //drive to stone
@@ -343,10 +343,11 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         //robot.driveOdo.quickDrive(-11, 58, .9, -90, 1.5);
                         robot.driveOdo.quickDrive(-18, 58, .9, -55, 1);
                         //back up and drive under bridge
-                        robot.driveOdo.quickDrive(-16, 34, .9, 30, 2);
-                        robot.driveOdo.quickDrive(38, 34, .9, 90, 4);
+                        robot.driveOdo.quickDrive(-16, 38, .9, 30, 2);
+                        robot.driveOdo.quickDrive(38, 38, .9, 90, 4);
                         robot.jaws.outputJaws();
-                        robot.driveOdo.quickDrive(30, 36, .9, 90, 2);
+                        robot.driveOdo.quickDrive(30, 38, .9, 90, 2);
+                        robot.robotWait(2);
 
                         break;
                     case CENTER:
@@ -371,6 +372,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         robot.driveOdo.quickDrive(38, 34, .9, 90, 4);
                         robot.jaws.outputJaws();
                         robot.driveOdo.quickDrive(30, 36, .9, 90, 2);
+                        robot.robotWait(2);
 
                         break;
                     case OUTSIDE:
@@ -396,6 +398,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         robot.driveOdo.quickDrive(38, 38, .9, 90, 4);
                         robot.jaws.outputJaws();
                         robot.driveOdo.quickDrive(30, 40, .9, 90, 2);
+                        robot.robotWait(2);
 
                 }
             }
@@ -412,37 +415,37 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                 switch (skyStonePos) {
                     case INSIDE:
                         //drive to stone
-                        robot.driveOdo.quickDrive(3, 32, .9, -30, 2);
+                        robot.driveOdo.quickDrive(-3, 32, .9, 30, 2);
                         //pick up stone
-                        robot.driveOdo.quickDrive(-1, 38, .9, -50, 2);
+                        robot.driveOdo.quickDrive(1, 38, .9, 50, 2);
                         //go under skybridge backwards
-                        robot.driveOdo.quickDrive(-1, 22, .9, -90, 1);
-                        robot.driveOdo.quickDrive(70, 24, .9, -90, 3);
+                        robot.driveOdo.quickDrive(1, 22, .9, 90, 1);
+                        robot.driveOdo.quickDrive(-70, 24, .9, 90, 3);
                         //turn toward foundation and latch on
-                        robot.driveOdo.quickDrive(84, 42, .9, -175, 2);
+                        robot.driveOdo.quickDrive(-84, 42, .9, 175, 2);
                         robot.claw.extendClaws();
                         robot.robotWait(1);
                         //move foundation and release stone
                         robot.jaws.outputJaws();
                         robot.robotWait(.2);
                         robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
-                        robot.driveOdo.quickDrive(72, 8, .9, -10, 3);
-                        robot.driveOdo.quickDrive(78, 8, .9, -90, 1);
+                        robot.driveOdo.quickDrive(-72, 8, .9, 10, 3);
+                        robot.driveOdo.quickDrive(-78, 8, .9, 90, 1);
                         //release foundation
                         robot.driveOdo.updatesThread.powerUpdate.powerNormal();
                         robot.claw.retractClaws();
                         robot.robotWait(.75);
-                        robot.driveOdo.quickDrive(84, 30, .9, -90, 2);
+                        robot.driveOdo.quickDrive(-84, 34, .9, 90, 2);
                         //back up
-                        robot.driveOdo.quickDrive(-12, 30, .9, -90, 4);
+                        robot.driveOdo.quickDrive(12, 36, .9, 90, 4);
                         //pick up second skystone
                         robot.jaws.intakeJaws();
-                        robot.driveOdo.quickDrive(-22, 62, .9, -40, 1.5);
+                        robot.driveOdo.quickDrive(22, 52, .9, 40, 1.5);
                         //back up and drive under bridge
-                        robot.driveOdo.quickDrive(-16, 34, .9, 30, 2);
-                        robot.driveOdo.quickDrive(42, 34, .9, 90, 4);
+                        robot.driveOdo.quickDrive(16, 38, .9, -30, 2);
+                        robot.driveOdo.quickDrive(-42, 38, .9, -90, 4);
                         robot.jaws.outputJaws();
-                        robot.driveOdo.quickDrive(30, 36, .9, 90, 2);
+                        robot.driveOdo.quickDrive(-30, 40, .9, -90, 2);
 
                         break;
                     case CENTER:
@@ -524,30 +527,29 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                 switch (skyStonePos) {
                     case INSIDE:
                         //drive to stone
-                        robot.driveOdo.quickDrive(-4, 30, .9, 40, 2);
+                        robot.driveOdo.quickDrive(-2, 34, .9, 40, 2);
                         //pick up stone
-                        robot.driveOdo.quickDrive(6, 41, .9, 50, 2);
+                        robot.driveOdo.quickDrive(6, 36, .9, 57, 2);
                         //back up and turn part way
                         robot.driveOdo.quickDrive(3, 27, .9, -35, 2);
                         //robot.jaws.turnOffJaws();
                         //drive under bridge
-                        robot.driveOdo.quickDrive(-42, 34, .9, -75, 2.5);
+                        robot.driveOdo.quickDrive(-42, 32, .9, -75, 2.5);
                         //output stone
                         robot.jaws.outputJaws();
                         robot.robotWait(.5);
                         //back up
-
-                        robot.driveOdo.quickDrive(18, 28, .9, 67, 4);
+                        robot.driveOdo.quickDrive(14, 28, .9, 67, 4);
                         //pick up second skystone
                         //robot.driveOdo.quickDrive(-11, 58, .9, -90, 1.5);
                         robot.jaws.intakeJaws();
-                        robot.driveOdo.quickDrive(28, 38, .9, 48, 2);
+                        robot.driveOdo.quickDrive(29, 38, .9, 50, 2);
                         //back up and drive under bridge
-                        robot.driveOdo.quickDrive(16, 30, .9, -37, 3);
+                        robot.driveOdo.quickDrive(16, 32, .9, -37, 3);
                         robot.driveOdo.quickDrive(-40, 39, .9, -77, 4);
                         robot.jaws.outputJaws();
                         robot.robotWait(.5);
-                        robot.driveOdo.quickDrive(-27, 45, .9, -77, 2);
+                        robot.driveOdo.quickDrive(-27, 47, .9, -77, 2);
 
                         break;
                     case CENTER:
@@ -611,6 +613,22 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
 
 
     public void driveBuildZone() throws InterruptedException {
+        //drive to the foundation and latch on
+        robot.driveOdo.quickDrive(isRedAlliance? -24 : 20, -34, .6, 0, 2);
+        robot.claw.extendClaws();
+        robot.robotWait(.7);
+        //pull foundation back and turn
+        robot.driveOdo.quickDrive(isRedAlliance? -2 : 2, isRedAlliance? 0 : -4, .9, isRedAlliance? 80 : -75, 2);
+        //release foundation
+        robot.claw.retractClaws();
+        //push foundation into building site
+        robot.driveOdo.quickDrive(isRedAlliance? -20 : 17, isRedAlliance? 0 : -4, .9, isRedAlliance? 100 : -95, 2);
+        //drive towards wall to avoid hitting alliance partners
+        //robot.driveOdo.quickDrive(isRedAlliance? -14 : 14, isRedAlliance? -6 : 6, .9, isRedAlliance? 90 : -90, 2);
+        //park next to wall
+        robot.driveOdo.quickDrive(isRedAlliance? 30 : -26, isRedAlliance? -1 : 5, .9, isRedAlliance? 95 : -90, 3);
+
+
 
         /*
         // drive to the isFoundation slowly
