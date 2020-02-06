@@ -1,14 +1,15 @@
 /*
         CatHW_Claw.java
 
-    A "hardware" class containing common code accessing hardware specific to the foundation claws.
-    This is a modified and stripped down version of CatSingleOverallHW to run all of the foundation
-    claw movements.  This file is used by the new autonomous OpModes to run multiple operations at
-    once.
+    A "hardware" class containing common code accessing hardware specific
+    to the movement and extension of the claw.  This is a modified and
+    stripped  down version of CatSingleOverallHW to run all of the
+    foundation claw movements.  This file is used by the new autonomous
+    OpModes to run multiple operations at once.
 
 
-    This file has been modified from the original FTC SkyStone SDK.
-    Written by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file is a modified version from the FTC SDK.
+    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
 */
 
 package org.firstinspires.ftc.teamcode;
@@ -41,7 +42,7 @@ public class CatHW_Claw extends CatHW_Subsystem
     /* Public OpMode members. */
     public Servo rightFoundationClaw = null;
     public Servo leftFoundationClaw  = null;
-
+    public Servo capstoneClaw        = null;
 
     /* local OpMode members. */
     LinearOpMode opMode     = null;
@@ -58,9 +59,11 @@ public class CatHW_Claw extends CatHW_Subsystem
     public void init()  throws InterruptedException  {
         rightFoundationClaw = hwMap.servo.get("right_claw_servo");
         leftFoundationClaw  = hwMap.servo.get("left_claw_servo");
+        capstoneClaw = hwMap.servo.get("capstone_servo");
 
         // Pull the claw in to fit within sizing cube:
         retractClaws();
+        grabCapstone();
     }
 
     /**
@@ -77,6 +80,14 @@ public class CatHW_Claw extends CatHW_Subsystem
         rightFoundationClaw.setPosition(1);
         //left starts at 0 and moves to .18 for a total movement of .18
         leftFoundationClaw.setPosition(0);
+    }
+
+    public void releaseCapstone(){
+        capstoneClaw.setPosition(0.1);
+    }
+
+    public void grabCapstone(){
+        capstoneClaw.setPosition(0.7);
     }
 
 

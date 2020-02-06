@@ -1,13 +1,15 @@
 /*
         CatHW_DriveOdo.java
 
-    A "hardware" class containing common code accessing hardware specific to the movement and
-    rotation of the drive train using odometry modules and encoders.  This file is used by the new
-    autonomous OpModes to run multiple operations at once.
+    A "hardware" class containing common code accessing hardware specific
+    to the movement and rotation of the setDrivePowers train.  This is a
+    modified or stripped down version of CatSingleOverallHW to run all
+    the drive train overall.  This file is used by the new autonomous
+    OpModes to run multiple operations at once.
 
 
-    This file has been modified from the original FTC SkyStone SDK.
-    Written by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file is a modified version from the FTC SDK.
+    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
 */
 
 package org.firstinspires.ftc.teamcode;
@@ -16,6 +18,8 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.openftc.revextensions2.ExpansionHubEx;
 
 /**
  * This is NOT an OpMode.
@@ -33,17 +37,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 public class CatHW_DriveOdo extends CatHW_DriveBase
 {
-    /* Wheel measurements */        //TODO:  Update these constants!
-    private static final double     ODO_COUNTS_PER_REV        = 8192;     // 8192 for rev encoder from rev robotics
-    private static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
-    static final double             ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
+    /* Wheel measurements */   //TODO:  Update these constants!
+    static final double     ODO_COUNTS_PER_REV        = 8192;     // 8192 for rev encoder from rev robotics
+    static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
+    static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
 
-    private double targetX;
-    private double targetY;
-    double strafePower;
-    private double targetTheta;
-    private double strafeTurnPower;
+    double  targetX;
+    double  targetY;
+    double  strafePower;
+    double  targetTheta;
+    double turnPower;
 
 
     /* Enums */
@@ -67,8 +71,12 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     public DcMotor  leftOdometry    = null;
     public DcMotor  rightOdometry   = null;
     public DcMotor  backOdometry    = null;
+    public ExpansionHubEx expansionHub = null;
 
     CatOdoAllUpdates updatesThread;
+
+    /* local OpMode members. */
+    LinearOpMode opMode = null;
 
     /* Constructor */
     public CatHW_DriveOdo(CatHW_Async mainHardware){
@@ -84,29 +92,24 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
         // Define and Initialize Motors //
-        //leftOdometry     = hwMap.dcMotor.get("left_jaw_motor");
-        //rightOdometry    = hwMap.dcMotor.get("right_jaw_motor");
-        //backOdometry     = hwMap.dcMotor.get("left_rear_motor");
-
-        //leftOdometry     = hwMap.dcMotor.get("right_jaw_motor");
-        //rightOdometry    = hwMap.dcMotor.get("left_rear_motor");
-        //backOdometry     = hwMap.dcMotor.get("left_jaw_motor");
 
         leftOdometry     = hwMap.dcMotor.get("left_rear_motor");
-        rightOdometry    = hwMap.dcMotor.get("left_jaw_motor");
+        rightOdometry    = hwMap.dcMotor.get("tail_lift2");
         backOdometry     = hwMap.dcMotor.get("right_jaw_motor");
-
+        expansionHub     = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         // Set odometry directions //
-        leftOdometry.setDirection(DcMotor.Direction.REVERSE);
+        //leftOdometry.setDirection(DcMotor.Direction.REVERSE);
         rightOdometry.setDirection(DcMotor.Direction.FORWARD);
-        backOdometry.setDirection(DcMotor.Direction.FORWARD);
+       // backOdometry.setDirection(DcMotor.Direction.FORWARD);
 
         // Set odometry modes //
         resetOdometryEncoders();
 
         // Odometry Setup
-        updatesThread = new CatOdoAllUpdates(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
+
+        updatesThread = updatesThread.getInstanceAndInit(expansionHub, leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
         Thread allUpdatesThread = new Thread(updatesThread);
+        updatesThread.resetThreads();
         allUpdatesThread.start();
 
         // Sets enums to a default value
@@ -132,19 +135,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         backOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
-
     // Driving Methods:
-    /**
-     * A single method that can turn and/or move the robot to an (x, y) position on the
-     *
-     * @param x Target X position.
-     * @param y Target Y position.
-     * @param power Max power motors can reach using motion profiling.
-     * @param theta The angle the robot will finish the drive facing.
-     * @param turnSpeed
-     * @param timeoutS The method will end when the timeout is reached.
-     */
-    public void translateDrive(double x, double y, double power, double theta, double turnSpeed, double timeoutS){
+    public void translateDrive(double x, double y, double power, double theta, double timeoutS){
 
         currentMethod = DRIVE_METHOD.translate;
         timeout = timeoutS;
@@ -153,7 +145,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetY = y;
         strafePower = power;
         targetTheta = theta;
-        strafeTurnPower = turnSpeed;
 
         // Reset timer once called
         runTime.reset();
@@ -161,6 +152,11 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         // Power update Thread:
         updatesThread.powerUpdate.setTarget(x, y, power);
+    }
+    public void quickDrive(double x, double y, double power, double theta, double timeoutS){
+
+        translateDrive(x,y,power,theta,timeoutS);
+        waitUntilDone();
     }
 
     /**
@@ -211,17 +207,12 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                 /**
                  * Calc robot angles:
-                 *
-                 *
-                 * ang1 is the calculation of the angle
-                 *
-                 * ang2 is the 0 of the target angle with the current needed angles
                   */
-                double ang1 = (Math.atan2(targetX - getX, targetY - getY));
-                double ang2 = ang1 - Math.toRadians(getTheta);
+                double absAngleToTarget         = (Math.atan2(targetX - getX, targetY - getY));
+                double relativeAngleToTarget    = absAngleToTarget - Math.toRadians(getTheta);
 
-                double lFrontPower = (Math.cos(ang2) + Math.sin(ang2));
-                double rFrontPower = (Math.cos(ang2) - Math.sin(ang2));
+                double lFrontPower = (Math.cos(relativeAngleToTarget) + Math.sin(relativeAngleToTarget));
+                double rFrontPower = (Math.cos(relativeAngleToTarget) - Math.sin(relativeAngleToTarget));
                 double lBackPower;
                 double rBackPower;
 
@@ -229,32 +220,58 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 lBackPower = rFrontPower;
                 rBackPower = lFrontPower;
 
-                // Adds turn
-                if ((getTheta - targetTheta) < 0) {
-                    // Turn right
-                    if (Math.abs(getTheta - targetTheta) > 4) {
-                        rFrontPower = rFrontPower - (strafeTurnPower);
-                        rBackPower = rBackPower - (strafeTurnPower);
-                        lFrontPower = lFrontPower + (strafeTurnPower);
-                        lBackPower = lBackPower + (strafeTurnPower);
-                    }
-                } else {
-                    // Turn left
-                    if (Math.abs(getTheta - targetTheta) > 4) {
-                        rFrontPower = rFrontPower + (strafeTurnPower);
-                        rBackPower = rBackPower + (strafeTurnPower);
-                        lFrontPower = lFrontPower - (strafeTurnPower);
-                        lBackPower = lBackPower - (strafeTurnPower);
-                    }
+                double minTP;
+                minTP = (updatesThread.powerUpdate.getDistanceToTarget() - 6.0)/-20.0;
+
+                if (minTP < 0){
+                    minTP = 0;
+                }
+                if (minTP > .2){
+                    minTP = .2;
                 }
 
+                if((getTheta - targetTheta)<2){
+                    minTP = 0;
+                }
+
+                turnPower = Math.abs((getTheta - targetTheta)/120.0);
+
+                if (turnPower < minTP){
+                    turnPower = minTP;
+                }
+                if (turnPower > .5){
+                    turnPower = .5;
+                }
+                Log.d("catbot",  String.format("minTP: %.2f , TP: %.2f",minTP,turnPower));
 
                 // Calculate scale factor and motor powers
                 double SF = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
-                leftFrontMotor.setPower(lFrontPower  * getPower * SF);
-                rightFrontMotor.setPower(rFrontPower * getPower * SF);
-                leftRearMotor.setPower(lBackPower    * getPower * SF);
-                rightRearMotor.setPower(rBackPower   * getPower * SF);
+                lFrontPower = lFrontPower  * getPower * SF;
+                rFrontPower = rFrontPower  * getPower * SF;
+                lBackPower = lBackPower  * getPower * SF;
+                rBackPower = rBackPower  * getPower * SF;
+
+                //adds turn
+                if ((getTheta - targetTheta) < 0) {
+                    // Turn right
+                        rFrontPower = rFrontPower - (turnPower);
+                        rBackPower = rBackPower - (turnPower);
+                        lFrontPower = lFrontPower + (turnPower);
+                        lBackPower = lBackPower + (turnPower);
+                } else {
+                    // Turn left
+                        rFrontPower = rFrontPower + (turnPower);
+                        rBackPower = rBackPower + (turnPower);
+                        lFrontPower = lFrontPower - (turnPower);
+                        lBackPower = lBackPower - (turnPower);
+                }
+
+                // Calculate scale factor and motor powers
+                double SF2 = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
+                leftFrontMotor.setPower(lFrontPower  * SF2);
+                rightFrontMotor.setPower(rFrontPower * SF2);
+                leftRearMotor.setPower(lBackPower    * SF2);
+                rightRearMotor.setPower(rBackPower   * SF2);
 
                 Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y/Θ: %.2f %.2f %.1f; currentX/Y/Θ %.2f %.2f %.1f; pow %.2f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
@@ -273,4 +290,10 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         }
         return false;
     }
+
+    /**
+     * ---   __________________   ---
+     * ---   End of Our Methods   ---
+     * ---   \/ \/ \/ \/ \/ \/    ---
+     */
 }// End of class bracket

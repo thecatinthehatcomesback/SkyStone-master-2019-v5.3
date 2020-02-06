@@ -11,20 +11,37 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
+@Disabled
 @TeleOp(name="Dec 16 TeleOp", group="CatTeleOp")
+<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Mec_TeleOpLevel4_Dec14Tourney.java
 public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
+========
+public class Mec_TeleOpLevel3_Dec14Tourney extends LinearOpMode {
+
+    //enum
+    enum GRAB_MODE {
+        INSIDE,
+        HALF,
+        OUT,
+        FULL
+    }
+
+    private GRAB_MODE grabMode;
+
+>>>>>>>> origin/Odometry_Method_Developement:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Mec_TeleOpLevel3_Dec14Tourney.java
 
     /* Declare OpMode members. */
     private ElapsedTime elapsedGameTime = new ElapsedTime();
 
+    private ElapsedTime XButtonTime = new ElapsedTime();
+
     /* Declare OpMode members. */
     CatHW_Async robot = new CatHW_Async();  // Use our new mecanum async hardware
-
 
 
     // Our constructor for this class
@@ -51,21 +68,28 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         if(robot.isRedAlliance) {
-            robot.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
-            robot.underLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
         } else {
-            robot.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
-            robot.underLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
         }
 
         // Go! (Presses PLAY)
         elapsedGameTime.reset();
+        XButtonTime.reset();
         double driveSpeed;
         double leftFront;
         double rightFront;
         double leftBack;
         double rightBack;
         double SF;
+<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Mec_TeleOpLevel4_Dec14Tourney.java
+        boolean hooksDown = false;
+========
+        double fineAdjust = 0;
+        double adjustAmount = 0;
+        boolean wantAdjust = false;
+        grabMode = GRAB_MODE.INSIDE;
+>>>>>>>> origin/Odometry_Method_Developement:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Mec_TeleOpLevel3_Dec14Tourney.java
 
         // Run infinitely until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -125,18 +149,87 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
              */
 
 
-            // Open/Close Foundation Fingers:
+            //release the capstone
             if(gamepad2.y) {
+<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Mec_TeleOpLevel4_Dec14Tourney.java
+                robot.claw.releaseCapstone();
+            }
+
+            // Open/Close Foundation Fingers:
+            if (gamepad2.x && XButtonTime.seconds() > 0.17) {
+                XButtonTime.reset();
+                if (hooksDown){
+                    //if hooks are down bring them up
+                    robot.claw.retractClaws();
+                    hooksDown = false;
+                }else {
+                    //if hooks are up put them down
+                    robot.claw.extendClaws();
+                    hooksDown = true;
+                }
+
+========
                 robot.claw.retractClaws();
             }
             if (gamepad2.x) {
                 robot.claw.extendClaws();
+>>>>>>>> origin/Odometry_Method_Developement:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Mec_TeleOpLevel3_Dec14Tourney.java
             }
 
             // Tail/Stacker lift motor controls:
             robot.tail.tailLift.setPower(-gamepad2.right_stick_y);
+<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Mec_TeleOpLevel4_Dec14Tourney.java
+            robot.tail.tailLift2.setPower(-gamepad2.right_stick_y);
             // Extend controls:
             robot.tail.tailExtend.setPower(-gamepad2.left_stick_y);
+
+========
+            // Extend controls:
+            robot.tail.tailExtend.setPower(-gamepad2.left_stick_y);
+
+            // Wrist Controls:
+            if (gamepad2.dpad_right){
+                grabMode = GRAB_MODE.HALF;
+                fineAdjust = 0;
+                adjustAmount = 0;
+            }
+            if (gamepad2.dpad_left){
+                grabMode = GRAB_MODE.FULL;
+                fineAdjust = 0;
+                adjustAmount = 0;
+            }
+            if (gamepad2.dpad_up){
+                grabMode = GRAB_MODE.OUT;
+                fineAdjust = 0;
+                adjustAmount = 0;
+            }
+            if (gamepad2.dpad_down){
+                grabMode = GRAB_MODE.INSIDE;
+                fineAdjust = 0;
+                adjustAmount = 0;
+            }
+            //fine adjust for the wrist
+            if (gamepad2.right_stick_button && (fineAdjustTimer.seconds() > 0.5)){
+                wantAdjust = true;
+                adjustAmount = -gamepad2.left_stick_x*.35;
+            }
+            if (wantAdjust &&  Math.abs(gamepad2.left_stick_x) <= 0.05){
+                fineAdjust += adjustAmount;
+                fineAdjustTimer.reset();
+                wantAdjust = false;
+            }
+
+            /*
+            if (grabMode == GRAB_MODE.INSIDE) {
+                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35)-1 + fineAdjust);
+            } else if (grabMode == GRAB_MODE.HALF) {
+                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35) -.05 + fineAdjust);
+            } else if (grabMode == GRAB_MODE.OUT) {
+                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35)+0.45 + fineAdjust);
+            } else if (grabMode == GRAB_MODE.FULL) {
+                robot.tail.wristServo.setPower((-gamepad2.left_stick_x*.35)+.975 + fineAdjust);
+            }*/
+>>>>>>>> origin/Odometry_Method_Developement:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Mec_TeleOpLevel3_Dec14Tourney.java
 
 
             // Grabber controls:
@@ -148,6 +241,8 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
             }
 
 
+
+
             /**
              * ---   _________   ---
              * ---   TELEMETRY   ---
@@ -157,7 +252,7 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
             telemetry.addData("Right Front Power:", "%.2f", rightFront);
             telemetry.addData("Left Back Power:", "%.2f", leftBack);
             telemetry.addData("Right Back Power:", "%.2f", rightBack);
-            telemetry.addData("Intake Power:","%.2f", robot.jaws.leftJawMotor.getPower());
+            //telemetry.addData("Intake Power:","%.2f", robot.jaws.leftJawMotor.getPower());
 
             telemetry.addData("Encoder lf/lr rf/rr", "%5d %5d   %5d %5d",
                     robot.driveClassic.leftFrontMotor.getCurrentPosition(),
@@ -166,5 +261,7 @@ public class Mec_TeleOpLevel4_Dec14Tourney extends LinearOpMode {
                     robot.driveClassic.rightRearMotor.getCurrentPosition()  );
             telemetry.update();
         }
+
+        robot.driveOdo.updatesThread.stop();
     }
 }

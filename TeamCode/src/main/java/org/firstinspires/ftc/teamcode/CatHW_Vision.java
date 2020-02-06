@@ -104,7 +104,7 @@ public class CatHW_Vision extends CatHW_Subsystem
          */
 
 
-        if (skyStoneValues.size() > 99) {
+        if (skyStoneValues.size() > 29) {
             // Make sure we keep the size at a reasonable level
             skyStoneValues.removeFirst();
         }

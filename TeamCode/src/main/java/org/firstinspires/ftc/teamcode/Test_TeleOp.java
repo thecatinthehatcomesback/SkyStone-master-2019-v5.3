@@ -6,8 +6,8 @@
     modify the main TeleOp.
 
 
-    This file has been modified from the original FTC SkyStone SDK.
-    Written by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file is a modified version from the FTC SDK.
+    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -15,8 +15,6 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.odometry.OdometryGlobalCoordinatePosition;
 
 
 @TeleOp(name="Test Tele", group="CatTest TeleOp")
@@ -26,7 +24,8 @@ public class Test_TeleOp extends LinearOpMode {
     private ElapsedTime runTime = new ElapsedTime();
     private ElapsedTime elapsedGameTime = new ElapsedTime();
 
-    CatOdoPositionUpdate globalPositionUpdate;
+
+    //CatOdoPositionUpdate globalPositionUpdate;
 
 
     /* Declare OpMode members. */
@@ -56,17 +55,19 @@ public class Test_TeleOp extends LinearOpMode {
         waitForStart();
 
         if(robot.isRedAlliance) {
-            robot.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
+            robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
         } else {
-            robot.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
+            robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
         }
+
+
         // Go!
         runTime.reset();
         elapsedGameTime.reset();
 
-        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.driveOdo.leftOdometry, robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, CatHW_DriveOdo.ODO_COUNTS_PER_INCH, 75);
-        Thread positionThread = new Thread(globalPositionUpdate);
-        positionThread.start();
+//        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.driveOdo.leftOdometry, robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, CatHW_DriveOdo.ODO_COUNTS_PER_INCH, 75);
+//        Thread positionThread = new Thread(globalPositionUpdate);
+//        positionThread.start();
 
         double driveSpeed;
         double leftFront;
@@ -122,20 +123,19 @@ public class Test_TeleOp extends LinearOpMode {
 
             // Tell us the odometry encoder ticks
             telemetry.addData("OdoTicks", "L/R/B  :%7d  :%7d  :%7d",
-                    robot.driveOdo.leftOdometry.getCurrentPosition(),
-                    robot.driveOdo.rightOdometry.getCurrentPosition(),
-                    robot.driveOdo.backOdometry.getCurrentPosition());
+                    robot.driveOdo.updatesThread.positionUpdate.returnVerticalLeftEncoderPosition(),
+                    robot.driveOdo.updatesThread.positionUpdate.returnVerticalRightEncoderPosition(),
+                    robot.driveOdo.updatesThread.positionUpdate.returnNormalEncoderPosition() );
             //Display Global (x, y, theta) coordinates
-            telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / CatHW_DriveOdo.ODO_COUNTS_PER_INCH);
-            telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / CatHW_DriveOdo.ODO_COUNTS_PER_INCH);
-            telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
-            telemetry.addData("Thread Active", positionThread.isAlive());
-
+            telemetry.addData("X Position", robot.driveOdo.updatesThread.positionUpdate.returnXInches());
+            telemetry.addData("Y Position", robot.driveOdo.updatesThread.positionUpdate.returnYInches());
+            telemetry.addData("Orientation (Degrees)", robot.driveOdo.updatesThread.positionUpdate.returnOrientation());
+            telemetry.addData("intakeSensor ", robot.jaws.hasStone());
             telemetry.update();
         }
 
         //Stop the thread
-        globalPositionUpdate.stop();
+        robot.driveOdo.updatesThread.stop();
 
     }
 }
