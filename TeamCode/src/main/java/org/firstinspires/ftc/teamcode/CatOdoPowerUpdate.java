@@ -32,10 +32,10 @@ public class CatOdoPowerUpdate {
         positionUpdate = inPositionUpdate;
     }
 
-    public  void powerBoast(double power){
+    public void powerBoost(double power){
         minPower = power;
     }
-    public  void powerNormal(){
+    public void powerNormal(){
         minPower = .15;
     }
 
