@@ -44,7 +44,9 @@ public class CatOdoPowerUpdate {
     public  void powerNormal(){
         minPower = defaultMinPower;
     }
-
+    public void  setTimer(ElapsedTime time){
+        powerTime = time;
+    }
 
     public void setTarget(double x, double y, double power) {
         targetX     = x;

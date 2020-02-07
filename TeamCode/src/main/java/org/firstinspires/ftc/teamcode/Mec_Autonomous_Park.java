@@ -1,29 +1,37 @@
-/*
-        Test_Autonomous.java
+/**
+ Mec_Odo_AutonomousLevel6_Statey.java
 
-    A Linear OpMode class to be place to test code both old
-    and new.  We constantly edit this, taking out and adding
-    in code.  This is never the same at any given time.
+ A Linear OpMode class to be an autonomous method for both Blue & Red alliance
+ sides where we pick which side of the alliance bridge we start off at with
+ gamepad1 as well as selecting alliance color and whether we park under the
+ alliance bridge closer or further from the game field wall.  Also will detect
+ the position and deliver the skystone using machine vision.
 
+ Mec_Odo_AutonomousLevel6_Statey is written to add machine vision and
+ skystone delivery to our autonomous route with the help intake jaws that intake  //TODO: Change this...
+ a stone at any orientation for a "touch it-own it" approach.  A servo and two
+ motors make up TC-73/Bucky's tail a stack stones as well as our team marker.
+ This autonomous is used for our first qualifier of our year (December 14, 2019).
 
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
+ By FTC Team #10273, The Cat in the Hat Comes Back.
  */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="Test_Autonomous", group="CatTest Auto")
-public class Test_Autonomous extends LinearOpMode {
+@Autonomous(name="Park Autonomous", group="CatAuto")
+public class Mec_Autonomous_Park extends LinearOpMode {
 
     /* Declare OpMode members. */
     CatHW_Async robot  = new CatHW_Async();    // All the hardwares init here
     private ElapsedTime delayTimer = new ElapsedTime();
     private double timeDelay;
     private boolean isRedAlliance = true;
+    private boolean isParkAtWall = true;
 
     private CatHW_Vision.skyStonePos skyStonePos = CatHW_Vision.skyStonePos.OUTSIDE;
 
@@ -38,6 +46,7 @@ public class Test_Autonomous extends LinearOpMode {
         // Init IMU sensor later when the match starts to avoid drifting in the values
         // Init our Machine Vision
         //eyes.initVision(hardwareMap);
+
 
         /**
          * Send telemetry message to signify robot getting ready:
@@ -61,11 +70,14 @@ public class Test_Autonomous extends LinearOpMode {
         // After init is pushed but before Start we can change the delay using dpad up/down //
         delayTimer.reset();
         // Runs a loop to change certain settings while we wait to start
-        while (!opModeIsActive() ) {
+        while (!opModeIsActive()) {
             if (this.isStopRequested()) {
                 // Leave the loop if STOP is pressed
                 return;
             }
+
+            robot.eyes.findSkyStone();
+
             if (gamepad1.dpad_up && (delayTimer.seconds() > 0.8)) {
                 // Increases the amount of time we wait
                 timeDelay += 1;
@@ -79,7 +91,7 @@ public class Test_Autonomous extends LinearOpMode {
                 }
                 delayTimer.reset();
             }
-            if (((gamepad1.dpad_left) && delayTimer.seconds() > 0.8)) {
+            if (((gamepad1.x) && delayTimer.seconds() > 0.8)) {
                 // Changes Alliance Sides
                 if (isRedAlliance) {
                     isRedAlliance = false;
@@ -90,26 +102,51 @@ public class Test_Autonomous extends LinearOpMode {
                 }
                 delayTimer.reset();
             }
+            if (((gamepad1.dpad_left) && delayTimer.seconds() > 0.8)) {
+                // Changes Alliance Sides
+                if (isParkAtWall) {
+                    isParkAtWall = false;
+                } else {
+                    isParkAtWall = true;
+                }
+                delayTimer.reset();
+            }
 
             /**
              * LED code:
              */
-            if (isRedAlliance) {
-
+            if (robot.isRedAlliance) {
+                robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
             } else {
-
+                robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
             }
-
             /**
              * Telemetry while waiting for PLAY:
              */
             telemetry.addData("Delay Timer: ", timeDelay);
+
+            skyStonePos = robot.eyes.giveSkyStonePos();
+            if (skyStonePos == CatHW_Vision.skyStonePos.OUTSIDE && !isRedAlliance){
+                skyStonePos = CatHW_Vision.skyStonePos.CENTER;
+            }else if (skyStonePos == CatHW_Vision.skyStonePos.CENTER && !isRedAlliance){
+                skyStonePos = CatHW_Vision.skyStonePos.OUTSIDE;
+            }
+
+
+            telemetry.addData("Label", skyStonePos);
+
+            telemetry.addData("left position", robot.eyes.lastLeft);
+            telemetry.addData("right position", robot.eyes.lastRight);
+            telemetry.addData("center position", (robot.eyes.lastRight+robot.eyes.lastLeft)/2);
+            telemetry.addData("confidence", robot.eyes.lastConfidence);
 
             if (isRedAlliance) {
                 telemetry.addData("Alliance: ", "Red");
             } else {
                 telemetry.addData("Alliance: ", "Blue");
             }
+
+            telemetry.addData("isParkAtWall ", isParkAtWall);
             telemetry.update();
 
             /**
@@ -128,36 +165,30 @@ public class Test_Autonomous extends LinearOpMode {
          */
         robot.driveClassic.IMU_Init();
 
+        // Time Delay:
+        robot.robotWait(timeDelay);
+
         /* Go! */
-
-        robot.driveOdo.translateDrive(20,35,.9,0,17,22,33,40,-5,5,2);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(20,60,.9,0,3);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,60,.9,0,2);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0,.9,0,-2,2,-5,33,0,95,3);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0,.9,90,3);
-        robot.driveOdo.waitUntilDone();
-
-        //robot.driveOdo.translateDrive(0,36, CatHW_DriveBase.DRIVE_SPEED, 0,  5);
-        //robot.driveOdo.waitUntilDone();
-        //robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.DRIVE_SPEED, 0,  5);
-        //robot.driveOdo.waitUntilDone();
-        /*robot.driveOdo.translateDrive(36,36, CatHW_DriveBase.CHILL_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,72, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.CHILL_SPEED, 0, .65, 5);
-        robot.driveOdo.waitUntilDone();*/
-        //robot.robotWait(1.5);
-        //robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.CREEP_SPEED, 0,  5);
-        //robot.driveOdo.waitUntilDone();
-        // Testing the new mecTurn
-        //robot.driveClassic.mecTurn(CatHW_DriveClassic.TURN_SPEED, 170, 3.0);
+        if (isParkAtWall) {
+            robot.driveOdo.leftFrontMotor.setPower(.4);
+            robot.driveOdo.leftRearMotor.setPower(.4);
+            robot.driveOdo.rightFrontMotor.setPower(.4);
+            robot.driveOdo.rightRearMotor.setPower(.4);
+            robot.robotWait(.75);
+            robot.driveOdo.leftFrontMotor.setPower(0);
+            robot.driveOdo.leftRearMotor.setPower(0);
+            robot.driveOdo.rightFrontMotor.setPower(0);
+            robot.driveOdo.rightRearMotor.setPower(0);
+        } else {
+            if (isRedAlliance) {
+                robot.driveOdo.quickDrive(0, 25, .6, 0, 3);
+                robot.driveOdo.quickDrive(-22, 25, .6, 0, 2);
+            }else {
+                robot.driveOdo.quickDrive(0, 25, .6, 0, 3);
+                robot.driveOdo.quickDrive(22, 25, .6, 0, 2);
+            }
+        }
+        robot.driveOdo.updatesThread.stop();
 
     }
 }

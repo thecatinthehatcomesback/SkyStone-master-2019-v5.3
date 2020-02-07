@@ -72,11 +72,11 @@ public class CatHW_Claw extends CatHW_Subsystem
      * ---   \/ \/ \/ \/    ---
      */
     public void extendClaws() {
-        rightFoundationClaw.setPosition(0.46);
+        rightFoundationClaw.setPosition(0.43);
         leftFoundationClaw.setPosition(.18);
     }
     public void retractClaws() {
-        //right starts at 1 and moves to .46 for a total movement of .54
+        //right starts at 1 and moves to .40 for a total movement of .57
         rightFoundationClaw.setPosition(1);
         //left starts at 0 and moves to .18 for a total movement of .18
         leftFoundationClaw.setPosition(0);
