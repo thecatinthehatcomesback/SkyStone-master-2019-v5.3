@@ -217,14 +217,15 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         robot.driveOdo.quickDrive(-1, 22, .9, -90, 1);
                         robot.driveOdo.quickDrive(70, 24, .9, -90, 3);
                         //turn toward foundation and latch on
-                        robot.driveOdo.quickDrive(84, 42, .9, -175, 2);
+                        robot.driveOdo.quickDrive(84, 38, .9, -170, 2);
                         robot.claw.extendClaws();
                         robot.robotWait(1);
                         //move foundation and release stone
                         robot.jaws.outputJaws();
                         robot.robotWait(.2);
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
-                        robot.driveOdo.quickDrive(72, 8, .9, -100, 3);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
+                        //theta = -100
+                        robot.driveOdo.quickDrive(72, 8, .9, -50, 3);
                         robot.driveOdo.quickDrive(78, 6, .9, -90, 1);
                         //release foundation
                         robot.driveOdo.updatesThread.powerUpdate.powerNormal();
@@ -258,7 +259,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                             //move foundation and release stone
                             robot.jaws.outputJaws();
                             robot.robotWait(.75);
-                            robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                            robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
                         robot.driveOdo.quickDrive(72, 8, .9, -100, 3);
                         robot.driveOdo.quickDrive(78, 6, .9, -90, 1);
                             //release foundation
@@ -293,7 +294,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                             //move foundation and release stone
                             robot.jaws.outputJaws();
                             robot.robotWait(.75);
-                            robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                            robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
                             robot.driveOdo.quickDrive(72, 8, .9, -100, 3);
                             robot.driveOdo.quickDrive(78, 6, .9, -90, 1);
                             //release foundation
@@ -435,7 +436,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         //move foundation and release stone
                         robot.jaws.outputJaws();
                         //robot.robotWait(.15);
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
                         robot.driveOdo.quickDrive(-68, 8, .9, 100, 3);
                         robot.driveOdo.quickDrive(-78, 8, .9, 90, 1);
                         //release foundation
@@ -476,7 +477,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         //move foundation and release stone
                         robot.jaws.outputJaws();
                         //robot.robotWait(.15);
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
                         robot.driveOdo.quickDrive(-68, 8, .9, 100, 3);
                         robot.driveOdo.quickDrive(-78, 8, .9, 90, 1);
                         //release foundation
@@ -517,7 +518,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         //move foundation and release stone
                         robot.jaws.outputJaws();
                         //robot.robotWait(.15);
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
                         robot.driveOdo.quickDrive(-68, 8, .9, 100, 3);
                         robot.driveOdo.quickDrive(-78, 8, .9, 90, 1);
                         //release foundation
