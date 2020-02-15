@@ -171,11 +171,11 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 allPoints.add(new Point(xRoot2, yRoot2));
             }
         } catch (Exception e) {
-            //TODO:  Wha?
+            // TODO:  Could throw an exception if taking sqrt of negative number...?
         }
         return allPoints;
     }
-    public void followCurve(ArrayList<CurvePoint> allPoints, double followAngle) {
+    public void followCurve(ArrayList<CurvePoint> allPoints, double maxPower, double followAngle, double turnSpeed) {
         //TODO:  Add some debug logs here...
 
         CurvePoint followThisPoint = getFollowPointPath(allPoints,
@@ -183,19 +183,26 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 allPoints.get(0).followDistance);
 
         //TODO:  Going to want to want to think about how we use the followAngle here...
-        goToPosition(followThisPoint.x, followThisPoint.y, followAngle);
+        //goToPosition(followThisPoint.x, followThisPoint.y, followAngle);
+        //translateDrive(followThisPoint.x, followThisPoint.y, maxPower, followAngle, turnSpeed, 5.0);
 
-        //TODO:  Add logic to atop at the final point in the array list.
+        //TODO:  Add logic to stop at the final point in the array list.
     }
     public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints, Point robotLocation,
                                          double followRadius) {
-        //TODO: Improve this later...  Use a line perpendicular perhaps?
+        // TODO: In case robot's follow radius doesn't intersect line...  Improve this later...  Use
+        //  a line perpendicular perhaps?
         CurvePoint followThisPoint = new CurvePoint(pathPoints.get(0));
 
         // Go through all the CurvePoints and stop one early since a line needs at least two points.
         for (int i = 0; i < pathPoints.size() - 1; i++) {
             CurvePoint startLine = pathPoints.get(i);
             CurvePoint endLine = pathPoints.get(i + 1);
+            System.out.println(i + "startLine:   X=" + startLine.x +
+                    "   Y=" + startLine.y);
+            System.out.println(i + "endLine):   X=" + endLine.x +
+                    "   Y=" + endLine.y);
+
 
             ArrayList<Point> intersections = lineCircleIntersection(robotLocation, followRadius,
                     startLine.toPoint(), endLine.toPoint());
@@ -209,16 +216,23 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 double angle = Math.atan2(thisIntersection.y - updatesThread.positionUpdate.returnYInches(),
                         thisIntersection.x - updatesThread.positionUpdate.returnXInches());
                 double deltaAngle = Math.abs(angle - Math.toRadians(updatesThread.positionUpdate.returnOrientation()));
+                System.out.println("angle = " + angle);
+                System.out.println("deltaAngle = " + deltaAngle);
 
                 if (deltaAngle < closestAngle) {
                     closestAngle = deltaAngle;
                     followThisPoint.setPoint(thisIntersection);
+                    System.out.println("closestAngle = " + closestAngle);
+                    System.out.println("setPoint(thisIntersection):   X=" + thisIntersection.x +
+                            "   Y=" + thisIntersection.y);
                 }
             }
+            System.out.println();
         }
+        System.out.println("followThisPoint" + followThisPoint + "   " + followThisPoint.x + "   " + followThisPoint.y);
         return followThisPoint;
     }
-    public void goToPosition(double pointX, double pointY, double preferredAngle) {
+    /*public void goToPosition(double pointX, double pointY, double preferredAngle) {
         double distanceToPoint = Math.hypot(pointX - updatesThread.positionUpdate.returnXInches(),
                 pointY - updatesThread.positionUpdate.returnYInches());
 
@@ -234,7 +248,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         double movementXPower = relativeXToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
         double movementYPower = relativeYToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
-        //TODO: Now, use all these numbers to move around (NB: They will always be limited to 1.0).
+        // Now, use all these numbers to move around (NB: They will always be limited to 1.0).
 
 
         double relativeTurnAngle = relativeAngleToPoint + preferredAngle;
@@ -245,7 +259,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         if (distanceToPoint < 6) {
             turnMod = 0;
         }
-    }
+    }*/
 
     /**
      * ---   _______________________   ---
