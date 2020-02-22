@@ -19,8 +19,6 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.openftc.revextensions2.ExpansionHubEx;
-
 /**
  * This is NOT an OpMode.
  *
@@ -38,7 +36,7 @@ import org.openftc.revextensions2.ExpansionHubEx;
 public class CatHW_DriveOdo extends CatHW_DriveBase
 {
     /* Wheel measurements */   //TODO:  Update these constants!
-    static final double     ODO_COUNTS_PER_REV        = 8192;     // 8192 for rev encoder from rev robotics
+    static final double     ODO_COUNTS_PER_REV        = 1440;     // 1440 for E4T from Andymark
     static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
     static final double     ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
@@ -47,17 +45,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     double  targetY;
     double  strafePower;
     double  targetTheta;
-    double turnPower;
-    double xMin;
-    double xMax;
-    double yMin;
-    double yMax;
-    double thetaMin;
-    double thetaMax;
-    double lastPower = 0;
-    double maxPower;
-
-    boolean nonStop;
+    double  strafeTurnPower;
 
 
     /* Enums */
@@ -81,7 +69,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     public DcMotor  leftOdometry    = null;
     public DcMotor  rightOdometry   = null;
     public DcMotor  backOdometry    = null;
-    public ExpansionHubEx expansionHub = null;
 
     CatOdoAllUpdates updatesThread;
 
@@ -102,24 +89,21 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
         // Define and Initialize Motors //
+        leftOdometry     = hwMap.dcMotor.get("left_jaw_motor");
+        rightOdometry    = hwMap.dcMotor.get("right_jaw_motor");
+        backOdometry     = hwMap.dcMotor.get("left_rear_motor");
 
-        leftOdometry     = hwMap.dcMotor.get("left_rear_motor");
-        rightOdometry    = hwMap.dcMotor.get("tail_lift2");
-        backOdometry     = hwMap.dcMotor.get("right_jaw_motor");
-        expansionHub     = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         // Set odometry directions //
-        //leftOdometry.setDirection(DcMotor.Direction.REVERSE);
-        rightOdometry.setDirection(DcMotor.Direction.FORWARD);
-       // backOdometry.setDirection(DcMotor.Direction.FORWARD);
+        leftOdometry.setDirection(DcMotor.Direction.REVERSE);
+        rightOdometry.setDirection(DcMotor.Direction.REVERSE);
+        backOdometry.setDirection(DcMotor.Direction.REVERSE);
 
         // Set odometry modes //
         resetOdometryEncoders();
 
         // Odometry Setup
-
-        updatesThread = updatesThread.getInstanceAndInit(expansionHub, leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
+        updatesThread = new CatOdoAllUpdates(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
         Thread allUpdatesThread = new Thread(updatesThread);
-        updatesThread.resetThreads();
         allUpdatesThread.start();
 
         // Sets enums to a default value
@@ -146,7 +130,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
     }
     // Driving Methods:
-    public void translateDrive(double x, double y, double power, double theta, double timeoutS){
+    public void translateDrive(double x, double y, double power, double theta, double turnSpeed, double timeoutS){
 
         currentMethod = DRIVE_METHOD.translate;
         timeout = timeoutS;
@@ -155,59 +139,14 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetY = y;
         strafePower = power;
         targetTheta = theta;
-
-        // Power update Thread:
-        updatesThread.powerUpdate.setTarget(x, y, power);
-
-        //if the last drive was nonstop
-        if (nonStop){
-            nonStop = false;
-            updatesThread.powerUpdate.setTimer(runTime);
-        }
+        strafeTurnPower = turnSpeed;
 
         // Reset timer once called
         runTime.reset();
 
 
-    }
-
-    //nonstop translate
-    public void translateDrive(double x, double y, double power, double theta, double finishedXMin, double finishedXMax, double finishedYMin, double finishedYMax, double finishedThetaMin, double finishedThetaMax, double timeoutS){
-
-        currentMethod = DRIVE_METHOD.translate;
-        timeout = timeoutS;
-        isDone = false;
-        targetX = x;
-        targetY = y;
-        strafePower = power;
-        targetTheta = theta;
-        xMin = finishedXMin;
-        xMax = finishedXMax;
-        yMin = finishedYMin;
-        yMax = finishedYMax;
-        thetaMin = finishedThetaMin;
-        thetaMax = finishedThetaMax;
-        maxPower = power;
-
-        //if the last drive was nonstop
-        if (nonStop){
-            updatesThread.powerUpdate.setTimer(runTime);
-        }
-
         // Power update Thread:
         updatesThread.powerUpdate.setTarget(x, y, power);
-
-        nonStop = true;
-
-        // Reset timer once called
-        runTime.reset();
-
-    }
-
-    public void quickDrive(double x, double y, double power, double theta, double timeoutS){
-
-        translateDrive(x,y,power,theta,timeoutS);
-        waitUntilDone();
     }
 
     /**
@@ -222,7 +161,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
         if ((runTime.seconds() > timeout)) {
-            Log.d("catbot", "Timed OUT.");
+            Log.d("catbot", "Timed out.");
             keepDriving = false;
         }
 
@@ -250,36 +189,25 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 double getPower = updatesThread.powerUpdate.updatePower();
 
                 // Check if ready to end
-                if (!nonStop) {
-                    if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2) &&
-                            (Math.abs(getTheta - targetTheta) < 5)) {
+                if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&
+                        (Math.abs(getTheta - targetTheta) < 5 || (Math.abs(getTheta - (targetTheta + 360)) < 5))) {
 
-                        keepDriving = false;
-                    }
-                }else {
-
-                    //if is nonstop
-                    if (xMin < getX && getX < xMax && yMin < getY && getY < yMax && thetaMin < getTheta && getTheta < thetaMax){
-
-                        keepDriving = false;
-                    }
-                    if (lastPower > getPower){
-                        getPower = maxPower;
-                    }
-
+                    keepDriving = false;
                 }
-
-                lastPower = getPower;
-
 
                 /**
                  * Calc robot angles:
+                 *
+                 *
+                 * ang1 is the calculation of the angle
+                 *
+                 * ang2 is the 0 of the target angle with the current needed angles
                   */
-                double absAngleToTarget         = (Math.atan2(targetX - getX, targetY - getY));
-                double relativeAngleToTarget    = absAngleToTarget - Math.toRadians(getTheta);
+                double ang1 = (Math.atan2(targetX - getX, targetY - getY));
+                double ang2 = ang1 - Math.toRadians(getTheta);
 
-                double lFrontPower = (Math.cos(relativeAngleToTarget) + Math.sin(relativeAngleToTarget));
-                double rFrontPower = (Math.cos(relativeAngleToTarget) - Math.sin(relativeAngleToTarget));
+                double lFrontPower = (Math.cos(ang2) + Math.sin(ang2));
+                double rFrontPower = (Math.cos(ang2) - Math.sin(ang2));
                 double lBackPower;
                 double rBackPower;
 
@@ -287,75 +215,63 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 lBackPower = rFrontPower;
                 rBackPower = lFrontPower;
 
-                double minTP;
-                minTP = (updatesThread.powerUpdate.getDistanceToTarget() - 6.0)/-20.0;
-
-                if (minTP < 0){
-                    minTP = 0;
+                //TODO: Add turn here
+                if (Math.abs((getTheta - targetTheta)) < Math.abs((getTheta - (targetTheta + 360)))) {
+                    if ((getTheta - targetTheta) < 0) {
+                        // Turn right
+                        if (Math.abs(getTheta - targetTheta) > 4) {
+                            rFrontPower = rFrontPower - strafeTurnPower;
+                            rBackPower  = rBackPower  - strafeTurnPower;
+                            lFrontPower = lFrontPower + strafeTurnPower;
+                            lBackPower  = lBackPower  + strafeTurnPower;
+                        }
+                    } else {
+                        // Turn left
+                        if (Math.abs(getTheta - targetTheta) > 4) {
+                            rFrontPower = rFrontPower + strafeTurnPower;
+                            rBackPower  = rBackPower  + strafeTurnPower;
+                            lFrontPower = lFrontPower - strafeTurnPower;
+                            lBackPower  = lBackPower  - strafeTurnPower;
+                        }
+                    }
+                } else {
+                    if ((getTheta - (targetTheta + 360)) < 0) {
+                        // Turn right
+                        if (Math.abs(getTheta - (targetTheta + 360)) > 4) {
+                            rFrontPower = rFrontPower - strafeTurnPower;
+                            rBackPower  = rBackPower  - strafeTurnPower;
+                            lFrontPower = lFrontPower + strafeTurnPower;
+                            lBackPower  = lBackPower  + strafeTurnPower;
+                        }
+                    } else {
+                        // Turn left
+                        if (Math.abs(getTheta - (targetTheta + 360)) > 4) {
+                            rFrontPower = rFrontPower + strafeTurnPower;
+                            rBackPower  = rBackPower  + strafeTurnPower;
+                            lFrontPower = lFrontPower - strafeTurnPower;
+                            lBackPower  = lBackPower  - strafeTurnPower;
+                        }
+                    }
                 }
-                if (minTP > .2){
-                    minTP = .2;
-                }
-
-                if((getTheta - targetTheta)<2){
-                    minTP = 0;
-                }
-
-                turnPower = Math.abs((getTheta - targetTheta)/120.0);
-
-                if (turnPower < minTP){
-                    turnPower = minTP;
-                }
-                if (turnPower > .5){
-                    turnPower = .5;
-                }
-                Log.d("catbot",  String.format("minTP: %.2f , TP: %.2f",minTP,turnPower));
 
                 // Calculate scale factor and motor powers
                 double SF = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
-                lFrontPower = lFrontPower  * getPower * SF;
-                rFrontPower = rFrontPower  * getPower * SF;
-                lBackPower = lBackPower  * getPower * SF;
-                rBackPower = rBackPower  * getPower * SF;
+                leftFrontMotor.setPower(lFrontPower  * getPower * SF);
+                rightFrontMotor.setPower(rFrontPower * getPower * SF);
+                leftRearMotor.setPower(lBackPower    * getPower * SF);
+                rightRearMotor.setPower(rBackPower   * getPower * SF);
 
-                //adds turn
-                if ((getTheta - targetTheta) < 0) {
-                    // Turn right
-                        rFrontPower = rFrontPower - (turnPower);
-                        rBackPower = rBackPower - (turnPower);
-                        lFrontPower = lFrontPower + (turnPower);
-                        lBackPower = lBackPower + (turnPower);
-                } else {
-                    // Turn left
-                        rFrontPower = rFrontPower + (turnPower);
-                        rBackPower = rBackPower + (turnPower);
-                        lFrontPower = lFrontPower - (turnPower);
-                        lBackPower = lBackPower - (turnPower);
-                }
-
-                // Calculate scale factor and motor powers
-                double SF2 = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
-                leftFrontMotor.setPower(lFrontPower  * SF2);
-                rightFrontMotor.setPower(rFrontPower * SF2);
-                leftRearMotor.setPower(lBackPower    * SF2);
-                rightRearMotor.setPower(rBackPower   * SF2);
-
-                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y/Θ: %.2f %.2f %.1f; currentX/Y/Θ %.2f %.2f %.1f; pow %.2f",
+                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y: %.2f %.2f ; currentX/Y %.2f %.2f ; calc/calc2/current angle: %.1f %.1f %.1f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
-                        targetX, targetY, targetTheta, getX, getY, getTheta, getPower));
+                        targetX, targetY, getX, getY, Math.toDegrees(ang1), Math.toDegrees(ang2), getTheta));
                 break;
         }
 
         if (!keepDriving){
-            if (nonStop){
-                isDone = true;
-                return true;
-            }else {
-                // Stop all motion;
-                setDrivePowers(0, 0, 0, 0);
-                isDone = true;
-                return true;
-            }
+            // Stop all motion;
+            setDrivePowers(0, 0, 0, 0);
+            isDone = true;
+            return true;
         }
         if (isDone){
             return true;
