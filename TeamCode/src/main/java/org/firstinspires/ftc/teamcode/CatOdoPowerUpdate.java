@@ -14,11 +14,13 @@ public class CatOdoPowerUpdate {
 
     // Variables:
     private double currentPower;
-    private double minPower = 0.10;
+    private final double defaultMinPower = 0.27;
+    private double minPower = defaultMinPower;
     private double maxPower;
+    private double distanceToTarget;
 
-    static final private double rampUpTime       = 300;  // In milliseconds
-    static final private double rampDownDistance = 7;
+    static final private double rampUpTime       = 400;  // In milliseconds
+    static final private double rampDownDistance = 23;
 
     private double targetX;
     private double targetY;
@@ -32,6 +34,19 @@ public class CatOdoPowerUpdate {
         positionUpdate = inPositionUpdate;
     }
 
+    public void reset(){
+        minPower = defaultMinPower;
+    }
+
+    public  void powerBoast(double power){
+        minPower = power;
+    }
+    public  void powerNormal(){
+        minPower = defaultMinPower;
+    }
+    public void  setTimer(ElapsedTime time){
+        powerTime = time;
+    }
 
     public void setTarget(double x, double y, double power) {
         targetX     = x;
@@ -39,8 +54,11 @@ public class CatOdoPowerUpdate {
         maxPower    = power;
         currentPower = minPower;
         powerTime.reset();
+        distanceToTarget = distance(positionUpdate.returnXInches(), positionUpdate.returnYInches(), targetX, targetY);
     }
-
+    public double getDistanceToTarget(){
+        return distanceToTarget;
+    }
     /**
      * Use this method to continually update the powers for the
      * @return The power based on our motion profiling equations
@@ -48,28 +66,26 @@ public class CatOdoPowerUpdate {
     public double updatePower() {
 
         // Update the current position
-        double  currentX    = positionUpdate.returnXInches();
+        double currentX    = positionUpdate.returnXInches();
         double currentY    = positionUpdate.returnYInches();
         double currentTime = powerTime.milliseconds();
 
         // Distance left to target calculation
-        double distanceToTarget = distance(currentX, currentY, targetX, targetY);
+        distanceToTarget = distance(currentX, currentY, targetX, targetY);
 
-        if (currentPower > (maxPower * (distanceToTarget / rampDownDistance))) {
+        if (currentPower >= (1 * (distanceToTarget / rampDownDistance))) {
             // Ramp down if within the rampDownDistance
-            if (currentPower > minPower) {
-                currentPower = maxPower * (distanceToTarget / rampDownDistance);
-            } else {
-                currentPower = minPower;
-            }
+            currentPower = 1 * (distanceToTarget / rampDownDistance);
+
         } else {
             // Ramp up power
-            //TODO: add the first time to minimum power
-            if (currentPower < maxPower) {
-                currentPower = maxPower * (currentTime / rampUpTime);
-            } else {
-                currentPower = maxPower;
-            }
+            currentPower = maxPower * (currentTime / rampUpTime);
+        }
+        if(currentPower < minPower){
+            currentPower = minPower;
+        }
+        if(currentPower > maxPower){
+            currentPower = maxPower;
         }
 
         // Finally!  Give the power!

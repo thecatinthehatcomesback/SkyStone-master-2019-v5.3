@@ -1,13 +1,11 @@
 /*
         Mec_TeleOpLevel1_Ri2W.java
 
-    A Linear opmode class that is used as our
-    TeleOp method for the driver controlled period.
+    A Linear opMode class that is used as our TeleOp method for the driver controlled period.
 
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file has been modified from the original FTC SkyStone SDK.
+    Written by FTC Team #10273, The Cat in the Hat Comes Back.
 */
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;

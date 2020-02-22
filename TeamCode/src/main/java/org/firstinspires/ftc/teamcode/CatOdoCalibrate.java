@@ -10,9 +10,12 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 
 /**
- * Created by Sarthak on 6/1/2019.
- * Odometry system calibration. Run this OpMode to generate the necessary constants to calculate the robot's global position on the field.
- * The Global Positioning Algorithm will not function and will throw an error if this program is not run first
+ * Original created by Sarthak (of Wizards.exe) on 6/1/2019.
+ * Modified by Team #10273, The Cat in the Hat Comes Back.
+ *
+ * Odometry system calibration.  Run this OpMode to generate the necessary constants to calculate
+ * the robot's global position on the field.  The Global Positioning Algorithm will not function
+ * and will throw an error if this program is not run first.
  */
 @TeleOp(name = "Cat Odometry Calibrate", group = "Calibration")
 public class CatOdoCalibrate extends LinearOpMode {
@@ -53,8 +56,8 @@ public class CatOdoCalibrate extends LinearOpMode {
         waitForStart();
 
         //Begin calibration (if robot is unable to pivot at these speeds, please adjust the constant at the top of the code
-        while(robot.driveOdo.getCurrentAngle() < 90 && opModeIsActive()){
-            if(robot.driveOdo.getCurrentAngle() < 60) {
+        while(robot.driveOdo.getCurrentAngle() > -90 && opModeIsActive()){
+            if(robot.driveOdo.getCurrentAngle() > -60) {
                 robot.driveOdo.setDrivePowers(PIVOT_SPEED,-PIVOT_SPEED,PIVOT_SPEED,-PIVOT_SPEED);
 
             }else{
@@ -81,12 +84,12 @@ public class CatOdoCalibrate extends LinearOpMode {
 
         double verticalEncoderTickOffsetPerDegree = encoderDifference/angle;
 
-        double wheelBaseSeparation = (angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*robot.driveOdo.ODO_COUNTS_PER_INCH);
+        //double wheelBaseSeparation = (angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*robot.driveOdo.ODO_COUNTS_PER_INCH);
 
-        //double wheelBaseSeparation = (2*angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*robot.driveOdo.ODO_COUNTS_PER_INCH);
+        double wheelBaseSeparation = (2*angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*robot.driveOdo.ODO_COUNTS_PER_INCH);
 
         // Negated this numberto move the robot center to the actual center instead of behind it
-        horizontalTickOffset = -robot.driveOdo.backOdometry.getCurrentPosition()/Math.toRadians(robot.driveOdo.getCurrentAngle());
+        horizontalTickOffset = robot.driveOdo.backOdometry.getCurrentPosition()/Math.toRadians(robot.driveOdo.getCurrentAngle());
 
         //Write the constants to text files
         ReadWriteFile.writeFile(wheelBaseSeparationFile, String.valueOf(wheelBaseSeparation));

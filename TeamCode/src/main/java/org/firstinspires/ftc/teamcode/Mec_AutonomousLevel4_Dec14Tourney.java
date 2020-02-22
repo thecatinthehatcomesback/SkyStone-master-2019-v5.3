@@ -40,7 +40,7 @@ public class Mec_AutonomousLevel4_Dec14Tourney extends LinearOpMode {
     private boolean isBuildZone = true;
     private boolean isParkAtWall = false;
 
-    private CatHW_Vision.skyStonePos skyStonePos = CatHW_Vision.skyStonePos.RIGHT;
+    private CatHW_Vision.skyStonePos skyStonePos = CatHW_Vision.skyStonePos.OUTSIDE;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -190,11 +190,11 @@ public class Mec_AutonomousLevel4_Dec14Tourney extends LinearOpMode {
         // Drive to quarry
         robot.driveClassic.mecDriveVertical(CatHW_DriveBase.CHILL_SPEED,22,2);
         robot.driveClassic.waitUntilDone();
-        // Set the tongue to stop the block from being forced through so we can spit back out later
+        // Set the tongue to stop the block from being forced through so we can spit back OUT later
         //robot.jaws.pusherMid();
         // Turn and grab the SkyStone
         switch (skyStonePos) {
-            case LEFT:
+            case INSIDE:
                 robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, -3, 1);
                 robot.driveClassic.waitUntilDone();
                 robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED, -35, 1.5);
@@ -208,7 +208,7 @@ public class Mec_AutonomousLevel4_Dec14Tourney extends LinearOpMode {
                 robot.jaws.intakeJaws();
                 robot.driveClassic.waitUntilDone();
                 break;
-            case RIGHT:
+            case OUTSIDE:
                 robot.driveClassic.mecDriveHorizontal(CatHW_DriveBase.CHILL_SPEED, -15, 1);
                 robot.driveClassic.waitUntilDone();
                 robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED, -35, 1.5);
@@ -231,7 +231,7 @@ public class Mec_AutonomousLevel4_Dec14Tourney extends LinearOpMode {
         // Drive into building zone
         switch (skyStonePos ){
 
-            case LEFT:
+            case INSIDE:
                 robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED, 26, 2);
                 robot.driveClassic.waitUntilDone();
                 break;
@@ -239,7 +239,7 @@ public class Mec_AutonomousLevel4_Dec14Tourney extends LinearOpMode {
                 robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED, 22, 2);
                 robot.driveClassic.waitUntilDone();
                 break;
-            case RIGHT:
+            case OUTSIDE:
                 robot.driveClassic.mecDriveVertical(CatHW_DriveBase.DRIVE_SPEED, 18, 2);
                 robot.driveClassic.waitUntilDone();
                 break;
@@ -261,7 +261,7 @@ public class Mec_AutonomousLevel4_Dec14Tourney extends LinearOpMode {
         robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, -25, 3.0);
         robot.driveClassic.waitUntilDone();
         // Latch on to foundation
-        robot.claw.extendClaw();
+        robot.claw.extendClaws();
         robot.robotWait(0.3);
         // Drive back to Building Zone
         robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, 60, 3.0);
@@ -270,15 +270,15 @@ public class Mec_AutonomousLevel4_Dec14Tourney extends LinearOpMode {
         robot.driveClassic.mecDriveHorizontal(CatHW_DriveClassic.CHILL_SPEED, -2, 0.5);
         robot.driveClassic.waitUntilDone();
         robot.robotWait(.1);
-        robot.claw.retractClaw();
+        robot.claw.retractClaws();
         robot.robotWait(.2);
         //Rotate ourselves back square
         robot.driveClassic.mecTurn(CatHW_DriveBase.CHILL_SPEED,0,1.0);
         robot.driveClassic.waitUntilDone();
-        // Slide out to wall to line up
+        // Slide OUT to wall to line up
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? -14 : 0, 5.0);
         robot.driveClassic.waitUntilDone();
-        // Slide out to towards the line
+        // Slide OUT to towards the line
         robot.driveClassic.mecDriveVertical(CatHW_DriveClassic.CHILL_SPEED, isRedAlliance ? 42 : -25, 5.0);
         robot.driveClassic.waitUntilDone();
         // Drive ahead and line up with the foundation

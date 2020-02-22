@@ -1,20 +1,17 @@
 /*
         CatHW_DriveBase.java
 
-    A "hardware" class containing common code accessing hardware specific
-    to the movement and rotation of the setDrivePowers train.  This is a
-    modified or stripped down version of CatSingleOverallHW to run all
-    the drive train overall.  This file is used by the new autonomous
-    OpModes to run multiple operations at once.
+    A "hardware" class containing common code accessing hardware specific to the movement and
+    rotation of the drive train from both the odometry and standard drive motor encoders.  This has
+    been modified and/or stripped down from the CatSingleOverallHW to run all the drive train
+    overall.  This file is used by the new autonomous OpModes to run multiple operations at once.
 
 
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file has been modified from the original FTC SkyStone SDK.
+    Written by FTC Team #10273, The Cat in the Hat Comes Back.
 */
 
 package org.firstinspires.ftc.teamcode;
-
-import android.util.Log;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -158,7 +155,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
         rightRearMotor.setPower(rightBack);
 
         // Log message:
-        Log.d("catbot", String.format("Drive Power  LF: %.2f, RF: %.2f, LB: %.2f, RB: %.2f", leftFront, rightFront, leftBack, rightBack));
+        //Log.d("catbot", String.format("Drive Power  LF: %.2f, RF: %.2f, LB: %.2f, RB: %.2f", leftFront, rightFront, leftBack, rightBack));
     }
     /**
      * Set drive train motors to BRAKE
@@ -271,7 +268,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
          * 2: Find the highest absolute value (the "scalor")
          * 3: If the highest value is not more than 1.0, we don't need to change the values
          * 4: But if it is higher than 1.0, we need to find the scale to get that value down to 1.0
-         * 5: Finally, we pass out the scale factor so that we can scale each motor down
+         * 5: Finally, we pass OUT the scale factor so that we can scale each motor down
          */
         double scalor = 0;
         double scaleFactor;

@@ -1,17 +1,16 @@
 /*
         CatHW_Async.java
 
-    An "hardware" class that acts as the master in which all the other
-    "hardwares" run through.
+    An "hardware" class that acts as the master in which all the other "hardware" classes run
+    through.
 
 
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
+    This file has been modified from the original FTC SkyStone SDK.
+    Written by FTC Team #10273, The Cat in the Hat Comes Back.
 */
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -36,11 +35,7 @@ public class CatHW_Async
     /* Public OpMode members. */
     public boolean isInitOdo = false;
 
-    // LED stuff:
-    public RevBlinkinLedDriver lights = null;
-    public RevBlinkinLedDriver.BlinkinPattern pattern;
-    public RevBlinkinLedDriver underLights = null;
-    public RevBlinkinLedDriver.BlinkinPattern underPattern;
+
     public static boolean isRedAlliance = true;
 
 
@@ -56,7 +51,7 @@ public class CatHW_Async
     CatHW_DriveOdo      driveOdo        = null;
     CatHW_Tail          tail            = null;
     CatHW_Vision        eyes            = null;
-
+    CatHW_Lights        lights          = null;
     /* Constructor */
     public CatHW_Async(){
 
@@ -86,6 +81,11 @@ public class CatHW_Async
         claw = new CatHW_Claw(this);
         claw.init();
 
+        opMode.telemetry.addData("Initialize","Lights...");
+        opMode.telemetry.update();
+        lights = CatHW_Lights.getInstanceAndInit(this);
+        lights.init();
+
         if (isInitOdo) {
             opMode.telemetry.addData("Initialize","DriveOdo...");
             opMode.telemetry.update();
@@ -105,13 +105,6 @@ public class CatHW_Async
         opMode.telemetry.addData("Initialize","All Done...  BOOM!");
         opMode.telemetry.update();
 
-        // Blinkin LED stuff //
-        lights           = hwMap.get(RevBlinkinLedDriver.class, "blinky");
-        pattern          = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
-        underLights      = hwMap.get(RevBlinkinLedDriver.class, "under_blinky");
-        underPattern     = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
-        lights.setPattern(pattern);
-        underLights.setPattern(underPattern);
     }
 
     /**
