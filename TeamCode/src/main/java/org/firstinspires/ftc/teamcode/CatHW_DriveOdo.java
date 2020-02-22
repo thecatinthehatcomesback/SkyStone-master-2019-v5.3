@@ -48,6 +48,16 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     double  strafePower;
     double  targetTheta;
     double turnPower;
+    double xMin;
+    double xMax;
+    double yMin;
+    double yMax;
+    double thetaMin;
+    double thetaMax;
+    double lastPower = 0;
+    double maxPower;
+
+    boolean nonStop;
 
 
     /* Enums */
@@ -146,13 +156,54 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         strafePower = power;
         targetTheta = theta;
 
+        // Power update Thread:
+        updatesThread.powerUpdate.setTarget(x, y, power);
+
+        //if the last drive was nonstop
+        if (nonStop){
+            nonStop = false;
+            updatesThread.powerUpdate.setTimer(runTime);
+        }
+
         // Reset timer once called
         runTime.reset();
 
 
+    }
+
+    //nonstop translate
+    public void translateDrive(double x, double y, double power, double theta, double finishedXMin, double finishedXMax, double finishedYMin, double finishedYMax, double finishedThetaMin, double finishedThetaMax, double timeoutS){
+
+        currentMethod = DRIVE_METHOD.translate;
+        timeout = timeoutS;
+        isDone = false;
+        targetX = x;
+        targetY = y;
+        strafePower = power;
+        targetTheta = theta;
+        xMin = finishedXMin;
+        xMax = finishedXMax;
+        yMin = finishedYMin;
+        yMax = finishedYMax;
+        thetaMin = finishedThetaMin;
+        thetaMax = finishedThetaMax;
+        maxPower = power;
+
+        //if the last drive was nonstop
+        if (nonStop){
+            updatesThread.powerUpdate.setTimer(runTime);
+        }
+
         // Power update Thread:
         updatesThread.powerUpdate.setTarget(x, y, power);
+
+        nonStop = true;
+
+        // Reset timer once called
+        runTime.reset();
+
     }
+
     public void quickDrive(double x, double y, double power, double theta, double timeoutS){
 
         translateDrive(x,y,power,theta,timeoutS);
@@ -199,11 +250,27 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 double getPower = updatesThread.powerUpdate.updatePower();
 
                 // Check if ready to end
-                if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&
-                        (Math.abs(getTheta - targetTheta) < 5 )) {
+                if (!nonStop) {
+                    if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2) &&
+                            (Math.abs(getTheta - targetTheta) < 5)) {
 
-                    keepDriving = false;
+                        keepDriving = false;
+                    }
+                }else {
+
+                    //if is nonstop
+                    if (xMin < getX && getX < xMax && yMin < getY && getY < yMax && thetaMin < getTheta && getTheta < thetaMax){
+
+                        keepDriving = false;
+                    }
+                    if (lastPower > getPower){
+                        getPower = maxPower;
+                    }
+
                 }
+
+                lastPower = getPower;
+
 
                 /**
                  * Calc robot angles:
@@ -280,10 +347,15 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         }
 
         if (!keepDriving){
-            // Stop all motion;
-            setDrivePowers(0, 0, 0, 0);
-            isDone = true;
-            return true;
+            if (nonStop){
+                isDone = true;
+                return true;
+            }else {
+                // Stop all motion;
+                setDrivePowers(0, 0, 0, 0);
+                isDone = true;
+                return true;
+            }
         }
         if (isDone){
             return true;

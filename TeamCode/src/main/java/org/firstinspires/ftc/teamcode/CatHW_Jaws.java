@@ -110,7 +110,7 @@ public class CatHW_Jaws extends CatHW_Subsystem
         rightJawMotor.setPower(0.0);
     }
     public boolean hasStone(){
-        return intakeSensor.getState();
+        return !intakeSensor.getState();
     }
 
 
