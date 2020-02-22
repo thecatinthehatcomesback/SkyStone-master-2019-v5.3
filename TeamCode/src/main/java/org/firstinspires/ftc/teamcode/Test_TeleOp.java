@@ -16,6 +16,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.odometry.OdometryGlobalCoordinatePosition;
+
 
 @TeleOp(name="Test Tele", group="CatTest TeleOp")
 public class Test_TeleOp extends LinearOpMode {
@@ -24,10 +26,11 @@ public class Test_TeleOp extends LinearOpMode {
     private ElapsedTime runTime = new ElapsedTime();
     private ElapsedTime elapsedGameTime = new ElapsedTime();
 
+    CatOdoPositionUpdate globalPositionUpdate;
+
+
     /* Declare OpMode members. */
     CatHW_Async robot;
-
-    boolean inReverse = true;
 
     /* constructor for class */
     public Test_TeleOp() {
@@ -61,16 +64,78 @@ public class Test_TeleOp extends LinearOpMode {
         runTime.reset();
         elapsedGameTime.reset();
 
+        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.driveOdo.leftOdometry, robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, CatHW_DriveOdo.ODO_COUNTS_PER_INCH, 75);
+        Thread positionThread = new Thread(globalPositionUpdate);
+        positionThread.start();
+
+        double driveSpeed;
+        double leftFront;
+        double rightFront;
+        double leftBack;
+        double rightBack;
+        double SF;
 
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            /**
+             * ---   _________________   ---
+             * ---   Driver 1 controls   ---
+             * ---   \/ \/ \/ \/ \/ \/   ---
+             */
+
+            // Drive train speed control:
+            if (gamepad1.left_bumper) {
+                driveSpeed = 1.00;
+            } else if (gamepad1.right_bumper) {
+                driveSpeed = 0.30;
+            } else {
+                driveSpeed = 0.70;
+            }
+
+            // Input for setDrivePowers train and sets the dead-zones:
+            leftFront  = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) +
+                    ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) +
+                    gamepad1.left_stick_x;
+            rightFront = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) -
+                    ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) -
+                    gamepad1.left_stick_x;
+            leftBack   = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) -
+                    ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) +
+                    gamepad1.left_stick_x;
+            rightBack  = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) +
+                    ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) -
+                    gamepad1.left_stick_x;
+
+            // Calculate the scale factor:
+            SF = robot.driveClassic.findScalor(leftFront, rightFront, leftBack, rightBack);
+            // Set powers to each setDrivePowers motor:
+            leftFront  = leftFront  * SF * driveSpeed;
+            rightFront = rightFront * SF * driveSpeed;
+            leftBack   = leftBack   * SF * driveSpeed;
+            rightBack  = rightBack  * SF * driveSpeed;
+            // DRIVE!!!
+            robot.driveClassic.setDrivePowers(leftFront, rightFront, leftBack, rightBack);
+
+
+
 
             // Tell us the odometry encoder ticks
             telemetry.addData("OdoTicks", "L/R/B  :%7d  :%7d  :%7d",
                     robot.driveOdo.leftOdometry.getCurrentPosition(),
                     robot.driveOdo.rightOdometry.getCurrentPosition(),
                     robot.driveOdo.backOdometry.getCurrentPosition());
+            //Display Global (x, y, theta) coordinates
+            telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / CatHW_DriveOdo.ODO_COUNTS_PER_INCH);
+            telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / CatHW_DriveOdo.ODO_COUNTS_PER_INCH);
+            telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
+            telemetry.addData("Thread Active", positionThread.isAlive());
+
             telemetry.update();
         }
+
+        //Stop the thread
+        globalPositionUpdate.stop();
+
     }
 }

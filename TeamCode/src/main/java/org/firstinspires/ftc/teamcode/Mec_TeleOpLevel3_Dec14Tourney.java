@@ -133,12 +133,6 @@ public class Mec_TeleOpLevel3_Dec14Tourney extends LinearOpMode {
                 robot.jaws.setJawPower(gamepad1.right_trigger - (gamepad1.left_trigger*0.3));
             }
 
-            // stonePusher controls:
-            if (gamepad1.dpad_left) {
-                robot.jaws.pusherFullPush();
-            } else {
-                robot.jaws.pusherRetract();
-            }
 
 
             /**

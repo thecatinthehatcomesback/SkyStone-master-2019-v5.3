@@ -130,7 +130,21 @@ public class Test_Autonomous extends LinearOpMode {
 
         /* Go! */
 
+        robot.driveOdo.translateDrive(0,36, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
+        robot.driveOdo.waitUntilDone();
+        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
+        robot.driveOdo.waitUntilDone();
+        /*robot.driveOdo.translateDrive(0,72, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
+        robot.driveOdo.waitUntilDone();
+        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
+        robot.driveOdo.waitUntilDone();
+        robot.driveOdo.translateDrive(0,72, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
+        robot.driveOdo.waitUntilDone();
+        robot.driveOdo.translateDrive(0,0, CatHW_DriveBase.DRIVE_SPEED, 0, .65, 5);
+        robot.driveOdo.waitUntilDone();*/
+
+
         // Testing the new mecTurn
-        robot.driveClassic.mecTurn(CatHW_DriveClassic.TURN_SPEED, 170, 3.0);
+        //robot.driveClassic.mecTurn(CatHW_DriveClassic.TURN_SPEED, 170, 3.0);
     }
 }

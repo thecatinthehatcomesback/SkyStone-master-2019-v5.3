@@ -71,10 +71,10 @@ public class Mec_TeleOpLevel1_Ri2W extends LinearOpMode {
         double intakeSpeed;
         boolean autoIntake = false;
 
-        CatOdoPositionUpdate globalPositionUpdate = new CatOdoPositionUpdate(robot.driveOdo.leftOdometry,
-                robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, robot.driveOdo.ODO_COUNTS_PER_INCH,75);
-        Thread positionThread = new Thread(globalPositionUpdate);
-        positionThread.start();
+        CatOdoAllUpdates allUpdates = new CatOdoAllUpdates(robot.driveOdo.leftOdometry,
+                robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, robot.driveOdo.ODO_COUNTS_PER_INCH);
+        Thread updatesThread = new Thread(allUpdates);
+        updatesThread.start();
 
 
         // Run infinitely until the end of the match (driver presses STOP)
@@ -175,9 +175,9 @@ public class Mec_TeleOpLevel1_Ri2W extends LinearOpMode {
             telemetry.addData("Right Back Power:", "%.2f", rightBack);
             telemetry.addData("Intake Power:","%.2f", robot.jaws.leftJawMotor.getPower());
 
-            telemetry.addData("X Position","%.2f", globalPositionUpdate.returnXCoordinate() / robot.driveOdo.ODO_COUNTS_PER_INCH);
-            telemetry.addData("Y Position", "%.2f",globalPositionUpdate.returnYCoordinate() / robot.driveOdo.ODO_COUNTS_PER_INCH);
-            telemetry.addData("Orientation (Degrees)", "%.2f", globalPositionUpdate.returnOrientation());
+            telemetry.addData("X Position","%.2f", allUpdates.positionUpdate.returnXCoordinate() / robot.driveOdo.ODO_COUNTS_PER_INCH);
+            telemetry.addData("Y Position", "%.2f",allUpdates.positionUpdate.returnYCoordinate() / robot.driveOdo.ODO_COUNTS_PER_INCH);
+            telemetry.addData("Orientation (Degrees)", "%.2f", allUpdates.positionUpdate.returnOrientation());
 
             telemetry.addData("Intake Encoder:", robot.jaws.leftJawMotor.getCurrentPosition());
             telemetry.addData("left Encoder:", robot.driveOdo.leftOdometry.getCurrentPosition());
@@ -186,6 +186,6 @@ public class Mec_TeleOpLevel1_Ri2W extends LinearOpMode {
 
             telemetry.update();
         }
-        globalPositionUpdate.stop();
+        allUpdates.stop();
     }
 }

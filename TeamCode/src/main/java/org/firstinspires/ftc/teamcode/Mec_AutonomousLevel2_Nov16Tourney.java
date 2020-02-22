@@ -1,15 +1,16 @@
 /**
- Mec_AutonomousLevel1_Ri2W.java
+ Mec_AutonomousLevel2_Nov16Tourney.java
 
- A Linear OpMode class to be an autonomous method for both Blue & Red where
- we pick which side of the lander we are hanging off of with gamepad1 and
- detect the gold with DogeCV, hit the right element, place our team marker
- in our depot and park in either crater according to what we say using gamepad1
- at the beginning of the match.
+ A Linear OpMode class to be an autonomous method for both Blue & Red alliance
+ sides where we pick which side of the alliance bridge we start off at with
+ gamepad1 as well as selecting alliance color and whether we park under the
+ alliance bridge closer or further from the game field wall.
 
- MecBasic is written to use the most basic approach to our autonomous route      //TODO Change this
- with the help of mechanical sorting jaws and a servo to drop our team marker
- off in the depot.  This autonomous is used for our first qualifier this year
+ Mec_AutonomousLevel2_Nov16Tourney is written to use a better than basic
+ approach to our autonomous route with the help intake jaws that intake a
+ stone at any orientation for a "touch it-own it" approach.  A servo and
+ two motors make up TC-73/Bucky's tail a stack stones as well as our team
+ marker.  This autonomous is used for our first qualifier of our year
 (November 16, 2019).
 
  This was the old code for our Robot in 2 Weeks bot, but we completely stripped
