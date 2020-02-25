@@ -1,11 +1,3 @@
-/*
-        CatHW_Lights.java
-
-    A "hardware" class containing common code accessing hardware specific
-    to the LED strings.
-    By FTC Team #10273, The Cat in the Hat Comes Back.
-*/
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -13,109 +5,146 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.ArrayList;
 
+/**
+ * CatHW_Lights.java
+ *
+ *
+ * A "hardware" class containing common code accessing hardware specific to the LED strings.
+ *
+ *
+ * @author FTC Team #10273, The Cat in the Hat Comes Back
+ */
 public class CatHW_Lights implements Runnable
 {
-
-    // static variable singleInstance of type Singleton
+    /** Static variable singleInstance of type Singleton. */
     private static CatHW_Lights singleInstance = null;
 
-    // Thread run condition
+    // Thread run conditions: //
     private boolean isRunning   = true;
     private int     sleepTime   = 25;
-    private LightPattern defaultPattern = new LightPattern(sleepTime,RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+    private LightPattern defaultPattern = new LightPattern(sleepTime,
+            RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
 
-    //list
+    // The list of patterns:
     private ArrayList<LightPattern> patternList = new ArrayList<>();
 
-    // blinkin objects:
-    public RevBlinkinLedDriver lights = null;
-    public RevBlinkinLedDriver.BlinkinPattern pattern;
+    // Blinkin objects:
+    private RevBlinkinLedDriver lights = null;
+    private RevBlinkinLedDriver.BlinkinPattern pattern;
 
 
-    //hw map
-    HardwareMap hwMap;
+    // Hardware map:
+    private HardwareMap hwMap;
 
 
     /* Constructor */
-
-    // private constructor restricted to this class itself
+    // Private constructor restricted to this class itself.
     private CatHW_Lights(CatHW_Async mainHardware) {
         hwMap = mainHardware.hwMap;
-
     }
 
-    // static method to create instance of Singleton class
-    public static CatHW_Lights getInstanceAndInit(CatHW_Async mainHardwareIn ) {
+    // Static method to create instance of Singleton class.
+    public static CatHW_Lights getInstanceAndInit(CatHW_Async mainHardwareIn) {
         if (singleInstance == null) {
             singleInstance = new CatHW_Lights(mainHardwareIn);
         }
         return singleInstance;
     }
 
-    public void init(){
-
-        // Blinkin LED stuff //
+    /**
+     * Initializes the hardware for the Blinkin modules.
+     */
+    public void init() {
+        // Blinkin LED stuff: //
         lights           = hwMap.get(RevBlinkinLedDriver.class, "blinky");
         pattern          = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
-        //lights.setPattern(pattern);
 
-        defaultPattern = new LightPattern(sleepTime,RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+        defaultPattern = new LightPattern(sleepTime,
+                RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
         isRunning = true;
+
+        // Start a new Thread for lights:
         Thread lightsThread = new Thread(this);
         lightsThread.start();
         patternList.clear();
     }
 
-    public void blink (int num, RevBlinkinLedDriver.BlinkinPattern color, int timeperblinkMS){
+
+
+    //----------------------------------------------------------------------------------------------
+    // Blinkin Methods:
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Blinks a pattern so many times for a certain amount of time.
+     *
+     * @param num of times to blink.
+     * @param color pattern to blink.
+     * @param timePerBlinkMS how long to blink.
+     */
+    public void blink (int num, RevBlinkinLedDriver.BlinkinPattern color, int timePerBlinkMS) {
         for (int i = 0; i < num; i++){
-            addQueue(new LightPattern(timeperblinkMS,color));
-            addQueue(new LightPattern(timeperblinkMS, RevBlinkinLedDriver.BlinkinPattern.BLACK));
-
+            addQueue(new LightPattern(timePerBlinkMS,color));
+            addQueue(new LightPattern(timePerBlinkMS, RevBlinkinLedDriver.BlinkinPattern.BLACK));
         }
-
     }
 
-    public void setDefaultColor(RevBlinkinLedDriver.BlinkinPattern color){
+    /**
+     * Sets the LED pattern.
+     *
+     * @param color is the name of the Blinkin pattern.
+     */
+    public void setDefaultColor(RevBlinkinLedDriver.BlinkinPattern color) {
         defaultPattern.setPattern(color);
     }
 
-
-
+    /**
+     * Adds a light pattern to the end of the list.
+     *
+     * @param lp is the light pattern.
+     */
     public void addQueue(LightPattern lp) {
         synchronized (this) {
-            //adds the lightpattern to the end of the list
             patternList.add(lp);
-
         }
     }
 
-    public LightPattern readQueue(){
+    /**
+     * @return the light pattern's pattern and delay.
+     */
+    public LightPattern readQueue() {
         synchronized (this) {
-         //gets the lightpattern's pattern and delay
-
-        if (patternList.size() > 0) {
-            return patternList.remove(0);
-
-        }else {
-            return defaultPattern;
-        }
-
+            // Gets the light pattern's pattern and delay.
+            if (patternList.size() > 0) {
+                return patternList.remove(0);
+            } else {
+                return defaultPattern;
+            }
         }
     }
 
+
+
+    //----------------------------------------------------------------------------------------------
+    // Run and Stop methods:
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Continue trying different light patterns until stop() is called.
+     */
     @Override
     public void run() {
         while(isRunning) {
 
             LightPattern current = readQueue();
 
-            //do stuff
+            // Do stuff:
             if (current.getPattern() != pattern){
                 lights.setPattern(current.getPattern());
                 pattern = current.getPattern();
             }
 
-            //add delay
+            // Add delay here:
             try {
                 Thread.sleep(current.getDelayMs());
             } catch (InterruptedException e) {
@@ -124,7 +153,10 @@ public class CatHW_Lights implements Runnable
         }
     }
 
-    public void stop(){ isRunning = false; }
-
-
-}// End of class bracket
+    /**
+     * Used to set isRunning to false in order to stop the run() method.
+     */
+    public void stop() {
+        isRunning = false;
+    }
+}

@@ -1,14 +1,3 @@
-/*
-        Test_TeleOp.java
-
-    A Linear opMode class to be our TeleOp testing method to try
-    and solve our problems throughout the year without having to
-    modify the main TeleOp.
-
-
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
-*/
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -17,24 +6,31 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
+/**
+ * Test_TeleOp.java
+ *
+ *
+ * A Linear opMode class to be our TeleOp testing method to try and solve our problems throughout
+ * the year without having to modify the main TeleOp.
+ *
+ *
+ * @author FTC Team #10273, The Cat in the Hat Comes Back
+ */
 @TeleOp(name="Test Tele", group="CatTest TeleOp")
-public class Test_TeleOp extends LinearOpMode {
-
+public class Test_TeleOp extends LinearOpMode
+{
     /* Declare OpMode members. */
     private ElapsedTime runTime = new ElapsedTime();
     private ElapsedTime elapsedGameTime = new ElapsedTime();
 
-
-    //CatOdoPositionUpdate globalPositionUpdate;
-
-
     /* Declare OpMode members. */
     CatHW_Async robot;
 
-    /* constructor for class */
+    /* Constructor */
     public Test_TeleOp() {
         robot = new CatHW_Async();
     }
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -54,7 +50,7 @@ public class Test_TeleOp extends LinearOpMode {
         // Wait for PLAY:
         waitForStart();
 
-        if(robot.isRedAlliance) {
+        if(CatHW_Async.isRedAlliance) {
             robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
         } else {
             robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
@@ -65,9 +61,6 @@ public class Test_TeleOp extends LinearOpMode {
         runTime.reset();
         elapsedGameTime.reset();
 
-//        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.driveOdo.leftOdometry, robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, CatHW_DriveOdo.ODO_COUNTS_PER_INCH, 75);
-//        Thread positionThread = new Thread(globalPositionUpdate);
-//        positionThread.start();
 
         double driveSpeed;
         double leftFront;
@@ -79,11 +72,9 @@ public class Test_TeleOp extends LinearOpMode {
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            /**
-             * ---   _________________   ---
-             * ---   Driver 1 controls   ---
-             * ---   \/ \/ \/ \/ \/ \/   ---
-             */
+            //--------------------------------------------------------------------------------------
+            // Driver 1 Controls:
+            //--------------------------------------------------------------------------------------
 
             // Drive train speed control:
             if (gamepad1.left_bumper) {
@@ -120,6 +111,9 @@ public class Test_TeleOp extends LinearOpMode {
 
 
 
+            //--------------------------------------------------------------------------------------
+            // Telemetry Data:
+            //--------------------------------------------------------------------------------------
 
             // Tell us the odometry encoder ticks
             telemetry.addData("OdoTicks", "L/R/B  :%7d  :%7d  :%7d",
@@ -134,8 +128,7 @@ public class Test_TeleOp extends LinearOpMode {
             telemetry.update();
         }
 
-        //Stop the thread
+        // Stop the thread.
         robot.driveOdo.updatesThread.stop();
-
     }
 }

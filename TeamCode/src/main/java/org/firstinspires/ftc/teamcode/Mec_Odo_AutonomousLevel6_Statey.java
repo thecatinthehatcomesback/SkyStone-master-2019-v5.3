@@ -1,20 +1,3 @@
-/**
- Mec_Odo_AutonomousLevel6_Statey.java
-
- A Linear OpMode class to be an autonomous method for both Blue & Red alliance
- sides where we pick which side of the alliance bridge we start off at with
- gamepad1 as well as selecting alliance color and whether we park under the
- alliance bridge closer or further from the game field wall.  Also will detect
- the position and deliver the skystone using machine vision.
-
- Mec_Odo_AutonomousLevel6_Statey is written to add machine vision and
- skystone delivery to our autonomous route with the help intake jaws that intake  //TODO: Change this...
- a stone at any orientation for a "touch it-own it" approach.  A servo and two
- motors make up TC-73/Bucky's tail a stack stones as well as our team marker.
- This autonomous is used for our first qualifier of our year (December 14, 2019).
-
- By FTC Team #10273, The Cat in the Hat Comes Back.
- */
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -22,12 +5,31 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+/**
+ * Mec_Odo_AutonomousLevel6_Statey.java
+ *
+ *
+ * A Linear OpMode class to be an autonomous method for both Blue & Red alliance sides where we pick
+ * which side of the alliance bridge we start off at with gamepad1 as well as selecting alliance
+ * color and whether we park under the alliance bridge closer or further from the game field wall.
+ * Also will detect the position and deliver the skystone using machine vision and move the
+ * foundation.
+ *
+ * Mec_Odo_AutonomousLevel6_Statey is written to use machine vision and SkyStone delivery to our
+ * autonomous route with the help intake jaws that suck in a stone at any orientation using a
+ * "touch it-own it" approach.  A servo and two motors make up TC-73/Bucky's arm and stack stones as
+ * well as our team marker.
 
+ * This autonomous is used for our State Championship(February 7-8, 2020).
+ *
+ *
+ * @author FTC Team #10273, The Cat in the Hat Comes Back.
+ */
 @Autonomous(name="State Odo Autonomous", group="CatAuto")
-public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
-
+public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
+{
     /* Declare OpMode members. */
-    CatHW_Async robot  = new CatHW_Async();    // All the hardwares init here
+    CatHW_Async robot  = new CatHW_Async();    // All the hardware classes init here.
     private ElapsedTime delayTimer = new ElapsedTime();
     private double timeDelay;
     private boolean isRedAlliance = true;
@@ -40,34 +42,15 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        /**
-         * Initialize the setDrivePowers system variables.  The init() methods of
-         * our hardware class does all the work:
+        /*
+        Initialize the setDrivePowers system variables.  The init() methods of our hardware class
+        does all the work:
          */
         robot.init(hardwareMap, this, true);
-        // Init IMU sensor later when the match starts to avoid drifting in the values
-        // Init our Machine Vision
-        //eyes.initVision(hardwareMap);
 
 
-        /**
-         * Send telemetry message to signify robot getting ready:
-         */
-        telemetry.addData("Status: ", "Resetting Encoders...");
-        telemetry.update();
-        //robot.setDrivePowers.resetDriveEncoders();
-        //idle();
-        //robot.setDrivePowers.setDriveRunToPosition();
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0", "Starting at :%7d  :%7d  :%7d  :%7d",
-                robot.driveClassic.leftFrontMotor.getCurrentPosition(),
-                robot.driveClassic.rightFrontMotor.getCurrentPosition(),
-                robot.driveClassic.leftRearMotor.getCurrentPosition(),
-                robot.driveClassic.rightRearMotor.getCurrentPosition());
-        telemetry.update();
-
-        /**
-         * Init Delay Option Select:
+        /*
+        Init Delay Option Select:
          */
         // After init is pushed but before Start we can change the delay using dpad up/down //
         delayTimer.reset();
@@ -223,12 +206,12 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         //move foundation and release stone
                         robot.jaws.outputJaws();
                         robot.robotWait(.2);
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoost(.55);
                         //theta = -100
                         robot.driveOdo.quickDrive(72, 8, .9, -50, 3);
                         robot.driveOdo.quickDrive(78, 6, .9, -90, 1);
                         //release foundation
-                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                         robot.claw.retractClaws();
                         robot.robotWait(.75);
                         robot.driveOdo.quickDrive(84, 26, .9, -90, 2);
@@ -259,11 +242,11 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                             //move foundation and release stone
                             robot.jaws.outputJaws();
                             robot.robotWait(.75);
-                            robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
+                            robot.driveOdo.updatesThread.powerUpdate.powerBoost(.55);
                         robot.driveOdo.quickDrive(72, 8, .9, -100, 3);
                         robot.driveOdo.quickDrive(78, 6, .9, -90, 1);
                             //release foundation
-                            robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                            robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                             robot.claw.retractClaws();
                             robot.robotWait(.75);
                             robot.driveOdo.quickDrive(84, 29, .9, -90, 2);
@@ -294,11 +277,11 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                             //move foundation and release stone
                             robot.jaws.outputJaws();
                             robot.robotWait(.75);
-                            robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
+                            robot.driveOdo.updatesThread.powerUpdate.powerBoost(.55);
                             robot.driveOdo.quickDrive(72, 8, .9, -100, 3);
                             robot.driveOdo.quickDrive(78, 6, .9, -90, 1);
                             //release foundation
-                            robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                            robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                             robot.claw.retractClaws();
                             robot.robotWait(.75);
                             robot.driveOdo.quickDrive(84, 30, .9, -90, 2);
@@ -436,11 +419,11 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         //move foundation and release stone
                         robot.jaws.outputJaws();
                         //robot.robotWait(.15);
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoost(.55);
                         robot.driveOdo.quickDrive(-68, 8, .9, 100, 3);
                         robot.driveOdo.quickDrive(-78, 8, .9, 90, 1);
                         //release foundation
-                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                         robot.claw.retractClaws();
                         robot.robotWait(.2);
                         robot.driveOdo.quickDrive(-84, 34, .9, 90, 2);
@@ -450,9 +433,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         robot.jaws.intakeJaws();
                         robot.driveOdo.quickDrive(28, 46, .9, 55, 1.5);
                         //back up and drive under bridge
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoost(.4);
                         robot.driveOdo.quickDrive(16, 25, .9, -30, 2);
-                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                         robot.driveOdo.quickDrive(-42, 42, .9, -83, 4);
                         robot.jaws.outputJaws();
                         robot.driveOdo.quickDrive(-28, 42, .9, -83, 2);
@@ -477,11 +460,11 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         //move foundation and release stone
                         robot.jaws.outputJaws();
                         //robot.robotWait(.15);
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoost(.55);
                         robot.driveOdo.quickDrive(-68, 8, .9, 100, 3);
                         robot.driveOdo.quickDrive(-78, 8, .9, 90, 1);
                         //release foundation
-                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                         robot.claw.retractClaws();
                         robot.robotWait(.2);
                         robot.driveOdo.quickDrive(-84, 34, .9, 90, 2);
@@ -491,9 +474,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         robot.jaws.intakeJaws();
                         robot.driveOdo.quickDrive(20, 46, .9, 55, 1.5);
                         //back up and drive under bridge
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoost(.4);
                         robot.driveOdo.quickDrive(16, 22, .9, -30, 2);
-                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                         robot.driveOdo.quickDrive(-42, 37, .9, -83, 4);
                         robot.jaws.outputJaws();
                         robot.driveOdo.quickDrive(-28, 40, .9, -83, 2);
@@ -518,11 +501,11 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         //move foundation and release stone
                         robot.jaws.outputJaws();
                         //robot.robotWait(.15);
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.55);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoost(.55);
                         robot.driveOdo.quickDrive(-68, 8, .9, 100, 3);
                         robot.driveOdo.quickDrive(-78, 8, .9, 90, 1);
                         //release foundation
-                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                         robot.claw.retractClaws();
                         robot.robotWait(.2);
                         robot.driveOdo.quickDrive(-84, 34, .9, 90, 2);
@@ -532,9 +515,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         robot.jaws.intakeJaws();
                         robot.driveOdo.quickDrive(12, 46, .9, 55, 1.5);
                         //back up and drive under bridge
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoost(.4);
                         robot.driveOdo.quickDrive(8, 22, .9, -30, 2);
-                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                         robot.driveOdo.quickDrive(-42, 37, .9, -83, 4);
                         robot.jaws.outputJaws();
                         robot.driveOdo.quickDrive(-28, 40, .9, -83, 2);
@@ -558,11 +541,11 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         //move foundation and release stone
                         robot.jaws.outputJaws();
                         //robot.robotWait(.15);
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoost(.4);
                         robot.driveOdo.quickDrive(-68, 8, .9, 100, 3);
                         robot.driveOdo.quickDrive(-78, 8, .9, 90, 1);
                         //release foundation
-                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                         robot.claw.retractClaws();
                         robot.robotWait(.2);
                         robot.driveOdo.quickDrive(-84, 34, .9, 90, 2);
@@ -572,9 +555,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
                         robot.jaws.intakeJaws();
                         robot.driveOdo.quickDrive(12, 46, .9, 55, 1.5);
                         //back up and drive under bridge
-                        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.4);
+                        robot.driveOdo.updatesThread.powerUpdate.powerBoost(.4);
                         robot.driveOdo.quickDrive(16, 25, .9, -30, 2);
-                        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+                        robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
                         robot.driveOdo.quickDrive(-42, 42, .9, -83, 4);
                         robot.jaws.outputJaws();
                         robot.driveOdo.quickDrive(-28, 42, .9, -83, 2);
@@ -708,7 +691,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
         robot.claw.extendClaws();
         robot.robotWait(.25);
         //override the min power so we have enough power to move the isFoundation while driving
-        robot.driveOdo.updatesThread.powerUpdate.powerBoast(.7);
+        robot.driveOdo.updatesThread.powerUpdate.powerBoost(.7);
         //drive straight forward a little to simplify the turn
         robot.driveOdo.quickDrive(isRedAlliance ? -13 : 13,-19,.9,0,.2,3);
         //rotate the isFoundation while moving forward
@@ -716,7 +699,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode {
         //push the isFoundation against the wall
         robot.driveOdo.quickDrive(isRedAlliance ? -13 : 13,-6,.9,isRedAlliance ? 90 : -90,.67,3);
         //reset min power to normal
-        robot.driveOdo.updatesThread.powerUpdate.powerNormal();
+        robot.driveOdo.updatesThread.powerUpdate.resetPowerToNormal();
         //lift up the claw
         robot.claw.retractClaws();
         robot.robotWait(.25);

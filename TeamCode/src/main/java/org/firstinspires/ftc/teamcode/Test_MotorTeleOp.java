@@ -1,11 +1,3 @@
-/*
-        Mec_TeleOpLevel1_Ri2W.java
-
-    A Linear opMode class that is used as our TeleOp method for the driver controlled period.
-
-    This file has been modified from the original FTC SkyStone SDK.
-    Written by FTC Team #10273, The Cat in the Hat Comes Back.
-*/
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -13,36 +5,38 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+/**
+ * TestMotorTeleOp.java
+ *
+ *
+ * A Linear opMode class that is used to test different things in a TeleOp setting.
+ *
+ *
+ * @author FTC Team #10273, The Cat in the Hat Comes Back
+ */
 @Disabled
 @TeleOp(name="Motor Test TeleOp", group="CatTest TeleOp")
-public class Test_MotorTeleOp extends LinearOpMode {
-
+public class Test_MotorTeleOp extends LinearOpMode
+{
     /* Declare OpMode members. */
     private ElapsedTime elapsedGameTime = new ElapsedTime();
     private ElapsedTime elapsedTime = new ElapsedTime();
 
     /* Declare OpMode members. */
-    CatHW_Async robot = new CatHW_Async();  // Use our new mecanum async hardware
+    CatHW_Async robot = new CatHW_Async();  // Use our mecanum asynchronous hardware
 
-    // Our constructor for this class
-    public Test_MotorTeleOp() {
-    }
+    /* Constructor */
+    public Test_MotorTeleOp() {}
+
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        // Informs driver the robot is trying to init
-        telemetry.addData("Status", "Initializing...");
-        telemetry.update();
         // Initialize the hardware
         robot.init(hardwareMap, this, false);
-        // Define and Initialize Motors //
 
-        // Set Motor and Servo Modes //
+        // Define and Initialize Extra Motors: //
 
-        // Finished!  Now tell the driver...
-        telemetry.addData("Status", "Initialized...  BOOM!");
-        telemetry.update();
+        // Set Extra Motor and Servo Modes: //
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -57,11 +51,10 @@ public class Test_MotorTeleOp extends LinearOpMode {
 
 
 
-            /**
-             * ---   _________   ---
-             * ---   TELEMETRY   ---
-             * ---   \/ \/ \/    ---
-             */
+            //--------------------------------------------------------------------------------------
+            // Telemetry Data:
+            //--------------------------------------------------------------------------------------
+
             //telemetry.addData("Test Power:", "%.2f", testMotor.getPower());
             //telemetry.addData("Test Encoder:", "%d", testMotor.getCurrentPosition());
             telemetry.update();

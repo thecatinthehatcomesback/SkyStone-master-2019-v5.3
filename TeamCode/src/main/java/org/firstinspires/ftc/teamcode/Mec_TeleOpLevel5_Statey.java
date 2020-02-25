@@ -1,12 +1,3 @@
-/*
-    Mec_TeleOpLevel5_Statey.java
-
-    A Linear opmode class that is used as our
-    TeleOp method for the driver controlled period.
-
-    By FTC Team #10273, The Cat in the Hat Comes Back.
-*/
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -15,28 +6,35 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
+/**
+ * Mec_TeleOpLevel5_Statey.java
+ *
+ *
+ * A Linear opMode class that is used as our TeleOp method for the driver controlled period.
+ *
+ *
+ * @author FTC Team #10273, The Cat in the Hat Comes Back
+ */
 @TeleOp(name = "State TeleOp", group = "CatTeleOp")
-public class Mec_TeleOpLevel5_Statey extends LinearOpMode {
-
+public class Mec_TeleOpLevel5_Statey extends LinearOpMode
+{
     /* Declare OpMode members. */
     private ElapsedTime elapsedGameTime = new ElapsedTime();
-
     private ElapsedTime stoneReleaseTime = new ElapsedTime();
 
     /* Declare OpMode members. */
-    CatHW_Async robot = null;  // Use our new mecanum async hardware
+    CatHW_Async robot;  // Use our new mecanum async hardware
 
 
-    // Our constructor for this class
+    /* Constructor */
     public Mec_TeleOpLevel5_Statey() {
         robot = new CatHW_Async();
-
     }
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
-
 
         // Informs driver the robot is trying to init
         telemetry.addData("Status", "Initializing...");
@@ -49,7 +47,7 @@ public class Mec_TeleOpLevel5_Statey extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        if (robot.isRedAlliance) {
+        if (CatHW_Async.isRedAlliance) {
             robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
         } else {
             robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE);
@@ -70,14 +68,13 @@ public class Mec_TeleOpLevel5_Statey extends LinearOpMode {
 
         robot.tail.openGrabber();
 
+
         // Run infinitely until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            /**
-             * ---   _________________   ---
-             * ---   Driver 1 controls   ---
-             * ---   \/ \/ \/ \/ \/ \/   ---
-             */
+            //--------------------------------------------------------------------------------------
+            // Driver 1 Controls:
+            //--------------------------------------------------------------------------------------
 
             // Drive train speed control:
             if (gamepad1.left_bumper) {
@@ -122,16 +119,14 @@ public class Mec_TeleOpLevel5_Statey extends LinearOpMode {
             // Open/Close Foundation Fingers:
             foundationHooks(gamepad1);
 
-            //capstone servo
+            // Capstone servo:
             capstone(gamepad1);
 
 
-            /**
-             * ---   _________________   ---
-             * ---   Driver 2 controls   ---
-             * ---   \/ \/ \/ \/ \/ \/   ---
-             */
 
+            //--------------------------------------------------------------------------------------
+            // Driver 2 Controls:
+            //--------------------------------------------------------------------------------------
 
             // Tail/Stacker lift motor controls:
             robot.tail.tailLift.setPower(gamepad2.right_stick_y);
@@ -149,7 +144,7 @@ public class Mec_TeleOpLevel5_Statey extends LinearOpMode {
             }
 
 
-            //  if driver 1 isn't using jaws, let driver 2 set Jaws Control:
+            // If driver 1 isn't using jaws, let driver 2 set Jaws Control:
             if (gamepad1.right_trigger - (gamepad1.left_trigger) == 0) {
                 robot.jaws.setJawPower(gamepad2.right_trigger - (gamepad2.left_trigger * 0.3));
             }
@@ -157,12 +152,18 @@ public class Mec_TeleOpLevel5_Statey extends LinearOpMode {
             // Open/Close Foundation Fingers:
             foundationHooks(gamepad2);
 
-            //capstone servo
+            // Capstone servo
             capstone(gamepad2);
 
-            //add lights
 
-            //code to add green blink if it picks up a stone
+
+            //--------------------------------------------------------------------------------------
+            // Automated Driver Control Enhancements:
+            //--------------------------------------------------------------------------------------
+
+            // TODO:  Add lights...
+            //  Code to add green blink if it picks up a stone
+
             if (robot.jaws.hasStone() && !alreadyStone) {
                 robot.lights.blink(4, RevBlinkinLedDriver.BlinkinPattern.YELLOW, 150);
                 alreadyStone = true;
@@ -171,11 +172,12 @@ public class Mec_TeleOpLevel5_Statey extends LinearOpMode {
                 alreadyStone = false;
             }
 
-            //code to blink at endgame
+            // Blink at TeleOp Endgame:
             if (!endGame && elapsedGameTime.seconds() > 90) {
                 robot.lights.setDefaultColor(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 endGame = true;
             }
+            // For when less than 10 seconds left in TeleOp Endgame.
             if (!under10Sec && elapsedGameTime.seconds() > 110) {
                 under10Sec = true;
                 robot.lights.blink(1, RevBlinkinLedDriver.BlinkinPattern.HOT_PINK, 1200);
@@ -188,11 +190,10 @@ public class Mec_TeleOpLevel5_Statey extends LinearOpMode {
             }
 
 
-            /**
-             * ---   _________   ---
-             * ---   TELEMETRY   ---
-             * ---   \/ \/ \/    ---
-             */
+
+            //--------------------------------------------------------------------------------------
+            // Telemetry Data:
+            //--------------------------------------------------------------------------------------
             telemetry.addData("Left Front Power:", "%.2f", leftFront);
             telemetry.addData("Right Front Power:", "%.2f", rightFront);
             telemetry.addData("Left Back Power:", "%.2f", leftBack);
@@ -210,8 +211,18 @@ public class Mec_TeleOpLevel5_Statey extends LinearOpMode {
         robot.driveOdo.updatesThread.stop();
     }
 
-    //foundation hooks and capstone code for both controllers
-    public void foundationHooks(Gamepad controller){
+
+
+    //----------------------------------------------------------------------------------------------
+    // Multiple Driver Control Methods:
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Open and close the foundation hooks.
+     *
+     * @param controller whose buttons are to be used.
+     */
+    private void foundationHooks(Gamepad controller) {
         // Open/Close Foundation Fingers:
         if (controller.b) {
             robot.claw.retractClaws();
@@ -221,15 +232,19 @@ public class Mec_TeleOpLevel5_Statey extends LinearOpMode {
             robot.claw.extendClaws();
         }
     }
-    public void capstone(Gamepad controller){
 
-        //capstone servo
+    /**
+     * Release and hold the capstone.
+     *
+     * @param controller whose buttons are to be used.
+     */
+    private void capstone(Gamepad controller) {
+        // Capstone servo
         if (controller.x) {
             robot.claw.releaseCapstone();
         }
         if (controller.y) {
             robot.claw.grabCapstone();
         }
-
     }
 }
