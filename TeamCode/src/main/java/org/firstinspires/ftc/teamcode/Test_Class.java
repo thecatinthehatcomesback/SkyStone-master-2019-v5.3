@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import java.util.ArrayList;
 
 /**
-        Test_Class.java
-
-    Just for println() calls...  Hopefully.
-
-
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
+ * Test_Class.java
+ *
+ *
+ * Trying to debug with println() calls...
+ *
+ *
+ * @author Team #10273, The Cat in the Hat Comes Back.
  */
 public class Test_Class {
 
@@ -32,11 +32,10 @@ public class Test_Class {
     }
 
 
-    /**
-     * ---   ____________________   ---
-     * ---   Pure Pursuit Methods   ---
-     * ---   \/ \/ \/ \/ \/ \/ \/   ---
-     */
+    //----------------------------------------------------------------------------------------------
+    // Pure Pursuit Methods:
+    //----------------------------------------------------------------------------------------------
+
     private static ArrayList<Point> lineCircleIntersection(Point circleCenter, double radius,
                                                            Point linePoint1, Point linePoint2) {
         // Make sure we don't have a slope of 1 or 0.
