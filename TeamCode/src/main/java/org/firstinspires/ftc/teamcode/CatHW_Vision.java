@@ -120,7 +120,7 @@ public class CatHW_Vision extends CatHW_Subsystem
                 for (Recognition recognition : updatedRecognitions) {
 
                     if (recognition.getLabel().equals(SKYSTONE_LABEL)) {
-                        int skyStoneX = (int) ((recognition.getLeft()+recognition.getRight())/2);
+                        int skyStoneX = (int) ((recognition.getLeft()+recognition.getRight()) / 2);
                         lastLeft = recognition.getLeft();
                         lastRight = recognition.getRight();
                         lastConfidence = recognition.getConfidence();
@@ -160,10 +160,8 @@ public class CatHW_Vision extends CatHW_Subsystem
                 Collections.frequency(skyStoneValues, skyStonePos.OUTSIDE)));
 
         // Check to see which value has the most occurrences in the deque
-        if (Collections.frequency(skyStoneValues, skyStonePos.INSIDE) >
-            Collections.frequency(skyStoneValues, skyStonePos.CENTER) &&
-                Collections.frequency(skyStoneValues, skyStonePos.INSIDE) >
-                Collections.frequency(skyStoneValues, skyStonePos.OUTSIDE)) {
+        if (Collections.frequency(skyStoneValues, skyStonePos.INSIDE) > Collections.frequency(skyStoneValues, skyStonePos.CENTER) &&
+                Collections.frequency(skyStoneValues, skyStonePos.INSIDE) > Collections.frequency(skyStoneValues, skyStonePos.OUTSIDE)) {
             // If the amount of INSIDE readings is the most in the past 30 readings, return INSIDE.
             return skyStonePos.INSIDE;
         } else if (Collections.frequency(skyStoneValues, skyStonePos.CENTER) > Collections.frequency(skyStoneValues, skyStonePos.INSIDE) &&
