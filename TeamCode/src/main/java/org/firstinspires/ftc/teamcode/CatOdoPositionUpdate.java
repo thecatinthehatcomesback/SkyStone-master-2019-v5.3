@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -39,9 +40,11 @@ public class CatOdoPositionUpdate {
     private int rightEncoderValue = 0;
     private int horizontalEncoderValue = 0;
     private RevBulkData bulkData;
+    private ElapsedTime time = new ElapsedTime();
 
     private double count_per_in;
 
+    public boolean isUpdated = false;
     /**
      * Constructor for GlobalCoordinatePosition Thread
      * @param verticalEncoderLeft left odometry encoder, facing the vertical direction
@@ -57,7 +60,7 @@ public class CatOdoPositionUpdate {
 
         robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
         this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
-
+        time.reset();
     }
 
     public CatOdoPositionUpdate(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, double startingX,
@@ -113,18 +116,30 @@ public class CatOdoPositionUpdate {
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
         prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
 
-        Log.d("catbot", String.format("OdoTicks L/R/B  :%7d  :%7d  :%7d   X: %5.2f  Y: %5.2f  theta: %5.2f",
+        double velocityTimer = time.seconds();
+        time.reset();
+
+        double rotVelocity = (changeInRobotOrientation *(180/Math.PI))/velocityTimer;
+        double velocity = (Math.sqrt(Math.pow((p*Math.sin(robotOrientationRadiansHalf) + n*Math.cos(robotOrientationRadiansHalf)),2) + Math.pow((p*Math.cos(robotOrientationRadiansHalf) - n*Math.sin(robotOrientationRadiansHalf)),2))/count_per_in)/velocityTimer;
+
+        Log.d("catbot", String.format("OdoTicks L/R/B  :%7d  :%7d  :%7d   X: %5.2f  Y: %5.2f  theta: %5.2f Velocity: %5.2f RotVelocity: %5.2f",
                 returnVerticalLeftEncoderPosition(),
                 returnVerticalRightEncoderPosition(),
                 returnNormalEncoderPosition(),
                 returnXInches(),
                 returnYInches(),
-                returnOrientation()));
+                returnOrientation(),
+                velocity,
+                rotVelocity));
+
+
+        isUpdated = true;
     }
 
     public double returnXInches(){ return robotGlobalXCoordinatePosition/count_per_in; }
 
     public double returnYInches(){ return robotGlobalYCoordinatePosition/count_per_in; }
+
 
     public void resetPos(){
         verticalRightEncoderWheelPosition = 0;

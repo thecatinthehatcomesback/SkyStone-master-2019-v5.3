@@ -218,6 +218,13 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     @Override
     public boolean isDone() {
 
+        //wait for the update
+        while (!updatesThread.positionUpdate.isUpdated){
+            mainHW.opMode.sleep(1);
+        }
+        //set the updated status back to false so it knows that we are now using current powers
+        updatesThread.positionUpdate.isUpdated = false;
+
         boolean keepDriving = true;
 
 
