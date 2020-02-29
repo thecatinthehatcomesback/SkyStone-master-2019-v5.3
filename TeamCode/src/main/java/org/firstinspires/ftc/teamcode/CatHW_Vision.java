@@ -1,18 +1,3 @@
-/*
-        CatHW_Vision.java
-
-    A "hardware" class intended to contain common code for accessing
-    camera and vision related situations.  While previous versions were
-    made to mostly to test various forms of machine vision, this version
-    uses the Tensor Flow system from the FTC SDK to detect the Gold
-    mineral during init in our Autonomous routines. Previous versions
-    also used the DogeCV library which uses OpenCV.
-
-
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
-*/
-
 package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
@@ -31,30 +16,44 @@ import java.util.Deque;
 import java.util.List;
 
 /**
- * This is NOT an opmode.
+ * CatHW_Vision.java
  *
- * This class can be used to define all vision coding we use.
  *
+ * A "hardware" class intended to contain common code for accessing camera and other vision related
+ * situations.  While previous versions were made to mostly to test various forms of machine vision,
+ * this version uses the Tensor Flow system from the FTC SDK to detect the SkyStones during init in
+ * our autonomous routines. We've also tested Vuforia.  TODO:  Check if this is correct...
+ *
+ *
+ * This is NOT an OpMode.  This class is used to define all the other hardware classes.
+ * This hardware class assumes the following device names have been configured on the robot.
+ *
+ *
+ * @author FTC Team #10273, The Cat in the Hat Comes Back
  */
 public class CatHW_Vision extends CatHW_Subsystem
 {
+    /** Constant unit converter of millimeters to inches. */
     private static final float mmPerInch        = 25.4f;
-    private static final float mmFTCFieldWidth  = (12*6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)
-    private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
+    /** The width of the FTC field (from the center point to the outer panels) */
+    private static final float mmFTCFieldWidth  = (12*6) * mmPerInch;
+    /** The height of the center of the target image above the floor */
+    private static final float mmTargetHeight   = (6) * mmPerInch;
 
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String STONE_LABEL = "Stone";
     private static final String SKYSTONE_LABEL = "Skystone";
 
-    HardwareMap hwMap   = null;
+    private HardwareMap hwMap   = null;
 
+    /* Enums */
     enum skyStonePos {
         INSIDE,
         CENTER,
         OUTSIDE
     }
 
-    Deque<skyStonePos> skyStoneValues;
+    private Deque<skyStonePos> skyStoneValues;
 
     public double lastLeft;
     public double lastRight;
@@ -62,30 +61,37 @@ public class CatHW_Vision extends CatHW_Subsystem
 
     // Objects and Detectors
     private VuforiaLocalizer vuforia;
-    public TFObjectDetector tfod;
+    private TFObjectDetector tfod;
 
+    /* Constructor */
     public CatHW_Vision(CatHW_Async mainHardware){
         super(mainHardware);
     }
 
+    /**
+     * Initializes the "hardware" devices for anything having to do with machine vision.
+     *
+     * @param ahwMap which contains the hardware to look for.
+     */
     public void initVision(HardwareMap ahwMap) {
         hwMap = ahwMap;
-        skyStoneValues = new ArrayDeque<skyStonePos>(30);
+        skyStoneValues = new ArrayDeque<>(30);
 
-        /**
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+        /*
+        Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = "AWbfTmn/////AAABmY0xuIe3C0RHvL3XuzRxyEmOT2OekXBSbqN2jot1si3OGBObwWadfitJR/D6Vk8VEBiW0HG2Q8UAEd0//OliF9aWCRmyDJ1mMqKCJZxpZemfT5ELFuWnJIZWUkKyjQfDNe2RIaAh0ermSxF4Bq77IDFirgggdYJoRIyi2Ys7Gl9lD/tSonV8OnldIN/Ove4/MtEBJTKHqjUEjC5U2khV+26AqkeqbxhFTNiIMl0LcmSSfugGhmWFGFtuPtp/+flPBRGoBO+tSl9P2sV4mSUBE/WrpHqB0Jd/tAmeNvbtgQXtZEGYc/9NszwRLVNl9k13vrBcgsiNxs2UY5xAvA4Wb6LN7Yu+tChwc+qBiVKAQe09\n";
+        // Use the Optical Zoom Camera.
         parameters.cameraName = hwMap.get(WebcamName.class, "Webcam 2");
 
-        //  Instantiate the Vuforia engine
+        //  Instantiate the Vuforia engine.
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
 
-        // Now init the tfod
+        // Now init the tfod.
         int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -96,16 +102,12 @@ public class CatHW_Vision extends CatHW_Subsystem
         tfod.activate();
     }
 
+    /**
+     * Newest way to continuously look for the SkyStone while looping INSIDE the autonomous init
+     * mode but limits the amount of positional occurrences we keep using a Deque.
+     */
     public void findSkyStone() {
-        /**
-         * Newest way to continuously look for the gold
-         * while looping INSIDE the autonomous init mode
-         * but limits the amount of occurrences we keep
-         * using a Deque.
-         */
-
-
-        if (skyStoneValues.size() > 99) {
+        if (skyStoneValues.size() > 29) {
             // Make sure we keep the size at a reasonable level
             skyStoneValues.removeFirst();
         }
@@ -117,13 +119,12 @@ public class CatHW_Vision extends CatHW_Subsystem
                 for (Recognition recognition : updatedRecognitions) {
 
                     if (recognition.getLabel().equals(SKYSTONE_LABEL)) {
-                        int skyStoneX = (int) ((recognition.getLeft()+recognition.getRight())/2);
+                        int skyStoneX = (int) ((recognition.getLeft()+recognition.getRight()) / 2);
                         lastLeft = recognition.getLeft();
                         lastRight = recognition.getRight();
                         lastConfidence = recognition.getConfidence();
-                        // Look for the Gold Pos and decide which side of the sampling field the gold lies
+                        // Look for the SkyStone position and decide where it is.
                         if (skyStoneX > 300) {
-                            //***Inverted this since the camera was recently placed upside down***//
                             skyStoneValues.add(skyStonePos.OUTSIDE);
                             return;
                         } else if (skyStoneX > 135) {
@@ -139,19 +140,20 @@ public class CatHW_Vision extends CatHW_Subsystem
                     return;
                 }
         }
-        // Since camera is only looking at the INSIDE and CENTER values, it will return OUTSIDE
-        // if is doesn't see the gold (just basic logic)
-        return;
+        /*
+         Since camera is only looking at the OUTSIDE and CENTER values, it will return INSIDE if is
+         doesn't see the SkyStone (basic logic).
+         */
     }
 
+    /**
+     * A new way to take the all the values during the init and choosing the value in the deque that
+     * has the most occurrences.
+     *
+     * @return which SkyStone position is the most likely.
+     */
     public skyStonePos giveSkyStonePos() {
-        /**
-         * A new way to take the all the values during the init
-         * and choosing the value in the deque that has the most
-         * occurrences.
-         */
-
-        Log.d("catbot", String.format("giveSamplePos amounts:  INSIDE: %d, CENTER: %d, OUTSIDE: &d",
+        Log.d("catbot", String.format("giveSamplePos:  INSIDE: %d, CENTER: %d, OUTSIDE: &d",
                 Collections.frequency(skyStoneValues, skyStonePos.INSIDE),
                 Collections.frequency(skyStoneValues, skyStonePos.CENTER),
                 Collections.frequency(skyStoneValues, skyStonePos.OUTSIDE)));
@@ -159,15 +161,15 @@ public class CatHW_Vision extends CatHW_Subsystem
         // Check to see which value has the most occurrences in the deque
         if (Collections.frequency(skyStoneValues, skyStonePos.INSIDE) > Collections.frequency(skyStoneValues, skyStonePos.CENTER) &&
                 Collections.frequency(skyStoneValues, skyStonePos.INSIDE) > Collections.frequency(skyStoneValues, skyStonePos.OUTSIDE)) {
-            // If the amount of INSIDE readings is the most in the past 30 readings, return INSIDE
+            // If the amount of INSIDE readings is the most in the past 30 readings, return INSIDE.
             return skyStonePos.INSIDE;
         } else if (Collections.frequency(skyStoneValues, skyStonePos.CENTER) > Collections.frequency(skyStoneValues, skyStonePos.INSIDE) &&
                 Collections.frequency(skyStoneValues, skyStonePos.CENTER) > Collections.frequency(skyStoneValues, skyStonePos.OUTSIDE)) {
-            // If the amount of CENTER readings is the most in the past 30 readings, return CENTER
+            // If the amount of CENTER readings is the most in the past 30 readings, return CENTER.
             return skyStonePos.CENTER;
         } else {
-            // Just return back OUTSIDE since it is the last possible value
+            // Just return back OUTSIDE since it is the last possible value.
             return skyStonePos.OUTSIDE;
         }
     }
-}// End of class bracket
+}

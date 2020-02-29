@@ -2,30 +2,82 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-/**
- * Created by Team #10273, The Cat in the Hat Comes Back.
- */
-public class CatOdoAllUpdates implements Runnable{
-    // Thread run condition
-    private boolean isRunning   = true;
-    private int     sleepTime   = 25;
+import org.openftc.revextensions2.ExpansionHubEx;
 
-    CatOdoPositionUpdate positionUpdate = null;
-    CatOdoPowerUpdate powerUpdate = null;
+/**
+ * CatOdoAllUpdates.java
+ *
+ *
+ * This class spawns a separate thread to keep track the robot encoders using USB bulk reads to get
+ * consistent odometry readings which helps for position and power calculations.
+ *
+ *
+ * This is NOT an OpMode.  This class is used to define all the other hardware classes.
+ * This hardware class assumes the following device names have been configured on the robot.
+ *
+ *
+ * @author FTC Team #10273, The Cat in the Hat Comes Back
+ */
+public class CatOdoAllUpdates implements Runnable
+{
+    /** static variable singleInstance of type Singleton. */
+    private static CatOdoAllUpdates singleInstance = null;
+
+    /** Thread run condition. */
+    private boolean isRunning = true;
+    /** The amount of time the thread will rest before running its tasks again. */
+    private int sleepTime = 25;
+
+    /* Classes that will run off this thread. */
+    CatOdoPositionUpdate positionUpdate;
+    CatOdoPowerUpdate powerUpdate;
 
     /**
-     * Stops the position update thread
+     * Stops the position update thread.
      */
     public void stop(){ isRunning = false; }
 
-    public CatOdoAllUpdates(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH) {
-        positionUpdate = new CatOdoPositionUpdate(verticalEncoderLeft, verticalEncoderRight, horizontalEncoder, COUNTS_PER_INCH);
+    /* Constructor */
+    public CatOdoAllUpdates(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH) {
+        positionUpdate = new CatOdoPositionUpdate(inExpansionHub, verticalEncoderLeft, verticalEncoderRight, horizontalEncoder, COUNTS_PER_INCH);
         powerUpdate = new CatOdoPowerUpdate(positionUpdate);
+        //positionUpdate.reverseLeftEncoder();
     }
 
+    /**
+     * TODO:  Add Javadoc.
+     *
+     * @param inExpansionHubIn
+     * @param verticalEncoderLeftIn
+     * @param verticalEncoderRightIn
+     * @param horizontalEncoderIn
+     * @param COUNTS_PER_INCHIn
+     * @return
+     */
+    public static CatOdoAllUpdates getInstanceAndInit(ExpansionHubEx inExpansionHubIn,
+                                                      DcMotor verticalEncoderLeftIn,
+                                                      DcMotor verticalEncoderRightIn,
+                                                      DcMotor horizontalEncoderIn,
+                                                      double COUNTS_PER_INCHIn) {
+        if (singleInstance == null) {
+            singleInstance = new CatOdoAllUpdates(inExpansionHubIn, verticalEncoderLeftIn,
+                    verticalEncoderRightIn,horizontalEncoderIn,COUNTS_PER_INCHIn);
+        }
+
+        return singleInstance;
+    }
 
     /**
-     * Runs the thread
+     * Resets the minimum power and position for the robot.
+     */
+    public void resetThreads() {
+        powerUpdate.resetPowerToNormal();
+        positionUpdate.resetPos();
+        isRunning = true;
+    }
+
+    /**
+     * Runs the thread.
      */
     @Override
     public void run() {
