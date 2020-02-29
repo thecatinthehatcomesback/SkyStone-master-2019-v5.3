@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.openftc.revextensions2.ExpansionHubEx;
-//TODO:  Download this import statement.
 
 /**
  * CatHW_DriveOdo.java
@@ -25,19 +23,29 @@ import org.openftc.revextensions2.ExpansionHubEx;
  */
 public class CatHW_DriveOdo extends CatHW_DriveBase
 {
-    /* Wheel measurements */                //TODO:  Update these constants!
-    // __8192__ for REV encoder from REV Robotics:
-    private static final double ODO_COUNTS_PER_REV        = 8192;
-    // For figuring circumference:
-    private static final double ODO_WHEEL_DIAMETER_INCHES = 2.0 ;
-    // For use in determining robot's position:
-    static final double         ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV /
+    //----------------------------------------------------------------------------------------------
+    // Odometry Module Constants:                               TODO: Are these constants updated???
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * The number of encoder ticks per one revolution of the odometry wheel.
+     * 8192 ticks for a REV encoder from REV Robotics.
+     */
+    private static final double ODO_COUNTS_PER_REVOLUTION = 8192;
+    /** The measurement of the odometry wheel diameter for use in calculating circumference. */
+    private static final double ODO_WHEEL_DIAMETER_INCHES = 2.0;
+    /**
+     * The amount of odometry encoder ticks equal to movement of 1 inch.  Used for conversion in the
+     * robot's positioning algorithms so that when a user inputs (X,Y) coordinates in inches, those
+     * can be converted into encoder ticks.
+     */
+    static final double ODO_COUNTS_PER_INCH     = ODO_COUNTS_PER_REVOLUTION /
             (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
 
+    //TODO: Other attributes/field should get some Javadoc sometime...
     private double targetX;
     private double targetY;
-    private double strafePower;
     private double targetTheta;
     private double xMin;
     private double xMax;
@@ -47,30 +55,32 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     private double thetaMax;
     private double lastPower = 0;
     private double maxPower;
+    private double strafePower;
 
     private boolean isNonStop;
 
-
-    /* Enums */
-    enum DRIVE_METHOD {
-        translate,
-        turn
+    /** Enumerated type for the style of drive the robot will make. */
+    private enum DRIVE_METHOD {
+        TRANSLATE,
+        TURN
     }
-
+    /** Variable to keep track of the DRIVE_METHOD that's the current style of robot's driving. */
     private DRIVE_METHOD currentMethod;
 
 
-    /* Public OpMode members. */
+
+    //----------------------------------------------------------------------------------------------
+    // Public OpMode Members
+    //----------------------------------------------------------------------------------------------
+
     // Motors
     public DcMotor  leftOdometry    = null;
     public DcMotor  rightOdometry   = null;
     public DcMotor  backOdometry    = null;
     public ExpansionHubEx expansionHub = null;
 
+    // Access to Update Thread
     CatOdoAllUpdates updatesThread;
-
-    /* local OpMode members. */
-    LinearOpMode opMode = null;
 
     /* Constructor */
     public CatHW_DriveOdo(CatHW_Async mainHardware){
@@ -94,7 +104,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         backOdometry     = hwMap.dcMotor.get("right_jaw_motor");
         expansionHub     = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
 
-        // Set odometry directions //
+        // Set odometry directions: //
         //leftOdometry.setDirection(DcMotor.Direction.REVERSE);
         rightOdometry.setDirection(DcMotor.Direction.FORWARD);
         // backOdometry.setDirection(DcMotor.Direction.FORWARD);
@@ -110,7 +120,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         allUpdatesThread.start();
 
         // Sets enums to a default value: //
-        currentMethod = DRIVE_METHOD.translate;
+        currentMethod = DRIVE_METHOD.TRANSLATE;
     }
 
 
@@ -140,7 +150,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * @param x is the new X coordinate the robot drives to.
      * @param y is the new Y coordinate the robot drives to.
      * @param power at which robot max speed can be set to using motion profiling.
-     * @param theta is the angle at which the robot will turn to while driving.
+     * @param theta is the angle at which the robot will TURN to while driving.
      * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
      *                 This is used/useful for stall outs.
      */
@@ -151,20 +161,20 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     }
 
     /**
-     * Used to move the robot across the field.  The robot can also turn while moving along the path
+     * Used to move the robot across the field.  The robot can also TURN while moving along the path
      * in order for it to face a certain by the end of its path.  This method assumes the robot has
      * odometry modules which give an absolute position of the robot on the field.
      *
      * @param x is the new X coordinate the robot drives to.
      * @param y is the new Y coordinate the robot drives to.
      * @param power at which robot max speed can be set to using motion profiling.
-     * @param theta is the angle at which the robot will turn to while driving.
+     * @param theta is the angle at which the robot will TURN to while driving.
      * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
      *                 This is used/useful for stall outs.
      */
     public void translateDrive(double x, double y, double power, double theta, double timeoutS){
 
-        currentMethod = DRIVE_METHOD.translate;
+        currentMethod = DRIVE_METHOD.TRANSLATE;
         timeout = timeoutS;
         isDone = false;
         targetX = x;
@@ -186,12 +196,12 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     }
 
     /**
-     * Nonstop translate.  TODO: Add Javadoc here.
+     * Nonstop TRANSLATE.  TODO: Add Javadoc here.
      *
      * @param x is the new X coordinate the robot drives to.
      * @param y is the new Y coordinate the robot drives to.
      * @param power at which robot max speed can be set to using motion profiling.
-     * @param theta is the angle at which the robot will turn to while driving.
+     * @param theta is the angle at which the robot will TURN to while driving.
      * @param finishedXMin
      * @param finishedXMax
      * @param finishedYMin
@@ -205,7 +215,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                                double finishedXMax, double finishedYMin, double finishedYMax,
                                double finishedThetaMin, double finishedThetaMax, double timeoutS){
 
-        currentMethod = DRIVE_METHOD.translate;
+        currentMethod = DRIVE_METHOD.TRANSLATE;
         timeout = timeoutS;
         isDone = false;
         targetX = x;
@@ -232,7 +242,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         // Reset timer once called
         runTime.reset();
-
     }
 
 
@@ -254,7 +263,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         }
 
         switch (currentMethod) {
-            case turn:
+            case TURN:
                 // Current orientation from odometry modules:
                 int zVal = getCurrentAngle();
 
@@ -269,7 +278,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 }
                 break;
 
-            case translate:
+            case TRANSLATE:
                 // Current robot position and orientation from odometry modules:
                 double getY = updatesThread.positionUpdate.returnYInches();
                 double getX = updatesThread.positionUpdate.returnXInches();
@@ -350,7 +359,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 lBackPower  = lBackPower   * getPower * SF;
                 rBackPower  = rBackPower   * getPower * SF;
 
-                // Adds turn powers to each mecanum wheel.
+                // Adds TURN powers to each mecanum wheel.
                 if ((getTheta - targetTheta) < 0) {
                     // Turn right
                     rFrontPower = rFrontPower - (turnPower);

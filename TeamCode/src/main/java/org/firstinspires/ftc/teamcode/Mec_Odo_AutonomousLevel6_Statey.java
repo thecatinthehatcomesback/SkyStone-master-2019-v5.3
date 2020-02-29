@@ -199,7 +199,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         //go under skybridge backwards
                         robot.driveOdo.quickDrive(-1, 22, .9, -90, 1);
                         robot.driveOdo.quickDrive(70, 24, .9, -90, 3);
-                        //turn toward foundation and latch on
+                        //TURN toward foundation and latch on
                         robot.driveOdo.quickDrive(84, 38, .9, -170, 2);
                         robot.claw.extendClaws();
                         robot.robotWait(1);
@@ -235,7 +235,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                             //go under skybridge backwards
                             robot.driveOdo.quickDrive(-1, 24, .9, -90, 1);
                             robot.driveOdo.quickDrive(66, 24, .9, -90, 3);
-                            //turn toward foundation and latch on
+                            //TURN toward foundation and latch on
                             robot.driveOdo.quickDrive(84, 42, .9, -170, 2);
                             robot.claw.extendClaws();
                             robot.robotWait(1);
@@ -270,7 +270,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                             //go under skybridge backwards
                             robot.driveOdo.quickDrive(-1, 22, .9, -90, 1);
                             robot.driveOdo.quickDrive(60, 24, .9, -90, 3);
-                            //turn toward foundation and latch on
+                            //TURN toward foundation and latch on
                             robot.driveOdo.quickDrive(84, 40, .9, -180, 2);
                             robot.claw.extendClaws();
                             robot.robotWait(1);
@@ -307,9 +307,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         robot.driveOdo.quickDrive(3, 32, .9, -30, 2);
                         //pick up stone
                         robot.driveOdo.quickDrive(-1, 38, .9, -50, 2);
-                        //back up and turn part way
+                        //back up and TURN part way
                         robot.driveOdo.quickDrive(0, 30, .9, 30, 2);
-                        //if the block is fully in the intake turn off the jaws to save power
+                        //if the block is fully in the intake TURN off the jaws to save power
                         if (robot.jaws.hasStone()) {
                             robot.jaws.turnOffJaws();
                         }
@@ -336,9 +336,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         robot.driveOdo.quickDrive(11, 32, .9, -30, 2);
                         //pick up stone
                         robot.driveOdo.quickDrive(7, 40, .9, -55, 2);
-                        //back up and turn part way
+                        //back up and TURN part way
                         robot.driveOdo.quickDrive(8, 30, .9, 30, 2);
-                        //if the block is fully in the intake turn off the jaws to save power
+                        //if the block is fully in the intake TURN off the jaws to save power
                         if (robot.jaws.hasStone()) {
                             robot.jaws.turnOffJaws();
                         }
@@ -364,9 +364,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         robot.driveOdo.quickDrive(19, 32, .9, -30, 2);
                         //pick up stone
                         robot.driveOdo.quickDrive(15, 42, .9, -50, 2);
-                        //back up and turn part way
+                        //back up and TURN part way
                         robot.driveOdo.quickDrive(0, 28, .9, 30, 2);
-                        //if the block is fully in the intake turn off the jaws to save power
+                        //if the block is fully in the intake TURN off the jaws to save power
                         if (robot.jaws.hasStone()) {
                             robot.jaws.turnOffJaws();
                         }
@@ -407,12 +407,12 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         robot.driveOdo.quickDrive(6, 36, .9, 57, 2);
                         //go under skybridge backwards
                         robot.driveOdo.quickDrive(1, 22, .9, 83, 1);
-                        //turn off intake if it has a stone
+                        //TURN off intake if it has a stone
                         if (robot.jaws.hasStone()) {
                             robot.jaws.turnOffJaws();
                         }
                         robot.driveOdo.quickDrive(-70, 24, .9, 90, 2);
-                        //turn toward foundation and latch on
+                        //TURN toward foundation and latch on
                         robot.driveOdo.quickDrive(-80, 49, .9, 175, 2);
                         robot.claw.extendClaws();
                         robot.robotWait(.5);
@@ -448,12 +448,12 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         robot.driveOdo.quickDrive(-6, 38, .9, 55, 2);
                         //go under skybridge backwards
                         robot.driveOdo.quickDrive(1, 22, .9, 83, 1);
-                        //turn off intake if it has a stone
+                        //TURN off intake if it has a stone
                         if (robot.jaws.hasStone()) {
                             robot.jaws.turnOffJaws();
                         }
                         robot.driveOdo.quickDrive(-70, 24, .9, 90, 2);
-                        //turn toward foundation and latch on
+                        //TURN toward foundation and latch on
                         robot.driveOdo.quickDrive(-80, 49, .9, 175, 2);
                         robot.claw.extendClaws();
                         robot.robotWait(.5);
@@ -489,12 +489,12 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         robot.driveOdo.quickDrive(-14, 38, .9, 60, 2);
                         //go under skybridge backwards
                         robot.driveOdo.quickDrive(-7, 22, .9, 83, 1);
-                        //turn off intake if it has a stone
+                        //TURN off intake if it has a stone
                         if (robot.jaws.hasStone()) {
                             robot.jaws.turnOffJaws();
                         }
                         robot.driveOdo.quickDrive(-70, 24, .9, 90, 2);
-                        //turn toward foundation and latch on
+                        //TURN toward foundation and latch on
                         robot.driveOdo.quickDrive(-78, 53, .9, 180, 2);
                         robot.claw.extendClaws();
                         robot.robotWait(.5);
@@ -529,12 +529,12 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         robot.driveOdo.quickDrive(-15, 42, .9, 50, 2);
                         //go under skybridge backwards
                         robot.driveOdo.quickDrive(1, 22, .9, 83, 1);
-                        //turn off intake if it has a stone
+                        //TURN off intake if it has a stone
                         if (robot.jaws.hasStone()) {
                             robot.jaws.turnOffJaws();
                         }
                         robot.driveOdo.quickDrive(-70, 24, .9, 90, 2);
-                        //turn toward foundation and latch on
+                        //TURN toward foundation and latch on
                         robot.driveOdo.quickDrive(-80, 49, .9, 175, 2);
                         robot.claw.extendClaws();
                         robot.robotWait(.5);
@@ -575,9 +575,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         robot.driveOdo.quickDrive(-2, 34, .9, 40, 2);
                         //pick up stone
                         robot.driveOdo.quickDrive(6, 36, .9, 57, 2);
-                        //back up and turn part way
+                        //back up and TURN part way
                         robot.driveOdo.quickDrive(3, 27, .9, -35, 2);
-                        //if the block is fully in the intake turn off the jaws to save power
+                        //if the block is fully in the intake TURN off the jaws to save power
                         if (robot.jaws.hasStone()) {
                             robot.jaws.turnOffJaws();
                         }
@@ -605,9 +605,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         robot.driveOdo.quickDrive(-11, 30, .9, 30, 2);
                         //pick up stone
                         robot.driveOdo.quickDrive(-7, 40, .9, 55, 2);
-                        //back up and turn part way
+                        //back up and TURN part way
                         robot.driveOdo.quickDrive(-8, 27, .9, -30, 2);
-                        //if the block is fully in the intake turn off the jaws to save power
+                        //if the block is fully in the intake TURN off the jaws to save power
                         if (robot.jaws.hasStone()) {
                             robot.jaws.turnOffJaws();
                         }
@@ -634,9 +634,9 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
                         robot.driveOdo.quickDrive(-17, 32, .9, 30, 2);
                         //pick up stone
                         robot.driveOdo.quickDrive(-12, 42, .9, 50, 2);
-                        //back up and turn part way
+                        //back up and TURN part way
                         robot.driveOdo.quickDrive(0, 27, .9, -30, 2);
-                        //if the block is fully in the intake turn off the jaws to save power
+                        //if the block is fully in the intake TURN off the jaws to save power
                         if (robot.jaws.hasStone()) {
                             robot.jaws.turnOffJaws();
                         }
@@ -671,7 +671,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
         robot.driveOdo.quickDrive(isRedAlliance? -24 : 20, -34, .6, 0, 2);
         robot.claw.extendClaws();
         robot.robotWait(.7);
-        //pull foundation back and turn
+        //pull foundation back and TURN
         robot.driveOdo.quickDrive(isRedAlliance? -2 : 2, isRedAlliance? 0 : -4, .9, isRedAlliance? 80 : -75, 2);
         //release foundation
         robot.claw.retractClaws();
@@ -692,7 +692,7 @@ public class Mec_Odo_AutonomousLevel6_Statey extends LinearOpMode
         robot.robotWait(.25);
         //override the min power so we have enough power to move the isFoundation while driving
         robot.driveOdo.updatesThread.powerUpdate.powerBoost(.7);
-        //drive straight forward a little to simplify the turn
+        //drive straight forward a little to simplify the TURN
         robot.driveOdo.quickDrive(isRedAlliance ? -13 : 13,-19,.9,0,.2,3);
         //rotate the isFoundation while moving forward
         robot.driveOdo.quickDrive(isRedAlliance ? -5 : 5,-6,.9,isRedAlliance ? 90 : -90,.7,4);

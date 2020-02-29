@@ -144,7 +144,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
 
     /**
      * This is a simpler mecanum setDrivePowers method that drives blindly straight horizontally
-     * (positive numbers should translate left).
+     * (positive numbers should TRANSLATE left).
      *
      * @param power at which the robot will travel.
      * @param distance is how far the robot will drive.
@@ -198,7 +198,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
     }
 
     /**
-     * Method to translate using the drive train encoders.
+     * Method to TRANSLATE using the drive train encoders.
      *
      * @param power at which the robot will travel.
      * @param vectorDistance is how far the robot will travel.
@@ -306,7 +306,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
      * Turn using IMU gyro sensors.
      *
      * @param power at which the robot will travel.
-     * @param degrees that the robot needs to turn to.
+     * @param degrees that the robot needs to TURN to.
      * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
      *                 This is used/useful for stall outs.
      * @throws InterruptedException in case of error.
@@ -318,13 +318,13 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
     /**
      * Turn using IMU gyro sensors.
      *
-     * @param power used to turn.
-     * @param degrees that the robot needs to turn to.
+     * @param power used to TURN.
+     * @param degrees that the robot needs to TURN to.
      * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
      *                 This is used/useful for stall outs.
      * @param turnMode can be SPIN or TANK.
-     *                 -SPIN will turn with a center of rotation at the center of the robot.
-     *                 -TANK will turn with a center of rotation at the center of one side of robot.
+     *                 -SPIN will TURN with a center of rotation at the center of the robot.
+     *                 -TANK will TURN with a center of rotation at the center of one side of robot.
      * @throws InterruptedException in case of error.
      */
     public void mecTurn(double power, int degrees, double timeoutS, TURN_MODE turnMode) {
@@ -342,13 +342,13 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
             targetAngleZ  = degrees;
             clockwiseTurn = (getCurrentAngle() < targetAngleZ);
 
-            // Don't use encoders.  We only use the gyro angle to turn.
+            // Don't use encoders.  We only use the gyro angle to TURN.
             setDriveRunWithoutEncoders();
             // reset the timeout time and start motion.
             runTime.reset();
 
             // Log message:
-            Log.d("catbot", String.format("Start turn...  target %d, current %d  %s",
+            Log.d("catbot", String.format("Start TURN...  target %d, current %d  %s",
                     targetAngleZ, getCurrentAngle(), clockwiseTurn ?"CW":"CCW"));
 
 
@@ -440,7 +440,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
                 int zVal = getCurrentAngle();
 
                 // Log message:
-                Log.d("catbot", String.format("turn  target %d, current %d  %s",
+                Log.d("catbot", String.format("TURN  target %d, current %d  %s",
                         targetAngleZ, zVal, clockwiseTurn ? "CW": "CCW"));
 
                 if ((zVal <= targetAngleZ) && (!clockwiseTurn)) {
