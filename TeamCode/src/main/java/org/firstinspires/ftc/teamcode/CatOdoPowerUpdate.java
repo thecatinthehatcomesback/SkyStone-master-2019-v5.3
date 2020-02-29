@@ -26,7 +26,7 @@ public class CatOdoPowerUpdate
 
     // Local Variables or Attributes:
     private double currentPower;
-    private final double defaultMinPowerForward = 0.27;
+    private final double defaultMinPowerForward = 0.2;
     private final double minPowerStrafeScale = 0.75;
     private double minPower = defaultMinPowerForward;
     private double maxPower;
@@ -138,7 +138,7 @@ public class CatOdoPowerUpdate
         }
 
         // Checks to make sure we are within our minimum and maximum power ranges.
-        if(currentPower < minPower){
+        if(currentPower < (minPower*calcMinPowerScale())){
             currentPower = minPower*calcMinPowerScale();
         }
         if(currentPower > maxPower){
