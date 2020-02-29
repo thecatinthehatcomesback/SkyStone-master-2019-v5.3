@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * the separate updatesThread and works by getting information from the CatOdoPositionUpdate and
  * receiving information from other classes using the setTarget() setter method.  CatOdoPowerUpdate
  * will then take all that information into account, calculates according to our motion profiling
- * equations and returns a percentage at which the motors should be powered.
+ * equations and returns a percentage at which the motors should be powered. TODO: Check again!!!
  *
  * This is NOT an OpMode.  This class is used to define all the other hardware classes.
  * This hardware class assumes the following device names have been configured on the robot.
@@ -48,48 +48,56 @@ public class CatOdoPowerUpdate
         minPower = defaultMinPowerForward;
     }
 
+
+
     //----------------------------------------------------------------------------------------------
     // Setter and Getter Methods:
     //----------------------------------------------------------------------------------------------
+
     /**
-     * Sets the robot's minimum power level.
+     * Sets the robot's minimum power level.  TODO: this Javadoc
      *
      * @param power to set minPower to.
      */
     public void powerBoost(double power){
         minPower = power;
     }
+
     /**
      * Sets the robot's minimum power to the defaulted amount.
      */
-    public  void powerNormal(){
+    public void resetPowerToNormal(){
         minPower = defaultMinPowerForward;
     }
 
 
-    //if this one is called do not reset the timer  so it won't start the motors slowly
-    public void setNonStopTarget(double x, double y, double power){
+    /**
+     * TODO:  if this one is called do not reset the timer  so it won't start the motors slowly
+     *
+     * @param x
+     * @param y
+     * @param power
+     */
+    public void setNonStopTarget(double x, double y, double power) {
+        targetX = x;
+        targetY = y;
+        maxPower = power;
+        currentPower = minPower;
+        distanceToTarget = distance(positionUpdate.returnXInches(), positionUpdate.returnYInches(), targetX, targetY);
+
+    }
+
     /**
      * Sets the target that the robot is going towards for this class.
-     *    //the normal set target resets the timer so it will ramp up the power
+     * TODO:  Check==>The normal set target resets the timer so it will ramp up the power
      *
      * @param x that the robot is driving towards.
      * @param y that the robot is driving towards.
      * @param power that the robot can go at most.
      */
     public void setTarget(double x, double y, double power) {
-        targetX     = x;
-        targetY     = y;
-        maxPower    = power;
-        currentPower = minPower;
-        distanceToTarget = distance(positionUpdate.returnXInches(), positionUpdate.returnYInches(), targetX, targetY);
-
-    }
-
-    //the normal set target resets the timer so it will ramp up the power
-    public void setTarget(double x, double y, double power) {
         powerTime.reset();
-        setNonStopTarget(x,y,power);
+        setNonStopTarget(x, y, power);
     }
 
     /**
@@ -99,9 +107,12 @@ public class CatOdoPowerUpdate
         return distanceToTarget;
     }
 
+
+
     //----------------------------------------------------------------------------------------------
     // Motion Profiling Stuff:
     //----------------------------------------------------------------------------------------------
+
     /**
      * Use this method to continually update the powers for the drive train.
      *
@@ -138,7 +149,7 @@ public class CatOdoPowerUpdate
         return currentPower;
     }
 
-    public double calcMinPowerScale(){
+    private double calcMinPowerScale(){
 
         double minPowerScale;
 
