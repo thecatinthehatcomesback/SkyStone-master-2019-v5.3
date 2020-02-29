@@ -157,12 +157,13 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetTheta = theta;
 
         // Power update Thread:
-        updatesThread.powerUpdate.setTarget(x, y, power);
-
-        //if the last drive was nonstop
         if (nonStop){
+            //if the last drive was nonstop
             nonStop = false;
-            updatesThread.powerUpdate.setTimer(runTime);
+            updatesThread.powerUpdate.setNonStopTarget(x, y, power);
+        }else {
+            //if the last drive was normal
+            updatesThread.powerUpdate.setTarget(x, y, power);
         }
 
         // Reset timer once called
@@ -189,14 +190,16 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         thetaMax = finishedThetaMax;
         maxPower = power;
 
-        //if the last drive was nonstop
+        // Power update Thread:
         if (nonStop){
-            updatesThread.powerUpdate.setTimer(runTime);
+            //if the last drive was nonstop
+            updatesThread.powerUpdate.setNonStopTarget(x, y, power);
+        }else {
+            //if the last drive was normal
+            updatesThread.powerUpdate.setTarget(x, y, power);
         }
 
-        // Power update Thread:
-        updatesThread.powerUpdate.setTarget(x, y, power);
-
+        //set it so the next one will be nonstop
         nonStop = true;
 
         // Reset timer once called

@@ -109,8 +109,10 @@ public class CatOdoPositionUpdate {
         double n = horizontalChange;
 
         //Calculate and update the position values
-        robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (p*Math.sin(robotOrientationRadiansHalf) + n*Math.cos(robotOrientationRadiansHalf));
-        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p*Math.cos(robotOrientationRadiansHalf) - n*Math.sin(robotOrientationRadiansHalf));
+        double robotXChangeCounts = (p*Math.sin(robotOrientationRadiansHalf) + n*Math.cos(robotOrientationRadiansHalf));
+        double robotYChangeCounts = (p*Math.cos(robotOrientationRadiansHalf) - n*Math.sin(robotOrientationRadiansHalf));
+        robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + robotXChangeCounts;
+        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + robotYChangeCounts;
 
         previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
@@ -120,7 +122,7 @@ public class CatOdoPositionUpdate {
         time.reset();
 
         double rotVelocity = (changeInRobotOrientation *(180/Math.PI))/velocityTimer;
-        double velocity = (Math.sqrt(Math.pow((p*Math.sin(robotOrientationRadiansHalf) + n*Math.cos(robotOrientationRadiansHalf)),2) + Math.pow((p*Math.cos(robotOrientationRadiansHalf) - n*Math.sin(robotOrientationRadiansHalf)),2))/count_per_in)/velocityTimer;
+        double velocity = (Math.sqrt(Math.pow(robotXChangeCounts,2) + Math.pow(robotYChangeCounts,2))/count_per_in)/velocityTimer;
 
         Log.d("catbot", String.format("OdoTicks L/R/B  :%7d  :%7d  :%7d   X: %5.2f  Y: %5.2f  theta: %5.2f Velocity: %5.2f RotVelocity: %5.2f",
                 returnVerticalLeftEncoderPosition(),

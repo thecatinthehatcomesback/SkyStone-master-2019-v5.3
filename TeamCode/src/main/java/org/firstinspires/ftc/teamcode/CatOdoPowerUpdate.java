@@ -14,8 +14,9 @@ public class CatOdoPowerUpdate {
 
     // Variables:
     private double currentPower;
-    private final double defaultMinPower = 0.27;
-    private double minPower = defaultMinPower;
+    private final double defaultMinPowerForward = 0.27;
+    private final double minPowerStrafeScale = 0.75;
+    private double minPower = defaultMinPowerForward;
     private double maxPower;
     private double distanceToTarget;
 
@@ -35,26 +36,31 @@ public class CatOdoPowerUpdate {
     }
 
     public void reset(){
-        minPower = defaultMinPower;
+        minPower = defaultMinPowerForward;
     }
 
     public  void powerBoast(double power){
         minPower = power;
     }
     public  void powerNormal(){
-        minPower = defaultMinPower;
-    }
-    public void  setTimer(ElapsedTime time){
-        powerTime = time;
+        minPower = defaultMinPowerForward;
     }
 
-    public void setTarget(double x, double y, double power) {
+
+    //if this one is called do not reset the timer  so it won't start the motors slowly
+    public void setNonStopTarget(double x, double y, double power){
         targetX     = x;
         targetY     = y;
         maxPower    = power;
         currentPower = minPower;
-        powerTime.reset();
         distanceToTarget = distance(positionUpdate.returnXInches(), positionUpdate.returnYInches(), targetX, targetY);
+
+    }
+
+    //the normal set target resets the timer so it will ramp up the power
+    public void setTarget(double x, double y, double power) {
+        powerTime.reset();
+        setNonStopTarget(x,y,power);
     }
     public double getDistanceToTarget(){
         return distanceToTarget;
@@ -82,7 +88,7 @@ public class CatOdoPowerUpdate {
             currentPower = maxPower * (currentTime / rampUpTime);
         }
         if(currentPower < minPower){
-            currentPower = minPower;
+            currentPower = minPower*calcMinPowerScale();
         }
         if(currentPower > maxPower){
             currentPower = maxPower;
@@ -90,6 +96,23 @@ public class CatOdoPowerUpdate {
 
         // Finally!  Give the power!
         return currentPower;
+    }
+
+    public double calcMinPowerScale(){
+
+        double minPowerScale;
+
+        double absAngleToTarget         = (Math.atan2(targetX - positionUpdate.returnXInches(), targetY - positionUpdate.returnYInches()));
+        double relativeAngleToTarget    = absAngleToTarget - Math.toRadians(positionUpdate.returnOrientation());
+
+        //calculate a min power between 1 and 1.75 based off sin
+        minPowerScale = (minPowerStrafeScale*(Math.abs(Math.sin(2*relativeAngleToTarget))))+1;
+
+        //if it is between 45 and 135 set it to the strafe scale
+        if (Math.abs(relativeAngleToTarget)% Math.PI > Math.PI/4 && Math.abs(relativeAngleToTarget)%Math.PI < 3*Math.PI/4){
+         minPowerScale = 1 + minPowerStrafeScale;
+        }
+        return minPowerScale;
     }
 
     /**
