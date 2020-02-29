@@ -14,7 +14,7 @@ public class CatOdoPowerUpdate {
 
     // Variables:
     private double currentPower;
-    private final double defaultMinPowerForward = 0.27;
+    private final double defaultMinPowerForward = 0.2;
     private final double minPowerStrafeScale = 0.75;
     private double minPower = defaultMinPowerForward;
     private double maxPower;
@@ -87,7 +87,8 @@ public class CatOdoPowerUpdate {
             // Ramp up power
             currentPower = maxPower * (currentTime / rampUpTime);
         }
-        if(currentPower < minPower){
+
+        if(currentPower < (minPower*calcMinPowerScale())){
             currentPower = minPower*calcMinPowerScale();
         }
         if(currentPower > maxPower){
