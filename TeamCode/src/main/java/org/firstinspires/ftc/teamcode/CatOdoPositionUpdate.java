@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -61,9 +62,11 @@ public class CatOdoPositionUpdate
     private int rightEncoderValue = 0;
     private int horizontalEncoderValue = 0;
     private RevBulkData bulkData;
+    private ElapsedTime time = new ElapsedTime();
 
     private double count_per_in;
 
+    public boolean isUpdated = false;
     /**
      * Constructor for GlobalCoordinatePosition Thread
      * @param verticalEncoderLeft left odometry encoder, facing the vertical direction
@@ -80,10 +83,9 @@ public class CatOdoPositionUpdate
         this.verticalEncoderRight = verticalEncoderRight;
         this.horizontalEncoder = horizontalEncoder;
 
-        robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.
-                readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
-        this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.
-                readFile(horizontalTickOffsetFile).trim());
+        robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
+        this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
+        time.reset();
     }
 
     public CatOdoPositionUpdate(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft,
@@ -141,29 +143,40 @@ public class CatOdoPositionUpdate
         double p = ((rightChange + leftChange) / 2);
         double n = horizontalChange;
 
-        // Calculate and update the position values:
-        robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (p *
-                Math.sin(robotOrientationRadiansHalf) + n*Math.cos(robotOrientationRadiansHalf));
-        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p *
-                Math.cos(robotOrientationRadiansHalf) - n*Math.sin(robotOrientationRadiansHalf));
+        //Calculate and update the position values
+        double robotXChangeCounts = (p*Math.sin(robotOrientationRadiansHalf) + n*Math.cos(robotOrientationRadiansHalf));
+        double robotYChangeCounts = (p*Math.cos(robotOrientationRadiansHalf) - n*Math.sin(robotOrientationRadiansHalf));
+        robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + robotXChangeCounts;
+        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + robotYChangeCounts;
 
         previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
         prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
 
-        Log.d("catbot", String.format("OdoTicks L/R/B  :%7d  :%7d  :%7d   X: %5.2f  Y: %5.2f" +
-                        "  theta: %5.2f",
+        double velocityTimer = time.seconds();
+        time.reset();
+
+        double rotVelocity = (changeInRobotOrientation *(180/Math.PI))/velocityTimer;
+        double velocity = (Math.sqrt(Math.pow(robotXChangeCounts,2) + Math.pow(robotYChangeCounts,2))/count_per_in)/velocityTimer;
+
+        Log.d("catbot", String.format("OdoTicks L/R/B  :%7d  :%7d  :%7d   X: %5.2f  Y: %5.2f  theta: %5.2f Velocity: %5.2f RotVelocity: %5.2f",
                 returnVerticalLeftEncoderPosition(),
                 returnVerticalRightEncoderPosition(),
                 returnNormalEncoderPosition(),
                 returnXInches(),
                 returnYInches(),
-                returnOrientation()));
+                returnOrientation(),
+                velocity,
+                rotVelocity));
+
+
+        isUpdated = true;
     }
 
     public double returnXInches() { return robotGlobalXCoordinatePosition/count_per_in; }
 
     public double returnYInches() { return robotGlobalYCoordinatePosition/count_per_in; }
+
 
     public void resetPos() {
         verticalRightEncoderWheelPosition = 0;

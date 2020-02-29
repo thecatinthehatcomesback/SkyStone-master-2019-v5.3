@@ -183,12 +183,13 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetTheta = theta;
 
         // Power update Thread:
-        updatesThread.powerUpdate.setTarget(x, y, power);
-
-        //if the last drive was nonstop
-        if (isNonStop){
-            isNonStop = false;
-            updatesThread.powerUpdate.setTimer(runTime);
+        if (nonStop){
+            //if the last drive was nonstop
+            nonStop = false;
+            updatesThread.powerUpdate.setNonStopTarget(x, y, power);
+        }else {
+            //if the last drive was normal
+            updatesThread.powerUpdate.setTarget(x, y, power);
         }
 
         // Reset timer once called
@@ -230,15 +231,17 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         thetaMax = finishedThetaMax;
         maxPower = power;
 
-        //if the last drive was nonstop
-        if (isNonStop){
-            updatesThread.powerUpdate.setTimer(runTime);
+        // Power update Thread:
+        if (nonStop){
+            //if the last drive was nonstop
+            updatesThread.powerUpdate.setNonStopTarget(x, y, power);
+        }else {
+            //if the last drive was normal
+            updatesThread.powerUpdate.setTarget(x, y, power);
         }
 
-        // Power update Thread:
-        updatesThread.powerUpdate.setTarget(x, y, power);
-
-        isNonStop = true;
+        //set it so the next one will be nonstop
+        nonStop = true;
 
         // Reset timer once called
         runTime.reset();
@@ -252,7 +255,13 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     @Override
     public boolean isDone() {
 
-        // Begins true so that it doesn't immediately exit.
+        //wait for the update
+        while (!updatesThread.positionUpdate.isUpdated){
+            mainHW.opMode.sleep(1);
+        }
+        //set the updated status back to false so it knows that we are now using current powers
+        updatesThread.positionUpdate.isUpdated = false;
+
         boolean keepDriving = true;
 
 

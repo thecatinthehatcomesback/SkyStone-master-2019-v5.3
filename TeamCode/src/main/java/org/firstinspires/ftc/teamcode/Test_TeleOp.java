@@ -22,6 +22,7 @@ public class Test_TeleOp extends LinearOpMode
     /* Declare OpMode members. */
     private ElapsedTime runTime = new ElapsedTime();
     private ElapsedTime elapsedGameTime = new ElapsedTime();
+    private ElapsedTime upButtonTimer = new ElapsedTime();
 
     /* Declare OpMode members. */
     CatHW_Async robot;
@@ -60,8 +61,13 @@ public class Test_TeleOp extends LinearOpMode
         // Go!
         runTime.reset();
         elapsedGameTime.reset();
+        upButtonTimer.reset();
+//        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.driveOdo.leftOdometry, robot.driveOdo.rightOdometry, robot.driveOdo.backOdometry, CatHW_DriveOdo.ODO_COUNTS_PER_INCH, 75);
+//        Thread positionThread = new Thread(globalPositionUpdate);
+//        positionThread.start();
 
 
+        int power = 0;
         double driveSpeed;
         double leftFront;
         double rightFront;
@@ -76,36 +82,52 @@ public class Test_TeleOp extends LinearOpMode
             // Driver 1 Controls:
             //--------------------------------------------------------------------------------------
 
-            // Drive train speed control:
-            if (gamepad1.left_bumper) {
-                driveSpeed = 1.00;
-            } else if (gamepad1.right_bumper) {
-                driveSpeed = 0.30;
-            } else {
-                driveSpeed = 0.70;
+            if (gamepad1.dpad_up && upButtonTimer.milliseconds()>200){
+                power++;
+                upButtonTimer.reset();
+            }
+            if (gamepad1.dpad_down && upButtonTimer.milliseconds()>200){
+                power--;
+                upButtonTimer.reset();
             }
 
-            // Input for setDrivePowers train and sets the dead-zones:
-            leftFront  = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) +
-                    ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) +
-                    gamepad1.left_stick_x;
-            rightFront = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) -
-                    ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) -
-                    gamepad1.left_stick_x;
-            leftBack   = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) -
-                    ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) +
-                    gamepad1.left_stick_x;
-            rightBack  = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) +
-                    ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) -
-                    gamepad1.left_stick_x;
+            if (power == 0) {
+                // Drive train speed control:
+                if (gamepad1.left_bumper) {
+                    driveSpeed = 1.00;
+                } else if (gamepad1.right_bumper) {
+                    driveSpeed = 0.30;
+                } else {
+                    driveSpeed = 0.70;
+                }
 
-            // Calculate the scale factor:
-            SF = robot.driveClassic.findScalor(leftFront, rightFront, leftBack, rightBack);
-            // Set powers to each setDrivePowers motor:
-            leftFront  = leftFront  * SF * driveSpeed;
-            rightFront = rightFront * SF * driveSpeed;
-            leftBack   = leftBack   * SF * driveSpeed;
-            rightBack  = rightBack  * SF * driveSpeed;
+                // Input for setDrivePowers train and sets the dead-zones:
+                leftFront = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) +
+                        ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) +
+                        gamepad1.left_stick_x;
+                rightFront = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) -
+                        ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) -
+                        gamepad1.left_stick_x;
+                leftBack = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) -
+                        ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) +
+                        gamepad1.left_stick_x;
+                rightBack = -((Math.abs(gamepad1.right_stick_y) < 0.05) ? 0 : gamepad1.right_stick_y) +
+                        ((Math.abs(gamepad1.right_stick_x) < 0.05) ? 0 : gamepad1.right_stick_x) -
+                        gamepad1.left_stick_x;
+
+                // Calculate the scale factor:
+                SF = robot.driveClassic.findScalor(leftFront, rightFront, leftBack, rightBack);
+                // Set powers to each setDrivePowers motor:
+                leftFront = leftFront * SF * driveSpeed;
+                rightFront = rightFront * SF * driveSpeed;
+                leftBack = leftBack * SF * driveSpeed;
+                rightBack = rightBack * SF * driveSpeed;
+            }else {
+                leftFront = power/100.0;
+                rightFront = 0.0;
+                leftBack = 0.0;
+                rightBack = power/100.0;
+            }
             // DRIVE!!!
             robot.driveClassic.setDrivePowers(leftFront, rightFront, leftBack, rightBack);
 
@@ -125,6 +147,11 @@ public class Test_TeleOp extends LinearOpMode
             telemetry.addData("Y Position", robot.driveOdo.updatesThread.positionUpdate.returnYInches());
             telemetry.addData("Orientation (Degrees)", robot.driveOdo.updatesThread.positionUpdate.returnOrientation());
             telemetry.addData("intakeSensor ", robot.jaws.hasStone());
+
+            telemetry.addData("Left Front Power:", "%.2f", leftFront);
+            telemetry.addData("Right Front Power:", "%.2f", rightFront);
+            telemetry.addData("Left Back Power:", "%.2f", leftBack);
+            telemetry.addData("Right Back Power:", "%.2f", rightBack);
             telemetry.update();
         }
 

@@ -103,15 +103,15 @@ public class Test_Autonomous extends LinearOpMode
 
         /* Go! */
 
-        robot.driveOdo.translateDrive(20,35,.9,0,17,22,33,40,-5,5,2);
+        robot.driveOdo.translateDrive(20,35,.75,0,17,22,33,40,-5,5,2);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(20,60,.9,0,3);
+        robot.driveOdo.translateDrive(20,60,.75,0,3);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,60,.9,0,2);
+        robot.driveOdo.translateDrive(0,60,.75,0,2);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0,.9,0,-2,2,-5,33,0,95,3);
+        robot.driveOdo.translateDrive(0,0,.75,0,-2,2,-5,33,0,95,3);
         robot.driveOdo.waitUntilDone();
-        robot.driveOdo.translateDrive(0,0,.9,90,3);
+        robot.driveOdo.translateDrive(0,0,.75,90,3);
         robot.driveOdo.waitUntilDone();
 
         //robot.driveOdo.translateDrive(0,36, CatHW_DriveBase.DRIVE_SPEED, 0,  5);
