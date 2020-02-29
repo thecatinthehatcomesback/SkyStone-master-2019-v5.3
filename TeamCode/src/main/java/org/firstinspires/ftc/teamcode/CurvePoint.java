@@ -6,13 +6,13 @@ package org.firstinspires.ftc.teamcode;
  */
 public class CurvePoint {
 
-    // Variables:
+    // Attributes/Fields:
     public double x;
     public double y;
     public double followDistance;
-    public double pointLength;
-    public double slowDownTurnRadians;
-    public double slowDownTurnAmount;
+    //public double pointLength;
+    //public double slowDownTurnRadians;
+    //public double slowDownTurnAmount;
 
 
     /**
@@ -30,9 +30,9 @@ public class CurvePoint {
         this.x = x;
         this.y = y;
         this.followDistance = followDistance;
-        this.pointLength = pointLength;
-        this.slowDownTurnRadians = slowDownTurnRadians;
-        this.slowDownTurnAmount = slowDownTurnAmount;
+        //this.pointLength = pointLength;
+        //this.slowDownTurnRadians = slowDownTurnRadians;
+        //this.slowDownTurnAmount = slowDownTurnAmount;
     }
 
     /**
@@ -43,9 +43,9 @@ public class CurvePoint {
         x = thisPoint.x;
         y = thisPoint.y;
         followDistance = thisPoint.followDistance;
-        pointLength = thisPoint.pointLength;
-        slowDownTurnRadians = thisPoint.slowDownTurnRadians;
-        slowDownTurnAmount = thisPoint.slowDownTurnAmount;
+        //pointLength = thisPoint.pointLength;
+        //slowDownTurnRadians = thisPoint.slowDownTurnRadians;
+        //slowDownTurnAmount = thisPoint.slowDownTurnAmount;
     }
 
     /**

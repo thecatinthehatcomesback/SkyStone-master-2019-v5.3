@@ -1,79 +1,92 @@
-/*
-        CatHW_DriveOdo.java
-
-    A "hardware" class containing common code accessing hardware specific
-    to the movement and rotation of the setDrivePowers train.  This is a
-    modified or stripped down version of CatSingleOverallHW to run all
-    the drive train overall.  This file is used by the new autonomous
-    OpModes to run multiple operations at once.
-
-
-    This file is a modified version from the FTC SDK.
-    Modifications by FTC Team #10273, The Cat in the Hat Comes Back.
-*/
-
 package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
+import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.util.ArrayList;
 
 /**
- * This is NOT an OpMode.
+ * CatHW_DriveOdo.java
  *
- * This class is used when using the odometry encoders for autonomous.
  *
+ * A "hardware" class containing common code accessing hardware specific to the movement and
+ * rotation of the drive train using odometry modules as position givers.  This file is used by the
+ * new autonomous OpModes to run multiple operations at once with odometry.
+ *
+ *
+ * This is NOT an OpMode.  This class is used to define all the other hardware classes.
  * This hardware class assumes the following device names have been configured on the robot.
  *
+ * NOTE: All names are lower case and have underscores between words.
  *
- * Note:  All names are lower case and have underscores between words.
  *
- * Motor channel:  Left  setDrivePowers motor:        "left_rear"  & "left_front"
- * Motor channel:  Right setDrivePowers motor:        "right_rear" & "right_front"
- * And so on...
+ * @author FTC Team #10273, The Cat in the Hat Comes Back
  */
 public class CatHW_DriveOdo extends CatHW_DriveBase
 {
-    /* Wheel measurements */   //TODO:  Update these constants!
-    private static final double     ODO_COUNTS_PER_REV        = 8192;     // 8192 for rev encoder from rev robotics
-    private static final double     ODO_WHEEL_DIAMETER_INCHES = 2.0 ;     // For figuring circumference
-    static final double             ODO_COUNTS_PER_INCH       = ODO_COUNTS_PER_REV / (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
+    //----------------------------------------------------------------------------------------------
+    // Odometry Module Constants:                               TODO: Are these constants updated???
+    //----------------------------------------------------------------------------------------------
 
+    /**
+     * The number of encoder ticks per one revolution of the odometry wheel.
+     * 8192 ticks for a REV encoder from REV Robotics.
+     */
+    private static final double ODO_COUNTS_PER_REVOLUTION = 8192;
+    /** The measurement of the odometry wheel diameter for use in calculating circumference. */
+    private static final double ODO_WHEEL_DIAMETER_INCHES = 2.0;
+    /**
+     * The amount of odometry encoder ticks equal to movement of 1 inch.  Used for conversion in the
+     * robot's positioning algorithms so that when a user inputs (X,Y) coordinates in inches, those
+     * can be converted into encoder ticks.
+     */
+    static final double ODO_COUNTS_PER_INCH     = ODO_COUNTS_PER_REVOLUTION /
+            (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
-    double  targetX;
-    double  targetY;
-    double  strafePower;
-    double  targetTheta;
-    double  strafeTurnPower;
+    private final double DEFAULT_FOLLOW_RADIUS = 6.0;
 
+    //TODO: Other attributes/field should get some Javadoc sometime...
+    private double targetX;
+    private double targetY;
+    private double targetTheta;
+    private double xMin;
+    private double xMax;
+    private double yMin;
+    private double yMax;
+    private double thetaMin;
+    private double thetaMax;
+    private double lastPower = 0;
+    private double maxPower;
+    private double strafePower;
 
-    /* Enums */
-    enum DRIVE_METHOD {
-        translate,
-        turn
+    private boolean isNonStop;
+
+    /** Enumerated type for the style of drive the robot will make. */
+    private enum DRIVE_METHOD {
+        TRANSLATE,
+        TURN
     }
-
-    enum DRIVE_MODE {
-        findLine,
-        followWall,
-        driveTilPoint
-    }
-
-
-    private DRIVE_MODE currentMode;
+    /** Variable to keep track of the DRIVE_METHOD that's the current style of robot's driving. */
     private DRIVE_METHOD currentMethod;
 
-    /* Public OpMode members. */
+    private ArrayList<CurvePoint> targetPoints;
+    private double followRadius = DEFAULT_FOLLOW_RADIUS;
+
+
+
+    //----------------------------------------------------------------------------------------------
+    // Public OpMode Members
+    //----------------------------------------------------------------------------------------------
+
     // Motors
     public DcMotor  leftOdometry    = null;
     public DcMotor  rightOdometry   = null;
     public DcMotor  backOdometry    = null;
+    public ExpansionHubEx expansionHub = null;
 
+    // Access to Update Thread
     CatOdoAllUpdates updatesThread;
-
 
     /* Constructor */
     public CatHW_DriveOdo(CatHW_Async mainHardware){
@@ -81,43 +94,167 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
     }
 
-
-    /* Initialize standard Hardware interfaces */
+    /**
+     * Initialize standard Hardware interfaces in the CatHW_DriveOdo hardware.
+     *
+     * @throws InterruptedException in case of error.
+     */
     public void init()  throws InterruptedException  {
 
-        // Calls DriveBase's init
+        // Calls DriveBase's init: //
         super.init();
 
-
-        // Define and Initialize Motors //
+        // Define and Initialize Motors and Expansion Hub: //
         leftOdometry     = hwMap.dcMotor.get("left_rear_motor");
-        rightOdometry    = hwMap.dcMotor.get("left_jaw_motor");
+        rightOdometry    = hwMap.dcMotor.get("tail_lift2");
         backOdometry     = hwMap.dcMotor.get("right_jaw_motor");
+        expansionHub     = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
 
-        // Set odometry directions //
-        leftOdometry.setDirection(DcMotor.Direction.REVERSE);
+        // Set odometry directions: //
+        //leftOdometry.setDirection(DcMotor.Direction.REVERSE);
         rightOdometry.setDirection(DcMotor.Direction.FORWARD);
-        backOdometry.setDirection(DcMotor.Direction.FORWARD);
+        // backOdometry.setDirection(DcMotor.Direction.FORWARD);
 
-        // Set odometry modes //
+        // Set odometry modes: //
         resetOdometryEncoders();
 
-        // Odometry Setup
-        updatesThread = new CatOdoAllUpdates(leftOdometry, rightOdometry, backOdometry, ODO_COUNTS_PER_INCH);
+        // Odometry Setup: //
+        updatesThread = updatesThread.getInstanceAndInit(expansionHub, leftOdometry, rightOdometry,
+                backOdometry, ODO_COUNTS_PER_INCH);
         Thread allUpdatesThread = new Thread(updatesThread);
+        updatesThread.resetThreads();
         allUpdatesThread.start();
 
-        // Sets enums to a default value
-        currentMode = DRIVE_MODE.driveTilPoint;
-        currentMethod = DRIVE_METHOD.translate;
+        // Sets enums to a default value: //
+        currentMethod = DRIVE_METHOD.TRANSLATE;
+    }
+
+
+
+    //----------------------------------------------------------------------------------------------
+    // Driving Chassis Methods:
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Set the odometry wheels to STOP_AND_RESET_ENCODER.
+     */
+    public void resetOdometryEncoders() {
+        leftOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     /**
-     * ---   ____________________   ---
-     * ---   Pure Pursuit Methods   ---
-     * ---   \/ \/ \/ \/ \/ \/ \/   ---
+     * Calls the translateDrive() method and adds in a waitUntilDone() afterwards so that the
+     * autonomous code is cleaner without having so many waitUntilDone() methods clogging up the
+     * view.
+     *TODO
+     * @param power at which robot max speed can be set to using motion profiling.
+     * @param theta is the angle at which the robot will TURN to while driving.
+     * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
+     *                 This is used/useful for stall outs.
      */
-    public ArrayList<Point> lineCircleIntersection(Point circleCenter, double radius,
+
+    /**
+     * Used to move the robot across the field.  The robot can also TURN while moving along the path
+     * in order for it to face a certain by the end of its path.  This method assumes the robot has
+     * odometry modules which give an absolute position of the robot on the field.
+     *
+     * TODO:
+     * @param power at which robot max speed can be set to using motion profiling.
+     * @param theta is the angle at which the robot will TURN to while driving.
+     * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
+     *                 This is used/useful for stall outs.
+     */
+    public void translateDrive(ArrayList<CurvePoint> points, double power, double theta,
+                               double radius, double timeoutS){
+
+        currentMethod = DRIVE_METHOD.TRANSLATE;
+        timeout = timeoutS;
+        isDone = false;
+        targetPoints = points;
+        strafePower = power;
+        targetTheta = theta;
+        followRadius = radius;
+
+        // Power update Thread:
+        if (isNonStop){
+            //if the last drive was nonstop
+            isNonStop = false;
+            //updatesThread.powerUpdate.setNonStopTarget(points.get(0).x, power);
+        }else {
+            //if the last drive was normal
+            //updatesThread.powerUpdate.setTarget(points, power);
+        }
+
+        // Reset timer once called
+        runTime.reset();
+    }
+
+    /**
+     * Nonstop TRANSLATE.  TODO: Add Javadoc here.
+     *
+     * @param x is the new X coordinate the robot drives to.
+     * @param y is the new Y coordinate the robot drives to.
+     * @param power at which robot max speed can be set to using motion profiling.
+     * @param theta is the angle at which the robot will TURN to while driving.
+     * @param finishedXMin
+     * @param finishedXMax
+     * @param finishedYMin
+     * @param finishedYMax
+     * @param finishedThetaMin
+     * @param finishedThetaMax
+     * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
+     *                 This is used/useful for stall outs.
+     */
+    public void translateDrive(double x, double y, double power, double theta, double finishedXMin,
+                               double finishedXMax, double finishedYMin, double finishedYMax,
+                               double finishedThetaMin, double finishedThetaMax, double timeoutS){
+
+        currentMethod = DRIVE_METHOD.TRANSLATE;
+        timeout = timeoutS;
+        isDone = false;
+        targetX = x;
+        targetY = y;
+        strafePower = power;
+        targetTheta = theta;
+        xMin = finishedXMin;
+        xMax = finishedXMax;
+        yMin = finishedYMin;
+        yMax = finishedYMax;
+        thetaMin = finishedThetaMin;
+        thetaMax = finishedThetaMax;
+        maxPower = power;
+
+        // Power update Thread:
+        if (isNonStop){
+            //if the last drive was nonstop
+            updatesThread.powerUpdate.setNonStopTarget(x, y, power);
+        }else {
+            //if the last drive was normal
+            updatesThread.powerUpdate.setTarget(x, y, power);
+        }
+
+        //set it so the next one will be nonstop
+        isNonStop = true;
+
+        // Reset timer once called
+        runTime.reset();
+    }
+
+
+
+
+
+    //----------------------------------------------------------------------------------------------
+    // Pure Pursuit Methods:
+    //----------------------------------------------------------------------------------------------
+
+    public ArrayList<Point> lineCircleIntersection(double robotX, double robotY, double radius,
                                                    Point linePoint1, Point linePoint2) {
         // Make sure we don't have a slope of 1 or 0.
         if (Math.abs(linePoint1.x - linePoint2.x) < 0.003) {
@@ -130,8 +267,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         // Slope of line
         double m1 = (linePoint2.y - linePoint1.y) / (linePoint2.x - linePoint1.x);
         // Zeros around the robot/circle's center (remove offset of robot)
-        double x1 = linePoint1.x - circleCenter.x;
-        double y1 = linePoint1.y - circleCenter.y;
+        double x1 = linePoint1.x - robotX;
+        double y1 = linePoint1.y - robotY;
 
         // Quadratics Stuff
         double quadraticA = 1.0 + Math.pow(m1, 2);
@@ -152,11 +289,11 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
             // Add back the offset of the robot/circle's center
-            xRoot1 += circleCenter.x;
-            yRoot1 += circleCenter.y;
+            xRoot1 += robotX;
+            yRoot1 += robotY;
             // Add back the offset to the other set of X and Y roots.
-            xRoot2 += circleCenter.x;
-            yRoot2 += circleCenter.y;
+            xRoot2 += robotX;
+            yRoot2 += robotY;
 
 
             double minX = linePoint1.x < linePoint2.x ? linePoint1.x : linePoint2.x;
@@ -179,8 +316,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         //TODO:  Add some debug logs here...
 
         CurvePoint followThisPoint = getFollowPointPath(allPoints,
-                new Point(updatesThread.positionUpdate.returnXInches(), updatesThread.positionUpdate.returnYInches()),
-                allPoints.get(0).followDistance);
+                updatesThread.positionUpdate.returnXInches(),
+                updatesThread.positionUpdate.returnYInches(), allPoints.get(0).followDistance);
 
         //TODO:  Going to want to want to think about how we use the followAngle here...
         //goToPosition(followThisPoint.x, followThisPoint.y, followAngle);
@@ -188,7 +325,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         //TODO:  Add logic to stop at the final point in the array list.
     }
-    public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints, Point robotLocation,
+    public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints,
+                                         double robotLocationX, double robotLocationY,
                                          double followRadius) {
         // TODO: In case robot's follow radius doesn't intersect line...  Improve this later...  Use
         //  a line perpendicular perhaps?
@@ -204,11 +342,11 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                     "   Y=" + endLine.y);
 
 
-            ArrayList<Point> intersections = lineCircleIntersection(robotLocation, followRadius,
-                    startLine.toPoint(), endLine.toPoint());
+            ArrayList<Point> intersections = lineCircleIntersection(robotLocationX, robotLocationY,
+                    followRadius, startLine.toPoint(), endLine.toPoint());
 
             // Choose point that the robot is facing.
-            double closestAngle = 1000000;
+            double closestAngle = Integer.MAX_VALUE;
 
             // Set the robot to follow the point ahead of it/closest to its current heading angle.
             for (Point thisIntersection : intersections) {
@@ -219,6 +357,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 System.out.println("angle = " + angle);
                 System.out.println("deltaAngle = " + deltaAngle);
 
+                //TODO:  Will need to come back and revisit this in order to decide a much better
+                // way to pick the point to follow.
                 if (deltaAngle < closestAngle) {
                     closestAngle = deltaAngle;
                     followThisPoint.setPoint(thisIntersection);
@@ -261,158 +401,175 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         }
     }*/
 
-    /**
-     * ---   _______________________   ---
-     * ---   Driving Chassis Methods   ---
-     * ---   \/ \/ \/ \/ \/ \/ \/ \/   ---
-     */
-    /* Basic methods for setting all four setDrivePowers motor powers and setModes: */
-    public void resetOdometryEncoders(){
-        /*
-         * Set the odometry wheels to STOP_AND_RESET_ENCODER
-         */
-        leftOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-    }
-    // Driving Methods:
-    public void translateDrive(double x, double y, double power, double theta, double turnSpeed, double timeoutS){
-
-        currentMethod = DRIVE_METHOD.translate;
-        timeout = timeoutS;
-        isDone = false;
-        targetX = x;
-        targetY = y;
-        strafePower = power;
-        targetTheta = theta;
-        strafeTurnPower = turnSpeed;
-
-        // Reset timer once called
-        runTime.reset();
 
 
-        // Power update Thread:
-        updatesThread.powerUpdate.setTarget(x, y, power);
-    }
-    public void quickDrive(double x, double y, double power, double theta, double turnSpeed, double timeoutS){
-
-        translateDrive(x,y,power,theta,turnSpeed,timeoutS);
-        waitUntilDone();
-    }
-
-    /**
-     * ---   _____________   ---
-     * ---   isDone Method   ---
-     * ---  \/ \/ \/ \/ \/   ---
-     */
+    //----------------------------------------------------------------------------------------------
+    // isDone Method:
+    //----------------------------------------------------------------------------------------------
     @Override
     public boolean isDone() {
+
+        //wait for the update
+        while (!updatesThread.positionUpdate.isUpdated){
+            mainHW.opMode.sleep(1);
+        }
+        //set the updated status back to false so it knows that we are now using current powers
+        updatesThread.positionUpdate.isUpdated = false;
 
         boolean keepDriving = true;
 
 
+        // Exit if timeout is hit.  Helpful for when the robot stalls/stalls out.
         if ((runTime.seconds() > timeout)) {
             Log.d("catbot", "Timed OUT.");
             keepDriving = false;
         }
 
         switch (currentMethod) {
-            case turn:
-
+            case TURN:
+                // Current orientation from odometry modules:
                 int zVal = getCurrentAngle();
 
                 Log.d("catbot", String.format("target %d, current %d  %s",
                         -targetAngleZ, -zVal, clockwiseTurn ? "CW": "CCW"));
 
-                if ((zVal >= targetAngleZ) && (!clockwiseTurn)) {
+                if ((zVal <= targetAngleZ) && (clockwiseTurn)) {
                     keepDriving = false;
                 }
-                if ((zVal <= targetAngleZ) && (clockwiseTurn)) {
+                if ((zVal >= targetAngleZ) && (!clockwiseTurn)) {
                     keepDriving = false;
                 }
                 break;
 
-            case translate:
-
+            case TRANSLATE:
+                // Current robot position and orientation from odometry modules:
                 double getY = updatesThread.positionUpdate.returnYInches();
                 double getX = updatesThread.positionUpdate.returnXInches();
                 double getTheta = updatesThread.positionUpdate.returnOrientation();
                 double getPower = updatesThread.powerUpdate.updatePower();
 
-                // Check if ready to end
-                if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2)  &&
-                        (Math.abs(getTheta - targetTheta) < 5 )) {
+                // Assign the point to follow
+                CurvePoint targetPoint = getFollowPointPath(targetPoints, getX, getY, followRadius);
+                targetX = targetPoint.x;
+                targetY = targetPoint.y;
 
-                    keepDriving = false;
+                // Check if ready to end without the isNonStop.
+                if (!isNonStop) {
+                    if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2) &&
+                            (Math.abs(getTheta - targetTheta) < 5)) {
+
+                        keepDriving = false;
+                    }
+                } else {
+
+                    // if isNonStop
+                    if (xMin < getX && getX < xMax && yMin < getY && getY < yMax &&
+                            thetaMin < getTheta && getTheta < thetaMax){
+
+                        keepDriving = false;
+                    }
+                    if (lastPower > getPower){
+                        getPower = maxPower;
+                    }
+
                 }
 
-                /**
-                 * Calc robot angles:
-                  */
+                lastPower = getPower;
+
+
+                /*
+                Calculate robot angles:
+                 */
                 double absAngleToTarget         = (Math.atan2(targetX - getX, targetY - getY));
                 double relativeAngleToTarget    = absAngleToTarget - Math.toRadians(getTheta);
-
-                double lFrontPower = (Math.cos(relativeAngleToTarget) + Math.sin(relativeAngleToTarget));
-                double rFrontPower = (Math.cos(relativeAngleToTarget) - Math.sin(relativeAngleToTarget));
+                /*
+                Calculate robot mecanum wheel powers:
+                 */
+                double lFrontPower = (Math.cos(relativeAngleToTarget) +
+                        Math.sin(relativeAngleToTarget));
+                double rFrontPower = (Math.cos(relativeAngleToTarget) -
+                        Math.sin(relativeAngleToTarget));
                 double lBackPower;
                 double rBackPower;
 
-                // Set powers for mecanum wheels
+                // Set powers for mecanum wheels:
                 lBackPower = rFrontPower;
                 rBackPower = lFrontPower;
 
-                //adds turn
-                if ((getTheta - targetTheta) < 0) {
-                    // Turn right
-                    if (Math.abs(getTheta - targetTheta) > 4) {
-                        rFrontPower = rFrontPower - (strafeTurnPower);
-                        rBackPower = rBackPower - (strafeTurnPower);
-                        lFrontPower = lFrontPower + (strafeTurnPower);
-                        lBackPower = lBackPower + (strafeTurnPower);
-                    }
-                } else {
-                    // Turn left
-                    if (Math.abs(getTheta - targetTheta) > 4) {
-                        rFrontPower = rFrontPower + (strafeTurnPower);
-                        rBackPower = rBackPower + (strafeTurnPower);
-                        lFrontPower = lFrontPower - (strafeTurnPower);
-                        lBackPower = lBackPower - (strafeTurnPower);
-                    }
+                double minTP = (updatesThread.powerUpdate.getDistanceToTarget() - 6.0) / -20.0;
+
+                if (minTP > .2){
+                    minTP = .2;
+                } else if (minTP < 0){
+                    minTP = 0;
                 }
 
+                if ((getTheta - targetTheta) < 2) {
+                    minTP = 0;
+                }
 
-                // Calculate scale factor and motor powers
+                double turnPower = Math.abs((getTheta - targetTheta) / 120.0);
+
+                if (turnPower < minTP){
+                    turnPower = minTP;
+                }
+                if (turnPower > .5){
+                    turnPower = .5;
+                }
+                Log.d("catbot",  String.format("minTP: %.2f , TP: %.2f",minTP, turnPower));
+
+                /*
+                Calculate scale factor and motor powers:
+                 */
                 double SF = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
-                leftFrontMotor.setPower(lFrontPower  * getPower * SF);
-                rightFrontMotor.setPower(rFrontPower * getPower * SF);
-                leftRearMotor.setPower(lBackPower    * getPower * SF);
-                rightRearMotor.setPower(rBackPower   * getPower * SF);
+                lFrontPower = lFrontPower  * getPower * SF;
+                rFrontPower = rFrontPower  * getPower * SF;
+                lBackPower  = lBackPower   * getPower * SF;
+                rBackPower  = rBackPower   * getPower * SF;
 
-                Log.d("catbot", String.format("translate LF: %.2f;  RF: %.2f;  LR: %.2f;  RR: %.2f  ; targetX/Y/Θ: %.2f %.2f %.1f; currentX/Y/Θ %.2f %.2f %.1f; pow %.2f",
-                        leftFrontMotor.getPower(), rightFrontMotor.getPower(), leftRearMotor.getPower(), rightRearMotor.getPower(),
-                        targetX, targetY, targetTheta, getX, getY, getTheta, getPower));
+                // Adds TURN powers to each mecanum wheel.
+                if ((getTheta - targetTheta) < 0) {
+                    // Turn right
+                    rFrontPower = rFrontPower - (turnPower);
+                    rBackPower  = rBackPower  - (turnPower);
+                    lFrontPower = lFrontPower + (turnPower);
+                    lBackPower  = lBackPower  + (turnPower);
+                } else {
+                    // Turn left
+                    rFrontPower = rFrontPower + (turnPower);
+                    rBackPower  = rBackPower  + (turnPower);
+                    lFrontPower = lFrontPower - (turnPower);
+                    lBackPower  = lBackPower  - (turnPower);
+                }
+
+                // Calculate scale factor and motor powers:
+                double SF2 = findScalor(lFrontPower, rFrontPower, lBackPower, rBackPower);
+                leftFrontMotor.setPower(lFrontPower  * SF2);
+                rightFrontMotor.setPower(rFrontPower * SF2);
+                leftRearMotor.setPower(lBackPower    * SF2);
+                rightRearMotor.setPower(rBackPower   * SF2);
+
+                Log.d("catbot", String.format("Translate LF:%.2f; RF:%.2f; LR:%.2f; RR:%.2f;" +
+                                "   TargetX/Y/Θ: %.2f %.2f %.1f;" +
+                                "   CurrentX/Y/Θ: %.2f %.2f %.1f;  Power: %.2f",
+                        leftFrontMotor.getPower(), rightFrontMotor.getPower(),
+                        leftRearMotor.getPower(), rightRearMotor.getPower(),
+                        targetX, targetY, targetTheta,
+                        getX, getY, getTheta, getPower));
                 break;
         }
 
-        if (!keepDriving){
-            // Stop all motion;
-            setDrivePowers(0, 0, 0, 0);
-            isDone = true;
-            return true;
+        if (!keepDriving) {
+            if (isNonStop){
+                isDone = true;
+                return true;
+            } else {
+                // Stop all motion;
+                setDrivePowers(0, 0, 0, 0);
+                isDone = true;
+                return true;
+            }
         }
-        if (isDone){
-            return true;
-        }
-        return false;
+        return isDone;
     }
-
-    /**
-     * ---   __________________   ---
-     * ---   End of Our Methods   ---
-     * ---   \/ \/ \/ \/ \/ \/    ---
-     */
-}// End of class bracket
+}
