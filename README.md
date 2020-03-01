@@ -6,6 +6,10 @@ We're Team #10273, The Cat in the Hat Comes Back, a FIRST Tech Challenge team fr
 Minnesota.  We enjoy learning new things and love helping other teams learn too!  (That's the
 point of FIRST robotics, right?)
 
+If you have any questions, please don't hesitate to contact us!  Our email is:
+catcomesback10273@gmail.com
+
+
 ## What We Have Done Thus Far...
 
 In this 2019-2020 season, we've set ourselves some pretty big goals.  In fact, we began setting
@@ -32,4 +36,4 @@ the large slippage rates of mecanum wheels.
 profiling.  Motion profiling is a way of speeding up and slowing down a robot based on time and
 distance to the target point for smoother drive motions.
 
-*
+* __Pure Pursuit:__ We are currently developing Pure Pursuit on a seperate branch.
