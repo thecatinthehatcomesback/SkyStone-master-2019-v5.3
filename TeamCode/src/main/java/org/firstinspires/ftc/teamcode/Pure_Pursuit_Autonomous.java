@@ -8,27 +8,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
 
 /**
- * Mec_Odo_AutonomousLevel6_Statey.java
- *
- *
- * A Linear OpMode class to be an autonomous method for both Blue & Red alliance sides where we pick
- * which side of the alliance bridge we start off at with gamepad1 as well as selecting alliance
- * color and whether we park under the alliance bridge closer or further from the game field wall.
- * Also will detect the position and deliver the skystone using machine vision and move the
- * foundation.
- *
- * Mec_Odo_AutonomousLevel6_Statey is written to use machine vision and SkyStone delivery to our
- * autonomous route with the help intake jaws that suck in a stone at any orientation using a
- * "touch it-own it" approach.  A servo and two motors make up TC-73/Bucky's arm and stack stones as
- * well as our team marker.
-
- * This autonomous is used for our State Championship(February 7-8, 2020).
- *
  *
  * @author FTC Team #10273, The Cat in the Hat Comes Back.
  */
-@Autonomous(name="State Odo Autonomous", group="CatAuto")
-public class Test_MotorTeleOp extends LinearOpMode
+@Autonomous(name="Pure Pursuit Autonomous", group="CatAuto")
+public class Pure_Pursuit_Autonomous extends LinearOpMode
 {
     /* Declare OpMode members. */
     CatHW_Async robot  = new CatHW_Async();    // All the hardware classes init here.
@@ -180,11 +164,11 @@ public class Test_MotorTeleOp extends LinearOpMode
 
         ArrayList<CurvePoint> allPoints = new ArrayList<>();
 
-        allPoints.add(new CurvePoint(0, 0, 3.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 96, 3.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(72, 96, 3.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(72, 0, 3.0, 1.0, Math.toRadians(0), 1.0));
-        allPoints.add(new CurvePoint(0, 0, 3.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 0, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(0, 96, 10.0, 1.0, Math.toRadians(0), 1.0));
+        allPoints.add(new CurvePoint(35, 96, 10.0, 1.0, Math.toRadians(0), 1.0));
+        //allPoints.add(new CurvePoint(72, 0, 3.0, 1.0, Math.toRadians(0), 1.0));
+        //allPoints.add(new CurvePoint(0, 0, 3.0, 1.0, Math.toRadians(0), 1.0));
 
         robot.driveOdo.translateDrive(allPoints, .7, 0, 3.0, 8);
         robot.driveOdo.waitUntilDone();

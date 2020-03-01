@@ -181,15 +181,24 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetTheta = theta;
         followRadius = radius;
 
-        // Power update Thread:
+        CurvePoint targetPoint = getFollowPointPath(targetPoints,
+                updatesThread.positionUpdate.returnXInches(),
+                updatesThread.positionUpdate.returnYInches(), followRadius);
+        targetX = targetPoint.x;
+        targetY = targetPoint.y;
+
+
+// Power update Thread:
         if (isNonStop){
             //if the last drive was nonstop
-            isNonStop = false;
-            //updatesThread.powerUpdate.setNonStopTarget(points.get(0).x, power);
+            updatesThread.powerUpdate.setNonStopTarget(targetX, targetY, power);
         }else {
             //if the last drive was normal
-            //updatesThread.powerUpdate.setTarget(points, power);
+            updatesThread.powerUpdate.setTarget(targetX, targetY, power);
         }
+
+        //set it so the next one will be nonstop
+        isNonStop = true;
 
         // Reset timer once called
         runTime.reset();
@@ -230,17 +239,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         thetaMax = finishedThetaMax;
         maxPower = power;
 
-        // Power update Thread:
-        if (isNonStop){
-            //if the last drive was nonstop
-            updatesThread.powerUpdate.setNonStopTarget(x, y, power);
-        }else {
-            //if the last drive was normal
-            updatesThread.powerUpdate.setTarget(x, y, power);
-        }
-
-        //set it so the next one will be nonstop
-        isNonStop = true;
+        isNonStop = false;
+        //if the last drive was nonstop
+        updatesThread.powerUpdate.setNonStopTarget(x, y, power);
 
         // Reset timer once called
         runTime.reset();
@@ -468,11 +469,13 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                         keepDriving = false;
                     }
-                    if (lastPower > getPower){
-                        getPower = maxPower;
-                    }
 
                 }
+
+                if (lastPower > getPower){
+                    getPower = maxPower;
+                }
+
 
                 lastPower = getPower;
 
