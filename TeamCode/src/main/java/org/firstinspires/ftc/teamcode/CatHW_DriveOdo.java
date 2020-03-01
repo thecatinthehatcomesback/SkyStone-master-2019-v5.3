@@ -44,7 +44,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     static final double ODO_COUNTS_PER_INCH     = ODO_COUNTS_PER_REVOLUTION /
             (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
-    private final double DEFAULT_FOLLOW_RADIUS = 6.0;
+    private final double DEFAULT_FOLLOW_RADIUS = 20.0;
 
     //TODO: Other attributes/field should get some Javadoc sometime...
     private double targetX;
