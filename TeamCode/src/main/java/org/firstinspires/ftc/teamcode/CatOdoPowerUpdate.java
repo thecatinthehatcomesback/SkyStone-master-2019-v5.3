@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.ArrayList;
+
 /**
  * Written by Team #10273, The Cat in the Hat Comes Back.
  */
@@ -20,8 +22,9 @@ public class CatOdoPowerUpdate {
     static final private double rampUpTime       = 400;  // In milliseconds
     static final private double rampDownDistance = 10;
 
-    private double finalX;
-    private double finalY;
+    ArrayList<CurvePoint> curvePointsList;
+
+    double radius;
 
 
     /**
@@ -40,12 +43,12 @@ public class CatOdoPowerUpdate {
     }
 
 
-    public void setTarget(double x, double y, double power) {
-        finalX = x;
-        finalY = y;
+    public void setTarget(ArrayList<CurvePoint> curvePointsListIn, double radiusIn, double power) {
+        curvePointsList = curvePointsListIn;
         maxPower = power;
         currentPower = minPower;
         powerTime.reset();
+        radius = radiusIn;
     }
 
     /**
@@ -60,7 +63,8 @@ public class CatOdoPowerUpdate {
         double currentTime = powerTime.milliseconds();
 
         // Distance left to target calculation
-        double distanceToTarget = distance(currentX, currentY, finalX, finalY);
+        CurvePoint pointOnLine = positionUpdate.getFollowPointPath(curvePointsList,currentX,currentY,radius);
+        double distanceToTarget = positionUpdate.distToPathEnd(pointOnLine.x,pointOnLine.y,curvePointsList) + positionUpdate.distance(currentX,currentY,pointOnLine.x,pointOnLine.y);
 
         if (currentPower >= (maxPower * (distanceToTarget / rampDownDistance))) {
             // Ramp down if within the rampDownDistance
@@ -87,19 +91,6 @@ public class CatOdoPowerUpdate {
 
         // Finally!  Give the power!
         return currentPower;
-    }
-
-    /**
-     * Just a simple distance formula so that we know how long until robot reaches
-     * the target with motion profiling.
-     * @param currentX Enter in the positionUpdate.returnXInches()
-     * @param currentY Enter in the positionUpdate.returnYInches()
-     * @param targetX Set by the setTarget method inside the CatHW_DriveOdo.translateDrive
-     * @param targetY Set by the setTarget method inside the CatHW_DriveOdo.translateDrive
-     * @return distance
-     */
-    private double distance(double currentX, double currentY, double targetX, double targetY) {
-        return Math.hypot((targetX - currentX), (targetY - currentY));
     }
 
 
