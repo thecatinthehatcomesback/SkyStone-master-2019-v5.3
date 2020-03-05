@@ -181,20 +181,17 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetTheta = theta;
         followRadius = radius;
 
-        CurvePoint targetPoint = updatesThread.positionUpdate.getFollowPointPath(targetPoints,
-                updatesThread.positionUpdate.returnXInches(),
-                updatesThread.positionUpdate.returnYInches(), followRadius);
-        targetX = targetPoint.x;
-        targetY = targetPoint.y;
+        //CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPointPath(targetPoints,
+        //        updatesThread.positionUpdate.returnRobotPointInches(), followRadius);
 
 
-// Power update Thread:
+        // Power update Thread:
         if (isNonStop){
             //if the last drive was nonstop
-            updatesThread.powerUpdate.setNonStopTarget(targetX, targetY, power);
+            updatesThread.powerUpdate.setNonStopTarget(points, power);
         }else {
             //if the last drive was normal
-            updatesThread.powerUpdate.setTarget(targetX, targetY, power);
+            updatesThread.powerUpdate.setTarget(points, power);
         }
 
         //set it so the next one will be nonstop
@@ -241,7 +238,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         isNonStop = false;
         //if the last drive was nonstop
-        updatesThread.powerUpdate.setNonStopTarget(x, y, power);
+        //updatesThread.powerUpdate.setNonStopTarget(x, y, power);
 
         // Reset timer once called
         runTime.reset();
@@ -251,12 +248,12 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
 
-    public void followCurve(ArrayList<CurvePoint> allPoints, double maxPower, double followAngle, double turnSpeed) {
+    public void followCurve(ArrayList<CurvePoint> allPoints, double maxPower, double followAngle,
+                            double turnSpeed) {
         //TODO:  Add some debug logs here...
 
-        CurvePoint followThisPoint = updatesThread.positionUpdate.getFollowPointPath(allPoints,
-                updatesThread.positionUpdate.returnXInches(),
-                updatesThread.positionUpdate.returnYInches(), allPoints.get(0).followDistance);
+        CurvePoint followThisPoint = updatesThread.powerUpdate.getFollowPointPath(allPoints,
+                updatesThread.positionUpdate.returnRobotPointInches(), allPoints.get(0).followDistance);
 
         //TODO:  Going to want to want to think about how we use the followAngle here...
         //goToPosition(followThisPoint.x, followThisPoint.y, followAngle);
@@ -307,19 +304,18 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
             case TRANSLATE:
                 // Current robot position and orientation from odometry modules:
-                double getY = updatesThread.positionUpdate.returnYInches();
-                double getX = updatesThread.positionUpdate.returnXInches();
+                Point getRobotPos = updatesThread.positionUpdate.returnRobotPointInches();
                 double getTheta = updatesThread.positionUpdate.returnOrientation();
                 double getPower = updatesThread.powerUpdate.updatePower();
 
                 // Assign the point to follow
-                CurvePoint targetPoint = updatesThread.positionUpdate.getFollowPointPath(targetPoints, getX, getY, followRadius);
-                targetX = targetPoint.x;
-                targetY = targetPoint.y;
+                CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPointPath(targetPoints,
+                        getRobotPos, followRadius);
 
                 // Check if ready to end without the isNonStop.
                 if (!isNonStop) {
-                    if ((Math.abs(targetY - getY) < 2 && Math.abs(targetX - getX) < 2) &&
+                    if ((Math.abs(targetY - getRobotPos.y) < 2 &&
+                            Math.abs(targetX - getRobotPos.x) < 2) &&
                             (Math.abs(getTheta - targetTheta) < 5)) {
 
                         keepDriving = false;
@@ -327,7 +323,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 } else {
 
                     // if isNonStop
-                    if (xMin < getX && getX < xMax && yMin < getY && getY < yMax &&
+                    if (xMin < getRobotPos.x && getRobotPos.x < xMax &&
+                            yMin < getRobotPos.y && getRobotPos.y < yMax &&
                             thetaMin < getTheta && getTheta < thetaMax){
 
                         keepDriving = false;
@@ -346,7 +343,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 /*
                 Calculate robot angles:
                  */
-                double absAngleToTarget         = (Math.atan2(targetX - getX, targetY - getY));
+                double absAngleToTarget         = (Math.atan2(targetX - getRobotPos.x,
+                        targetY - getRobotPos.y));
                 double relativeAngleToTarget    = absAngleToTarget - Math.toRadians(getTheta);
                 /*
                 Calculate robot mecanum wheel powers:
@@ -421,7 +419,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(),
                         leftRearMotor.getPower(), rightRearMotor.getPower(),
                         targetX, targetY, targetTheta,
-                        getX, getY, getTheta, getPower));
+                        getRobotPos.x, getRobotPos.y, getTheta, getPower));
                 break;
         }
 
