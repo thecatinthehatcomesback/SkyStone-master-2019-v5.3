@@ -8,6 +8,7 @@ public class CurvePoint extends Point {
 
     // Attributes/Fields: //
     public double followDistance;
+    //public int theta;
     //public double pointLength;
     //public double slowDownTurnRadians;
     //public double slowDownTurnAmount;
