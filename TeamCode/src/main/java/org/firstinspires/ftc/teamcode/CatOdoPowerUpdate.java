@@ -97,10 +97,9 @@ public class CatOdoPowerUpdate
         maxPower = power;
         currentPower = minPower;
         simplePath = simplePathPoints;
-        pointOnLine = getFollowPoint(simplePath,
-                positionUpdate.returnRobotPointInches(), followRadius);
+        pointOnLine = getFollowPoint(positionUpdate.returnRobotPointInches(), followRadius);
         distanceToFinalTargetPoint = distToPathEnd(pointOnLine, simplePath) +
-                distance(positionUpdate.returnRobotPointInches(), pointOnLine);
+                distanceBetween(positionUpdate.returnRobotPointInches(), pointOnLine);
     }
 
     /**
@@ -115,7 +114,7 @@ public class CatOdoPowerUpdate
     }
 
     /**
-     * @return distance from robot's current location to target's location in inches.
+     * @return distanceBetween from robot's current location to target's location in inches.
      */
     public double getDistanceToFinalTargetPoint(){
         return distanceToFinalTargetPoint;
@@ -139,9 +138,9 @@ public class CatOdoPowerUpdate
         double currentTime = powerTime.milliseconds();
 
         // Distance left to target calculation
-        pointOnLine = getFollowPoint(simplePath, currentPos , followRadius);
+        pointOnLine = getFollowPoint(currentPos , followRadius);
         distanceToFinalTargetPoint = distToPathEnd(pointOnLine, simplePath)
-                + distance(currentPos, pointOnLine);
+                + distanceBetween(currentPos, pointOnLine);
 
         if (currentPower >= (1 * (distanceToFinalTargetPoint / rampDownDistance))) {
             // Ramp down if within the rampDownDistance.
@@ -203,8 +202,8 @@ public class CatOdoPowerUpdate
      * @param linePoint2
      * @return
      */
-    public ArrayList<Point> lineCircleIntersection(Point robotPos, double radius,
-                                                   Point linePoint1, Point linePoint2) {
+    public ArrayList<Point> findPathIntersections(Point robotPos, double radius,
+                                                  Point linePoint1, Point linePoint2) {
         // Make sure we don't have a slope of 1 or 0.
         if (Math.abs(linePoint1.x - linePoint2.x) < 0.003) {
             linePoint1.x = linePoint2.x + 0.003;
@@ -266,24 +265,23 @@ public class CatOdoPowerUpdate
 
     /**
      *
-     * @param pathPoints
      * @param robotLocation
      * @param followRadius
      * @return
      */
-    public CurvePoint getFollowPoint(ArrayList<CurvePoint> pathPoints,
+    public CurvePoint getFollowPoint(/*ArrayList<CurvePoint> pathPoints,*/
                                      Point robotLocation, double followRadius) {
         // TODO: In case robot's follow followRadius doesn't intersect line...
         //  Improve this later...  Use a line perpendicular perhaps?
         CurvePoint followThisPoint = new CurvePoint(simplePath.get(0));
 
         // Go through all the CurvePoints and stop one early since a line needs at least two points.
-        for (int i = 0; i < pathPoints.size() - 1; i++) {
-            CurvePoint startLine = pathPoints.get(i);
-            CurvePoint endLine = pathPoints.get(i + 1);
+        for (int i = 0; i < simplePath.size() - 1; i++) {
+            CurvePoint startLine = simplePath.get(i);
+            CurvePoint endLine = simplePath.get(i + 1);
 
 
-            ArrayList<Point> intersections = lineCircleIntersection(robotLocation,
+            ArrayList<Point> intersections = findPathIntersections(robotLocation,
                     followRadius, startLine, endLine);
 
             // Choose point that the robot is facing.
@@ -292,7 +290,7 @@ public class CatOdoPowerUpdate
             // Set the robot to follow the point ahead of it/closest to its current heading angle.
             for (Point thisIntersection : intersections) {
 
-                double currentDist = distToPathEnd(thisIntersection.toCurvePoint(),pathPoints);
+                double currentDist = distToPathEnd(thisIntersection.toCurvePoint(), simplePath);
 
                 if (currentDist < smallestDist){
                     smallestDist = currentDist;
@@ -340,11 +338,11 @@ public class CatOdoPowerUpdate
 
 
     /**
-     * Just a simple distance formula so that we know how long until robot reaches
+     * Just a simple distanceBetween formula so that we know how long until robot reaches
      * the target with motion profiling.
-     * @return distance
+     * @return distanceBetween
      */
-    private double distance(Point point1, Point point2) {
+    private double distanceBetween(Point point1, Point point2) {
         return Math.hypot((point2.x - point1.x), (point2.y - point1.y));
     }
 
@@ -361,10 +359,10 @@ public class CatOdoPowerUpdate
         double totalDist = 0;
         //calc total dis by adding all distances
         for (int i = pathPoints.size()-1; i > line; i++) {
-            totalDist += distance(pathPoints.get(i), pathPoints.get(i+1));
+            totalDist += distanceBetween(pathPoints.get(i), pathPoints.get(i+1));
 
         }
-        totalDist += distance(pointOnLine, pathPoints.get(line + 1));
+        totalDist += distanceBetween(pointOnLine, pathPoints.get(line + 1));
 
         return totalDist;
     }
@@ -381,10 +379,10 @@ public class CatOdoPowerUpdate
 
         for (int i = 0; i < points.size()-1; i++) {
 
-            // If the the distance between the two points is the same as the distance: EX: A-C-----B
-            if (distance(points.get(i), points.get(i + 1))
-                    == distance(points.get(i), pointOnLine)
-                    + distance(pointOnLine, points.get(i + 1))) {
+            // If the the distanceBetween between the two points is the same as the distanceBetween: EX: A-C-----B
+            if (distanceBetween(points.get(i), points.get(i + 1))
+                    == distanceBetween(points.get(i), pointOnLine)
+                    + distanceBetween(pointOnLine, points.get(i + 1))) {
                 line = i;
             }
         }

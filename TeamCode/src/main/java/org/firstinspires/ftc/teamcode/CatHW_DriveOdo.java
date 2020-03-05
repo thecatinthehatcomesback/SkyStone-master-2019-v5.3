@@ -248,7 +248,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
 
-    public void followCurve(ArrayList<CurvePoint> allPoints, double maxPower, double followAngle,
+    /*public void followCurve(ArrayList<CurvePoint> allPoints, double maxPower, double followAngle,
                             double turnSpeed) {
         //TODO:  Add some debug logs here...
 
@@ -260,7 +260,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         //translateDrive(followThisPoint.x, followThisPoint.y, maxPower, followAngle, turnSpeed, 5.0);
 
         //TODO:  Add logic to stop at the final point in the array list.
-    }
+    }*/
 
 
 
@@ -309,7 +309,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 double getPower = updatesThread.powerUpdate.updatePower();
 
                 // Assign the point to follow
-                CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPoint(targetPoints,
+                CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPoint(/*targetPoints,*/
                         getRobotPos, followRadius);
 
                 // Check if ready to end without the isNonStop.
