@@ -181,7 +181,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetTheta = theta;
         followRadius = radius;
 
-        CurvePoint targetPoint = getFollowPointPath(targetPoints,
+        CurvePoint targetPoint = updatesThread.positionUpdate.getFollowPointPath(targetPoints,
                 updatesThread.positionUpdate.returnXInches(),
                 updatesThread.positionUpdate.returnYInches(), followRadius);
         targetX = targetPoint.x;
@@ -254,7 +254,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     public void followCurve(ArrayList<CurvePoint> allPoints, double maxPower, double followAngle, double turnSpeed) {
         //TODO:  Add some debug logs here...
 
-        CurvePoint followThisPoint = getFollowPointPath(allPoints,
+        CurvePoint followThisPoint = updatesThread.positionUpdate.getFollowPointPath(allPoints,
                 updatesThread.positionUpdate.returnXInches(),
                 updatesThread.positionUpdate.returnYInches(), allPoints.get(0).followDistance);
 
@@ -313,7 +313,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 double getPower = updatesThread.powerUpdate.updatePower();
 
                 // Assign the point to follow
-                CurvePoint targetPoint = getFollowPointPath(targetPoints, getX, getY, followRadius);
+                CurvePoint targetPoint = updatesThread.positionUpdate.getFollowPointPath(targetPoints, getX, getY, followRadius);
                 targetX = targetPoint.x;
                 targetY = targetPoint.y;
 

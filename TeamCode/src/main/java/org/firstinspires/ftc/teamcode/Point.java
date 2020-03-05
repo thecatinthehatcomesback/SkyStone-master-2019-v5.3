@@ -20,4 +20,7 @@ public class Point {
         this.x = x;
         this.y = y;
     }
+    public CurvePoint toCurvePoint() {
+        return new CurvePoint(this.x, this.y, 0);
+    }
 }

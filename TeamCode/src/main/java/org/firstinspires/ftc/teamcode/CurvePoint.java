@@ -24,8 +24,7 @@ public class CurvePoint {
      * @param slowDownTurnRadians
      * @param slowDownTurnAmount
      */
-    public CurvePoint(double x, double y, double followDistance,
-                      double pointLength, double slowDownTurnRadians, double slowDownTurnAmount) {
+    public CurvePoint(double x, double y, double followDistance) {
 
         this.x = x;
         this.y = y;
