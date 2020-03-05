@@ -26,7 +26,7 @@ public class CatOdoPowerUpdate
 
     private ElapsedTime powerTime = new ElapsedTime();
 
-    // Local Variables or Attributes:
+    // Attributes/Fields: //
     private double currentPower;
     private final double defaultMinPowerForward = 0.2;
     private final double minPowerStrafeScale = 0.75;
@@ -38,9 +38,9 @@ public class CatOdoPowerUpdate
     private static final double rampUpTime       = 400;  // In milliseconds
     private static final double rampDownDistance = 23;
 
-    ArrayList<CurvePoint> curvePointsList;
+    private ArrayList<CurvePoint> curvePointsList;
 
-    double radius;
+    private double followRadius;
     private int targetPoint;
 
 
@@ -50,10 +50,6 @@ public class CatOdoPowerUpdate
      */
     CatOdoPowerUpdate(CatOdoPositionUpdate inPositionUpdate) {
         positionUpdate = inPositionUpdate;
-    }
-
-    public void reset(){
-        minPower = defaultMinPowerForward;
     }
 
 
@@ -67,7 +63,7 @@ public class CatOdoPowerUpdate
      *
      * @param power to set minPower to.
      */
-    public void powerBoost(double power){
+    public void setMinPower(double power){
         minPower = power;
     }
 
@@ -80,7 +76,7 @@ public class CatOdoPowerUpdate
 
 
     /**
-     * TODO:  if this one is called do not reset the timer  so it won't start the motors slowly
+     * TODO:  if this one is called do not resetPowerTodefaultMin the timer  so it won't start the motors slowly
      *
      * @param power
      */
@@ -90,9 +86,9 @@ public class CatOdoPowerUpdate
         currentPower = minPower;
         curvePointsList = pathPoints;
         pointOnLine = getFollowPointPath(curvePointsList,
-                positionUpdate.returnRobotPointInches(), radius);
+                positionUpdate.returnRobotPointInches(), followRadius);
         distanceToTarget = distToPathEnd(pointOnLine, curvePointsList) +
-                distance(positionUpdate.returnRobotPointInches(), pointOnLine.x, pointOnLine.y);
+                distance(positionUpdate.returnRobotPointInches(), pointOnLine.toPoint());
     }
 
     /**
@@ -131,9 +127,9 @@ public class CatOdoPowerUpdate
         double currentTime = powerTime.milliseconds();
 
         // Distance left to target calculation
-        pointOnLine = getFollowPointPath(curvePointsList, currentPos ,radius);
+        pointOnLine = getFollowPointPath(curvePointsList, currentPos , followRadius);
         distanceToTarget = distToPathEnd(pointOnLine,curvePointsList)
-                + distance(currentPos, pointOnLine.x, pointOnLine.y);
+                + distance(currentPos, pointOnLine.toPoint());
 
         if (currentPower >= (1 * (distanceToTarget / rampDownDistance))) {
             // Ramp down if within the rampDownDistance.
@@ -243,7 +239,7 @@ public class CatOdoPowerUpdate
     // TODO: do this calc in the globalPosition update method, and just have a return target curve point method
     public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints,
                                          Point robotLocation, double followRadius) {
-        // TODO: In case robot's follow radius doesn't intersect line...  Improve this later...  Use
+        // TODO: In case robot's follow followRadius doesn't intersect line...  Improve this later...  Use
         //  a line perpendicular perhaps?
         CurvePoint followThisPoint = new CurvePoint(pathPoints.get(0));
 
@@ -309,12 +305,10 @@ public class CatOdoPowerUpdate
     /**
      * Just a simple distance formula so that we know how long until robot reaches
      * the target with motion profiling.
-     * @param targetX Set by the setTarget method inside the CatHW_DriveOdo.translateDrive
-     * @param targetY Set by the setTarget method inside the CatHW_DriveOdo.translateDrive
      * @return distance
      */
-    public double distance(Point point1, double targetX, double targetY) {
-        return Math.hypot((targetX - point1.x), (targetY - point1.y));
+    public double distance(Point point1, Point point2) {
+        return Math.hypot((point2.x - point1.x), (point2.y - point1.y));
     }
 
     public double distToPathEnd(CurvePoint pointOnLine, ArrayList<CurvePoint> pathPoints) {
@@ -324,10 +318,10 @@ public class CatOdoPowerUpdate
         double totalDist = 0;
         //calc total dis by adding all distances
         for (int i = pathPoints.size()-1; i > line; i++) {
-            totalDist += distance(pathPoints.get(i).toPoint(), pathPoints.get(i+1).x, pathPoints.get(i+1).y);
+            totalDist += distance(pathPoints.get(i).toPoint(), pathPoints.get(i+1).toPoint());
 
         }
-        totalDist += distance(pointOnLine.toPoint(), pathPoints.get(line + 1).x, pathPoints.get(line + 1).y);
+        totalDist += distance(pointOnLine.toPoint(), pathPoints.get(line + 1).toPoint());
 
         return totalDist;
     }
@@ -337,9 +331,9 @@ public class CatOdoPowerUpdate
         for (int i = 0; i < points.size()-1; i++) {
 
             //if the the distance between the two points is the same as the distance EX: A-C------B
-            if (distance(points.get(i).toPoint(), points.get(i + 1).x, points.get(i + 1).y)
-                    == distance(points.get(i).toPoint(), pointOnLine.x, pointOnLine.y)
-                    + distance(pointOnLine.toPoint(), points.get(i + 1).x, points.get(i + 1).y)) {
+            if (distance(points.get(i).toPoint(), points.get(i + 1).toPoint())
+                    == distance(points.get(i).toPoint(), pointOnLine.toPoint())
+                    + distance(pointOnLine.toPoint(), points.get(i + 1).toPoint())) {
                 line = i;
             }
         }
