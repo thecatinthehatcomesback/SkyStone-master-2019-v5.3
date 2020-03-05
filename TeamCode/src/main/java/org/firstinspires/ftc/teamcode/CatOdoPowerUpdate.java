@@ -88,7 +88,7 @@ public class CatOdoPowerUpdate
         pointOnLine = getFollowPointPath(curvePointsList,
                 positionUpdate.returnRobotPointInches(), followRadius);
         distanceToTarget = distToPathEnd(pointOnLine, curvePointsList) +
-                distance(positionUpdate.returnRobotPointInches(), pointOnLine.toPoint());
+                distance(positionUpdate.returnRobotPointInches(), pointOnLine);
     }
 
     /**
@@ -129,7 +129,7 @@ public class CatOdoPowerUpdate
         // Distance left to target calculation
         pointOnLine = getFollowPointPath(curvePointsList, currentPos , followRadius);
         distanceToTarget = distToPathEnd(pointOnLine,curvePointsList)
-                + distance(currentPos, pointOnLine.toPoint());
+                + distance(currentPos, pointOnLine);
 
         if (currentPower >= (1 * (distanceToTarget / rampDownDistance))) {
             // Ramp down if within the rampDownDistance.
@@ -250,7 +250,7 @@ public class CatOdoPowerUpdate
 
 
             ArrayList<Point> intersections = lineCircleIntersection(robotLocation,
-                    followRadius, startLine.toPoint(), endLine.toPoint());
+                    followRadius, startLine, endLine);
 
             // Choose point that the robot is facing.
             double smallestDist = Integer.MAX_VALUE;
@@ -318,10 +318,10 @@ public class CatOdoPowerUpdate
         double totalDist = 0;
         //calc total dis by adding all distances
         for (int i = pathPoints.size()-1; i > line; i++) {
-            totalDist += distance(pathPoints.get(i).toPoint(), pathPoints.get(i+1).toPoint());
+            totalDist += distance(pathPoints.get(i), pathPoints.get(i+1));
 
         }
-        totalDist += distance(pointOnLine.toPoint(), pathPoints.get(line + 1).toPoint());
+        totalDist += distance(pointOnLine, pathPoints.get(line + 1));
 
         return totalDist;
     }
@@ -331,9 +331,9 @@ public class CatOdoPowerUpdate
         for (int i = 0; i < points.size()-1; i++) {
 
             //if the the distance between the two points is the same as the distance EX: A-C------B
-            if (distance(points.get(i).toPoint(), points.get(i + 1).toPoint())
-                    == distance(points.get(i).toPoint(), pointOnLine.toPoint())
-                    + distance(pointOnLine.toPoint(), points.get(i + 1).toPoint())) {
+            if (distance(points.get(i), points.get(i + 1))
+                    == distance(points.get(i), pointOnLine)
+                    + distance(pointOnLine, points.get(i + 1))) {
                 line = i;
             }
         }

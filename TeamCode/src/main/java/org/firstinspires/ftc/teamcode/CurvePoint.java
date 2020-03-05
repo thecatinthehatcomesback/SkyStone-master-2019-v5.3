@@ -36,15 +36,6 @@ public class CurvePoint extends Point {
     }
 
     /**
-     * Turns the CurvePoint into a Point data type.
-     *
-     * @return the Point version of a CurvePoint.
-     */
-    public Point toPoint() {
-        return new Point(this.x, this.y);
-    }
-
-    /**
      * Sets the Point values for a CurvePoint.
      *
      * @param point to set the values to.
