@@ -181,7 +181,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetTheta = theta;
         followRadius = radius;
 
-        //CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPointPath(targetPoints,
+        //CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPoint(targetPoints,
         //        updatesThread.positionUpdate.returnRobotPointInches(), followRadius);
 
 
@@ -252,7 +252,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                             double turnSpeed) {
         //TODO:  Add some debug logs here...
 
-        CurvePoint followThisPoint = updatesThread.powerUpdate.getFollowPointPath(allPoints,
+        CurvePoint followThisPoint = updatesThread.powerUpdate.getFollowPoint(allPoints,
                 updatesThread.positionUpdate.returnRobotPointInches(), allPoints.get(0).followDistance);
 
         //TODO:  Going to want to want to think about how we use the followAngle here...
@@ -309,7 +309,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 double getPower = updatesThread.powerUpdate.updatePower();
 
                 // Assign the point to follow
-                CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPointPath(targetPoints,
+                CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPoint(targetPoints,
                         getRobotPos, followRadius);
 
                 // Check if ready to end without the isNonStop.
@@ -360,7 +360,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 lBackPower = rFrontPower;
                 rBackPower = lFrontPower;
 
-                double minTP = (updatesThread.powerUpdate.getDistanceToTarget() - 6.0) / -20.0;
+                double minTP = (updatesThread.powerUpdate.getDistanceToFinalTargetPoint() - 6.0) / -20.0;
 
                 if (minTP > .2){
                     minTP = .2;

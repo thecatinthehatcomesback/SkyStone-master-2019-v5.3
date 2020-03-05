@@ -22,30 +22,41 @@ import java.util.ArrayList;
  */
 public class CatOdoPowerUpdate
 {
+    //----------------------------------------------------------------------------------------------
+    // Attributes/Fields:
+    //----------------------------------------------------------------------------------------------
     private CatOdoPositionUpdate positionUpdate;
 
     private ElapsedTime powerTime = new ElapsedTime();
 
-    // Attributes/Fields: //
-    private double currentPower;
     private final double defaultMinPowerForward = 0.2;
     private final double minPowerStrafeScale = 0.75;
-    private double minPower = defaultMinPowerForward;
+    private double currentPower;
     private double maxPower;
-    private double distanceToTarget;
-    private CurvePoint pointOnLine;
+    private double minPower = defaultMinPowerForward;
 
-    private static final double rampUpTime       = 400;  // In milliseconds
+    /**
+     * A constant that decides how much time it takes for the robot to reach its max power measured
+     * in milliseconds.
+     */
+    private static final double rampUpTime = 400;
+    /**
+     * A constant which will be how far the robot needs to be in order to start slowing down
+     * measured in inches.
+     */
     private static final double rampDownDistance = 23;
 
-    private ArrayList<CurvePoint> curvePointsList;
-
     private double followRadius;
+    private double distanceToFinalTargetPoint;
+    /** Number to keep track of which point in the simplePath the robot is driving towards. */
     private int targetPoint;
+    private CurvePoint pointOnLine;
+    private ArrayList<CurvePoint> simplePath;
 
 
     /**
-     * Constructor which also has access to the values and such in CatOdoPositionUpdate
+     * Constructor which also has access to the values and such in CatOdoPositionUpdate.
+     *
      * @param inPositionUpdate Create an instance of the CatOdoPositionUpdate
      */
     CatOdoPowerUpdate(CatOdoPositionUpdate inPositionUpdate) {
@@ -76,18 +87,19 @@ public class CatOdoPowerUpdate
 
 
     /**
-     * TODO:  if this one is called do not resetPowerTodefaultMin the timer  so it won't start the motors slowly
+     * TODO:  if this one is called do not resetPowerToDefaultMin the timer so it won't start the
+     *  motors slowly
      *
      * @param power
      */
-    public void setNonStopTarget(ArrayList<CurvePoint> pathPoints, double power) {
+    public void setNonStopTarget(ArrayList<CurvePoint> simplePathPoints, double power) {
 
         maxPower = power;
         currentPower = minPower;
-        curvePointsList = pathPoints;
-        pointOnLine = getFollowPointPath(curvePointsList,
+        simplePath = simplePathPoints;
+        pointOnLine = getFollowPoint(simplePath,
                 positionUpdate.returnRobotPointInches(), followRadius);
-        distanceToTarget = distToPathEnd(pointOnLine, curvePointsList) +
+        distanceToFinalTargetPoint = distToPathEnd(pointOnLine, simplePath) +
                 distance(positionUpdate.returnRobotPointInches(), pointOnLine);
     }
 
@@ -105,8 +117,8 @@ public class CatOdoPowerUpdate
     /**
      * @return distance from robot's current location to target's location in inches.
      */
-    public double getDistanceToTarget(){
-        return distanceToTarget;
+    public double getDistanceToFinalTargetPoint(){
+        return distanceToFinalTargetPoint;
     }
 
 
@@ -127,13 +139,13 @@ public class CatOdoPowerUpdate
         double currentTime = powerTime.milliseconds();
 
         // Distance left to target calculation
-        pointOnLine = getFollowPointPath(curvePointsList, currentPos , followRadius);
-        distanceToTarget = distToPathEnd(pointOnLine,curvePointsList)
+        pointOnLine = getFollowPoint(simplePath, currentPos , followRadius);
+        distanceToFinalTargetPoint = distToPathEnd(pointOnLine, simplePath)
                 + distance(currentPos, pointOnLine);
 
-        if (currentPower >= (1 * (distanceToTarget / rampDownDistance))) {
+        if (currentPower >= (1 * (distanceToFinalTargetPoint / rampDownDistance))) {
             // Ramp down if within the rampDownDistance.
-            currentPower = 1 * (distanceToTarget / rampDownDistance);
+            currentPower = 1 * (distanceToFinalTargetPoint / rampDownDistance);
 
         } else {
             // Ramp up power.
@@ -152,29 +164,45 @@ public class CatOdoPowerUpdate
         return currentPower;
     }
 
+    /**
+     *
+     * @return
+     */
     private double calcMinPowerScale(){
 
         double minPowerScale;
 
-        double absAngleToTarget         = (Math.atan2(curvePointsList.get(targetPoint).x - positionUpdate.returnXInches(),
-                curvePointsList.get(targetPoint).y - positionUpdate.returnYInches()));
-        double relativeAngleToTarget    = absAngleToTarget - Math.toRadians(positionUpdate.returnOrientation());
+        double absAngleToTarget         = (Math.atan2(simplePath.get(targetPoint).x -
+                        positionUpdate.returnXInches(), simplePath.get(targetPoint).y -
+                positionUpdate.returnYInches()));
+        double relativeAngleToTarget    = absAngleToTarget -
+                Math.toRadians(positionUpdate.returnOrientation());
 
-        //calculate a min power between 1 and 1.75 based off sin
-        minPowerScale = (minPowerStrafeScale*(Math.abs(Math.sin(2*relativeAngleToTarget))))+1;
+        // Calculate a minimum power between 1 and 1.75 based off sin.
+        minPowerScale = (minPowerStrafeScale*(Math.abs(Math.sin(2*relativeAngleToTarget)))) + 1.0;
 
-        //if it is between 45 and 135 set it to the strafe scale
-        if (Math.abs(relativeAngleToTarget)% Math.PI > Math.PI/4 && Math.abs(relativeAngleToTarget)%Math.PI < 3*Math.PI/4){
-            minPowerScale = 1 + minPowerStrafeScale;
+        // If relative angle to target is between 45 and 135 degrees, set it to the strafe scale.
+        if (Math.abs(relativeAngleToTarget)% Math.PI > Math.PI/4 &&
+                Math.abs(relativeAngleToTarget)%Math.PI < 3*Math.PI/4) {
+            minPowerScale = 1.0 + minPowerStrafeScale;
         }
         return minPowerScale;
     }
+
 
 
     //----------------------------------------------------------------------------------------------
     // Pure Pursuit Methods:
     //----------------------------------------------------------------------------------------------
 
+    /**
+     *
+     * @param robotPos
+     * @param radius
+     * @param linePoint1
+     * @param linePoint2
+     * @return
+     */
     public ArrayList<Point> lineCircleIntersection(Point robotPos, double radius,
                                                    Point linePoint1, Point linePoint2) {
         // Make sure we don't have a slope of 1 or 0.
@@ -236,12 +264,18 @@ public class CatOdoPowerUpdate
     }
 
 
-    // TODO: do this calc in the globalPosition update method, and just have a return target curve point method
-    public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints,
-                                         Point robotLocation, double followRadius) {
-        // TODO: In case robot's follow followRadius doesn't intersect line...  Improve this later...  Use
-        //  a line perpendicular perhaps?
-        CurvePoint followThisPoint = new CurvePoint(pathPoints.get(0));
+    /**
+     *
+     * @param pathPoints
+     * @param robotLocation
+     * @param followRadius
+     * @return
+     */
+    public CurvePoint getFollowPoint(ArrayList<CurvePoint> pathPoints,
+                                     Point robotLocation, double followRadius) {
+        // TODO: In case robot's follow followRadius doesn't intersect line...
+        //  Improve this later...  Use a line perpendicular perhaps?
+        CurvePoint followThisPoint = new CurvePoint(simplePath.get(0));
 
         // Go through all the CurvePoints and stop one early since a line needs at least two points.
         for (int i = 0; i < pathPoints.size() - 1; i++) {
@@ -274,15 +308,18 @@ public class CatOdoPowerUpdate
         double absAngleToPoint = Math.atan2(targetY - updatesThread.positionUpdate.returnYInches(),
                 targetX - updatesThread.positionUpdate.returnXInches());
 
-        double relativeAngleToPoint = absAngleToPoint - Math.toRadians(updatesThread.positionUpdate.returnOrientation());
+        double relativeAngleToPoint = absAngleToPoint -
+                Math.toRadians(updatesThread.positionUpdate.returnOrientation());
 
 
 
         double relativeXToPoint = Math.cos(relativeAngleToPoint) * distanceToPoint;
         double relativeYToPoint = Math.sin(relativeAngleToPoint) * distanceToPoint;
 
-        double movementXPower = relativeXToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
-        double movementYPower = relativeYToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
+        double movementXPower = relativeXToPoint / (Math.abs(relativeXToPoint) +
+                Math.abs(relativeYToPoint));
+        double movementYPower = relativeYToPoint / (Math.abs(relativeXToPoint) +
+                Math.abs(relativeYToPoint));
         // Now, use all these numbers to move around (NB: They will always be limited to 1.0).
 
 
@@ -307,11 +344,17 @@ public class CatOdoPowerUpdate
      * the target with motion profiling.
      * @return distance
      */
-    public double distance(Point point1, Point point2) {
+    private double distance(Point point1, Point point2) {
         return Math.hypot((point2.x - point1.x), (point2.y - point1.y));
     }
 
-    public double distToPathEnd(CurvePoint pointOnLine, ArrayList<CurvePoint> pathPoints) {
+    /**
+     *
+     * @param pointOnLine
+     * @param pathPoints
+     * @return
+     */
+    private double distToPathEnd(CurvePoint pointOnLine, ArrayList<CurvePoint> pathPoints) {
 
         int line = findLineNum(pointOnLine, pathPoints);
 
@@ -325,22 +368,30 @@ public class CatOdoPowerUpdate
 
         return totalDist;
     }
-    public int findLineNum(CurvePoint pointOnLine, ArrayList<CurvePoint> points){
-        //find what line the point is between
+
+    /**
+     *
+     * @param pointOnLine
+     * @param points
+     * @return
+     */
+    private int findLineNum(CurvePoint pointOnLine, ArrayList<CurvePoint> points){
+        // Find what line the target point is between.
         int line = 0;
+
         for (int i = 0; i < points.size()-1; i++) {
 
-            //if the the distance between the two points is the same as the distance EX: A-C------B
+            // If the the distance between the two points is the same as the distance: EX: A-C-----B
             if (distance(points.get(i), points.get(i + 1))
                     == distance(points.get(i), pointOnLine)
                     + distance(pointOnLine, points.get(i + 1))) {
                 line = i;
             }
         }
-        //update the target point
-        targetPoint = (line + 1);
-        return line;
 
+        // Update the next point in the user's ArrayList that the robot is headed towards.
+        this.targetPoint = (line + 1);
+        return line;
     }
 
 
