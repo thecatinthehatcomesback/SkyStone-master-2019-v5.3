@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * phase, and frequency of the oscillation and watch the changes propagate immediately to the graph.
  */
 @Config
-@Autonomous
+@Autonomous(name="SineWaveOpMode", group="FtcDash")
 public class SineWaveOpMode extends LinearOpMode {
     public static double AMPLITUDE = 10;
     public static double PHASE = 90;

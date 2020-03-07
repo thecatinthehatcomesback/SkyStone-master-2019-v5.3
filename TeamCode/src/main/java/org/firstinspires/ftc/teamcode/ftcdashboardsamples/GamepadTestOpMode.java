@@ -14,7 +14,7 @@ import java.lang.reflect.Modifier;
 /*
  * Test the dashboard gamepad integration.
  */
-@Autonomous
+@Autonomous(name="GamepadTestOpMode", group="FtcDash")
 public class GamepadTestOpMode extends LinearOpMode {
 
     private static void logGamepad(Telemetry telemetry, Gamepad gamepad, String prefix) {
