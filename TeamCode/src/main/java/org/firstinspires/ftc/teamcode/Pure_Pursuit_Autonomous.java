@@ -64,8 +64,8 @@ public class Pure_Pursuit_Autonomous extends LinearOpMode
 
         simpleDrivePath.add(new CurvePoint(0, 0,0, 20.0));
         simpleDrivePath.add(new CurvePoint(0, 96, 0, 20.0));
-        simpleDrivePath.add(new CurvePoint(60, 96, 0, 20.0));
-        simpleDrivePath.add(new CurvePoint(60, 0, 0, 20.0));
+        //simpleDrivePath.add(new CurvePoint(60, 96, 0, 20.0));
+        //simpleDrivePath.add(new CurvePoint(60, 0, 0, 20.0));
         //simpleDrivePath.add(new CurvePoint(0, 0, 0, 20.0));
 
         robot.drive.translateDrive(simpleDrivePath, .7, 0, 20.0, 16);

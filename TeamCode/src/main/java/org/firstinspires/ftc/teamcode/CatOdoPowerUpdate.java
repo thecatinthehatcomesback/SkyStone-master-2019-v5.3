@@ -44,12 +44,12 @@ public class CatOdoPowerUpdate
      * A constant which will be how far the robot needs to be in order to start slowing down
      * measured in inches.
      */
-    private static final double rampDownDistance = 23;
+    private static final double rampDownDistance = 23.0;
 
-    private double followRadius;
+    private double followRadius = 20.0;
     private double distanceToFinalTargetPoint;
     /** Number to keep track of which point in the simplePath the robot is driving towards. */
-    private int targetPoint = 0;
+    private int targetPoint = 1;
     private CurvePoint pointOnLine;
     private ArrayList<CurvePoint> simplePath;
 
@@ -153,7 +153,7 @@ public class CatOdoPowerUpdate
 
         // Distance left to target calculation
         // these will also update the target point
-        pointOnLine = getFollowPoint(currentPos , followRadius);
+        pointOnLine = getFollowPoint(currentPos, followRadius);
         distanceToFinalTargetPoint = distToPathEnd(pointOnLine)
                 + distanceBetween(currentPos, pointOnLine);
 
@@ -318,12 +318,13 @@ public class CatOdoPowerUpdate
             double smallestDist = Integer.MAX_VALUE;
 
             // Set the robot to follow the point ahead of it/closest to its current heading angle.
-            for (Point thisIntersection : intersections) {
+            for (int j = 0; j < intersections.size(); j++) {
 
-                double currentDist = distToPathEnd(thisIntersection.toCurvePoint());
+                double currentDist = distToPathEnd(intersections.get(j).toCurvePoint());
 
-                if (currentDist < smallestDist){
+                if (currentDist < smallestDist) {
                     smallestDist = currentDist;
+                    followThisPoint = intersections.get(j).toCurvePoint();
                 }
             }
         }

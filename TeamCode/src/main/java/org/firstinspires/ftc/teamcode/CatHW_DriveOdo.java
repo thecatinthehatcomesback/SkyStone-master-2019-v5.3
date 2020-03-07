@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.util.ArrayList;
@@ -113,7 +115,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         // Set odometry directions: //
         //leftOdometry.setDirection(DcMotor.Direction.REVERSE);
         rightOdometry.setDirection(DcMotor.Direction.FORWARD);
-        // backOdometry.setDirection(DcMotor.Direction.FORWARD);
+        backOdometry.setDirection(DcMotor.Direction.REVERSE);
 
         // Set odometry modes: //
         resetOdometryEncoders();
@@ -343,8 +345,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 /*
                 Calculate robot angles:
                  */
-                double absAngleToTarget         = (Math.atan2(targetPoints.get(targetPointIndex).x - getRobotPos.x,
-                        targetPoints.get(targetPointIndex).y - getRobotPos.y));
+                double absAngleToTarget = (Math.atan2(targetPointOnLine.x - getRobotPos.x,
+                        targetPointOnLine.y - getRobotPos.y));
                 double relativeAngleToTarget    = absAngleToTarget - Math.toRadians(getTheta);
                 /*
                 Calculate robot mecanum wheel powers:
