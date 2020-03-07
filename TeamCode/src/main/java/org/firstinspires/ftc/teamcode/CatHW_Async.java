@@ -49,11 +49,9 @@ public class CatHW_Async
      *
      * @param ahwMap is the robot's hardware map object.
      * @param theOpMode for Linear OpMode usage.
-     * @param isInitOdo in case using odometry style drive.
      * @throws InterruptedException in case of error.
      */
-    public void init(HardwareMap ahwMap, LinearOpMode theOpMode, boolean isInitOdo)
-            throws InterruptedException {
+    public void init(HardwareMap ahwMap, LinearOpMode theOpMode)  throws InterruptedException {
 
         // Save a reference to hardware map and opMode
         hwMap = ahwMap;

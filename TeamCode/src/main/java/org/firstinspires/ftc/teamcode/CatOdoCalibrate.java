@@ -45,7 +45,7 @@ public class CatOdoCalibrate extends LinearOpMode
         // Informs driver the robot is initializing the hardware classes.
         telemetry.addData("Status", "Initializing...");
         telemetry.update();
-        robot.init(hardwareMap, this, true);
+        robot.init(hardwareMap, this);
         robot.drive.IMU_Init();
 
         // Finished!  Now tell the driver:
