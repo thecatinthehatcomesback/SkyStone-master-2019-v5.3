@@ -60,13 +60,15 @@ public class Pure_Pursuit_Autonomous extends LinearOpMode
         /* Go! */
 
 
-        ArrayList<CurvePoint> allPoints = new ArrayList<>();
+        ArrayList<CurvePoint> simpleDrivePath = new ArrayList<>();
 
-        allPoints.add(new CurvePoint(0, 0,0, 30.0));
-        allPoints.add(new CurvePoint(0, 96, 0, 30.0));
-        allPoints.add(new CurvePoint(72, 96, 0, 30.0));
+        simpleDrivePath.add(new CurvePoint(0, 0,0, 20.0));
+        simpleDrivePath.add(new CurvePoint(0, 96, 0, 20.0));
+        simpleDrivePath.add(new CurvePoint(60, 96, 0, 20.0));
+        simpleDrivePath.add(new CurvePoint(60, 0, 0, 20.0));
+        //simpleDrivePath.add(new CurvePoint(0, 0, 0, 20.0));
 
-        robot.drive.translateDrive(allPoints, .7, 0, 3.0, 16);
+        robot.drive.translateDrive(simpleDrivePath, .7, 0, 20.0, 16);
         robot.drive.waitUntilDone();
 
         robot.drive.updatesThread.stop();

@@ -171,7 +171,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      *                 This is used/useful for stall outs.
      */
     public void translateDrive(ArrayList<CurvePoint> points, double power, double theta,
-                               double radius, double timeoutS){
+                               double followRadius, double timeoutS){
 
         currentMethod = DRIVE_METHOD.TRANSLATE;
         timeout = timeoutS;
@@ -179,7 +179,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetPoints = points;
         strafePower = power;
         //targetTheta = theta;
-        followRadius = radius;
+        this.followRadius = followRadius;
 
         //CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPoint(targetPoints,
         //        updatesThread.positionUpdate.returnRobotPointInches(), followRadius);
@@ -187,7 +187,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
         // Power update Thread:
         //Todo: fix this do we need nonstop anymore?
-        if (isNonStop){
+        if (isNonStop) {
             //if the last drive was nonstop
             updatesThread.powerUpdate.setNonStopTarget(points, power);
         }else {

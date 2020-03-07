@@ -245,40 +245,50 @@ public class CatOdoPowerUpdate
 
         ArrayList<Point> allPoints = new ArrayList<>();
 
+        double minX = Math.min(linePoint1.x, linePoint2.x);
+        double maxX = Math.max(linePoint1.x, linePoint2.x);
+
+        // Try/Catch for first intersection.
         try {
             // Do math for quadratic formula:
             double xRoot1 = (-quadraticB + (Math.sqrt(Math.pow(quadraticB, 2) -
                     (4.0 * quadraticA * quadraticC))))  /  (2.0 * quadraticA);
             double yRoot1 = m1 * (xRoot1 - x1) + y1;
-            // Do math for other side of quadratic formula
-            double xRoot2 = (-quadraticB - (Math.sqrt(Math.pow(quadraticB, 2) -
-                    (4.0 * quadraticA * quadraticC))))  /  (2.0 * quadraticA);
-            double yRoot2 = m1 * (xRoot2 - x1) + y1;
-
 
             // Add back the offset of the robot/circle's center
             xRoot1 += robotPos.x;
             yRoot1 += robotPos.y;
-            // Add back the offset to the other set of X and Y roots.
-            xRoot2 += robotPos.x;
-            yRoot2 += robotPos.y;
-
-
-            double minX = linePoint1.x < linePoint2.x ? linePoint1.x : linePoint2.x;
-            double maxX = linePoint1.x > linePoint2.x ? linePoint1.x : linePoint2.x;
 
             // Add point if the robot is on the first set of X and Y roots.
             if (xRoot1 > minX && xRoot1 < maxX) {
                 allPoints.add(new Point(xRoot1, yRoot1));
             }
+        } catch (Exception e) {
+            //TODO: Better exception handling?
+            e.printStackTrace();
+        }
+
+
+        // Try/Catch for second intersection.
+        try {
+            // Do math for other side of quadratic formula
+            double xRoot2 = (-quadraticB - (Math.sqrt(Math.pow(quadraticB, 2) -
+                    (4.0 * quadraticA * quadraticC))))  /  (2.0 * quadraticA);
+            double yRoot2 = m1 * (xRoot2 - x1) + y1;
+
+            // Add back the offset to the other set of X and Y roots.
+            xRoot2 += robotPos.x;
+            yRoot2 += robotPos.y;
+
             // Add point if the robot is on the second set of X and Y roots.
             if (xRoot2 > minX && xRoot2 < maxX) {
                 allPoints.add(new Point(xRoot2, yRoot2));
             }
         } catch (Exception e) {
-            // TODO:  Could throw an exception if taking sqrt of negative number...?
-
+            //TODO: Better exception handling?
+            e.printStackTrace();
         }
+
         return allPoints;
     }
 
