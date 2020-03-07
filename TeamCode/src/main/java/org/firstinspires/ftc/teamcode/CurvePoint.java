@@ -10,7 +10,7 @@ public class CurvePoint extends Point {
     public double followDistance;
 
 
-    public int theta;
+    public double theta;
     //public double pointLength;
     //public double slowDownTurnRadians;
     //public double slowDownTurnAmount;
@@ -23,8 +23,9 @@ public class CurvePoint extends Point {
      * @param y coordinate in inches.
      * @param followDistance for intersection distance in inches.
      */
-    public CurvePoint(double x, double y, double followDistance) {
+    public CurvePoint(double x, double y, double thetaIn, double followDistance) {
         super(x, y);
+        theta = thetaIn;
         this.followDistance = followDistance;
     }
 
@@ -52,7 +53,7 @@ public class CurvePoint extends Point {
      *
      * @return the target theta
      */
-    public int getTheta() {
+    public double getTheta() {
         return theta;
     }
 }

@@ -27,6 +27,6 @@ public class Point {
      * @return a CurvePoint version of the Point.
      */
     public CurvePoint toCurvePoint() {
-        return new CurvePoint(this.x, this.y, 0);
+        return new CurvePoint(this.x, this.y, 0, 0);
     }
 }

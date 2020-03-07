@@ -371,7 +371,7 @@ public class CatOdoPowerUpdate
      * @param pointOnLine
      * @return
      */
-    private double distToPathEnd(CurvePoint pointOnLine) {
+    private double distToPathEnd(Point pointOnLine) {
 
         int line = findLineNum(pointOnLine);
 
@@ -391,7 +391,7 @@ public class CatOdoPowerUpdate
      * @param pointOnLine
      * @return
      */
-    public int findLineNum(CurvePoint pointOnLine){
+    public int findLineNum(Point pointOnLine){
         // Find what line the target point is between.
         int line = 0;
 
