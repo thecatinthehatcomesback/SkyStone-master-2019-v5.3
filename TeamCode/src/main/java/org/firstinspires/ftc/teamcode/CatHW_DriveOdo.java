@@ -316,9 +316,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
                 // Check if ready to end without the isNonStop.
                 if (!isNonStop) {
-                    if ((Math.abs(targetPoints.get(targetPoints.size()).y - getRobotPos.y) < 2 &&
-                            Math.abs(targetPoints.get(targetPoints.size()).x - getRobotPos.x) < 2) &&
-                            (Math.abs(targetPoints.get(targetPoints.size()).getTheta() - getTheta) < 5)) {
+                    if ((Math.abs(targetPoints.get(targetPoints.size()-1).y - getRobotPos.y) < 2 &&
+                            Math.abs(targetPoints.get(targetPoints.size()-1).x - getRobotPos.x) < 2) &&
+                            (Math.abs(targetPoints.get(targetPoints.size()-1).getTheta() - getTheta) < 5)) {
 
                         keepDriving = false;
                     }

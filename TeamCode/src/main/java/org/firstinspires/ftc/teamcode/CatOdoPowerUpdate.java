@@ -49,7 +49,7 @@ public class CatOdoPowerUpdate
     private double followRadius;
     private double distanceToFinalTargetPoint;
     /** Number to keep track of which point in the simplePath the robot is driving towards. */
-    private int targetPoint;
+    private int targetPoint = 0;
     private CurvePoint pointOnLine;
     private ArrayList<CurvePoint> simplePath;
 
@@ -296,7 +296,7 @@ public class CatOdoPowerUpdate
         CurvePoint followThisPoint = new CurvePoint(simplePath.get(0));
 
         // Go through all the CurvePoints and stop one early since a line needs at least two points.
-        for (int i = 0; i < simplePath.size() - 1; i++) {
+        for (int i = 0; i < (simplePath.size() - 1); i++) {
             CurvePoint startLine = simplePath.get(i);
             CurvePoint endLine = simplePath.get(i + 1);
 
@@ -377,8 +377,8 @@ public class CatOdoPowerUpdate
 
         double totalDist = 0;
         //calc total dis by adding all distances
-        for (int i = simplePath.size()-1; i > line; i++) {
-            totalDist += distanceBetween(simplePath.get(i), simplePath.get(i+1));
+        for (int i = (simplePath.size() - 1); i > line; i--) {
+            totalDist += distanceBetween(simplePath.get(i), simplePath.get(i-1));
 
         }
         totalDist += distanceBetween(pointOnLine, simplePath.get(line + 1));
@@ -395,7 +395,7 @@ public class CatOdoPowerUpdate
         // Find what line the target point is between.
         int line = 0;
 
-        for (int i = 0; i < simplePath.size()-1; i++) {
+        for (int i = 0; i < (simplePath.size() - 1); i++) {
 
             // If the the distanceBetween between the two points is the same as the distanceBetween: EX: A-C-----B
             if (distanceBetween(simplePath.get(i), simplePath.get(i + 1))
