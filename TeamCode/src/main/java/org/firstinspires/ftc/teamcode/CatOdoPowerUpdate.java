@@ -113,6 +113,19 @@ public class CatOdoPowerUpdate
         return distanceToTarget;
     }
 
+    /**
+     * @return the point on the line that the robot should be targeting
+     */
+    public CurvePoint getPointOnLine(){
+        return pointOnLine;
+    }
+
+    /**
+     * @return the point that the robot is currently targeting of the ones that were imputed in the ArrayList of points
+     */
+    public int getTargetPoint(){
+        return targetPoint;
+    }
 
 
     //----------------------------------------------------------------------------------------------
@@ -240,7 +253,7 @@ public class CatOdoPowerUpdate
     }
 
 
-    // TODO: do this calc in the globalPosition update method, and just have a return target curve point method
+    // TODO: do this calc in the update power method, and just have a return target curve point method
     public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints,
                                          Point robotLocation, double followRadius) {
         // TODO: In case robot's follow radius doesn't intersect line...  Improve this later...  Use
@@ -348,6 +361,8 @@ public class CatOdoPowerUpdate
         return line;
 
     }
+
+
 
 
 }
