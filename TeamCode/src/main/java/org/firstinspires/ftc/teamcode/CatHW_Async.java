@@ -83,10 +83,10 @@ public class CatHW_Async
         drive = new CatHW_DriveOdo(this);
         drive.init();
 
-        opMode.telemetry.addData("Initialize", "Eyes...");
+        /*opMode.telemetry.addData("Initialize", "Eyes...");
         opMode.telemetry.update();
         eyes = new CatHW_Vision(this);
-        eyes.initVision(hwMap);
+        eyes.initVision(hwMap);*/
 
         opMode.telemetry.addData("Initialize", "All Done...  BOOM!");
         opMode.telemetry.update();
