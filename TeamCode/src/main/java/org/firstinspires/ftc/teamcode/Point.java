@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode;
  */
 public class Point {
 
-    // Variables:
+    // Attributes/Fields: //
     public double x;
     public double y;
 
@@ -20,6 +20,12 @@ public class Point {
         this.x = x;
         this.y = y;
     }
+
+    /**
+     * Turns the Point into a CurvePoint with a followDistance of 0 inches.
+     *
+     * @return a CurvePoint version of the Point.
+     */
     public CurvePoint toCurvePoint() {
         return new CurvePoint(this.x, this.y, 0);
     }

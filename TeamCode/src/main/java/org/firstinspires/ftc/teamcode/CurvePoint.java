@@ -2,65 +2,57 @@ package org.firstinspires.ftc.teamcode;
 
 
 /**
- * Written by Team #10273, The Cat in the Hat Comes Back.
+ * @author Team #10273, The Cat in the Hat Comes Back.
  */
-public class CurvePoint {
+public class CurvePoint extends Point {
 
-    // Attributes/Fields:
-    public double x;
-    public double y;
+    // Attributes/Fields: //
     public double followDistance;
+
+
+    public int theta;
     //public double pointLength;
     //public double slowDownTurnRadians;
     //public double slowDownTurnAmount;
 
 
     /**
+     * Constructor which takes in double values to build CurvePoint.
      *
-     * @param x
-     * @param y
-     * @param followDistance
-     * @param pointLength
-     * @param slowDownTurnRadians
-     * @param slowDownTurnAmount
+     * @param x coordinate in inches.
+     * @param y coordinate in inches.
+     * @param followDistance for intersection distance in inches.
      */
     public CurvePoint(double x, double y, double followDistance) {
-
-        this.x = x;
-        this.y = y;
+        super(x, y);
         this.followDistance = followDistance;
-        //this.pointLength = pointLength;
-        //this.slowDownTurnRadians = slowDownTurnRadians;
-        //this.slowDownTurnAmount = slowDownTurnAmount;
     }
 
     /**
+     * Constructor that takes in a CurvePoint to build CurvePoint.
      *
-     * @param thisPoint
+     * @param thisPoint to set CurvePoint to.
      */
     public CurvePoint(CurvePoint thisPoint) {
-        x = thisPoint.x;
-        y = thisPoint.y;
-        followDistance = thisPoint.followDistance;
-        //pointLength = thisPoint.pointLength;
-        //slowDownTurnRadians = thisPoint.slowDownTurnRadians;
-        //slowDownTurnAmount = thisPoint.slowDownTurnAmount;
+        super(thisPoint.x, thisPoint.y);
+        this.followDistance = thisPoint.followDistance;
     }
 
     /**
+     * Sets the Point values for a CurvePoint.
      *
-     * @return
-     */
-    public Point toPoint() {
-        return new Point(x, y);
-    }
-
-    /**
-     *
-     * @param point
+     * @param point to set the values to.
      */
     public void setPoint(Point point) {
-        x = point.x;
-        y = point.y;
+        this.x = point.x;
+        this.y = point.y;
+    }
+
+    /**
+     *
+     * @return the target theta
+     */
+    public int getTheta() {
+        return theta;
     }
 }

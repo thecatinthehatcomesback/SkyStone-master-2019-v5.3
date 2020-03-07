@@ -344,7 +344,7 @@ public class CatHW_DriveClassic extends CatHW_DriveBase
 
             // Don't use encoders.  We only use the gyro angle to TURN.
             setDriveRunWithoutEncoders();
-            // reset the timeout time and start motion.
+            // resetPowerTodefaultMin the timeout time and start motion.
             runTime.reset();
 
             // Log message:
