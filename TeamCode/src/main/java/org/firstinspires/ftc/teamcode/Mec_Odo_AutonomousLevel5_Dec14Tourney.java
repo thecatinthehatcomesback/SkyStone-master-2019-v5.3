@@ -55,22 +55,6 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
         //eyes.initVision(hardwareMap);
 
         /**
-         * Send telemetry message to signify robot getting ready:
-         */
-        telemetry.addData("Status: ", "Resetting Encoders...");
-        telemetry.update();
-        //robot.setDrivePowers.resetDriveEncoders();
-        //idle();
-        //robot.setDrivePowers.setDriveRunToPosition();
-        // Send telemetry message to indicate successful Encoder resetPowerTodefaultMin
-        telemetry.addData("Path0", "Starting at :%7d  :%7d  :%7d  :%7d",
-                robot.driveClassic.leftFrontMotor.getCurrentPosition(),
-                robot.driveClassic.rightFrontMotor.getCurrentPosition(),
-                robot.driveClassic.leftRearMotor.getCurrentPosition(),
-                robot.driveClassic.rightRearMotor.getCurrentPosition());
-        telemetry.update();
-
-        /**
          * Init Delay Option Select:
          */
         // After init is pushed but before Start we can change the delay using dpad up/down //
@@ -180,7 +164,7 @@ public class Mec_Odo_AutonomousLevel5_Dec14Tourney extends LinearOpMode {
          * Init the IMU after play so that it is not offset after
          * remaining idle for a minute or two...
          */
-        robot.driveClassic.IMU_Init();
+        robot.drive.IMU_Init();
 
         // Time Delay:
         robot.robotWait(timeDelay);

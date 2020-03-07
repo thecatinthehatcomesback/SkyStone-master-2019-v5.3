@@ -40,7 +40,7 @@ public class Test_TeleOp extends LinearOpMode
         telemetry.update();
         // Initialize the hardware
         robot.init(hardwareMap, this, true);
-        robot.driveClassic.IMU_Init();
+        robot.drive.IMU_Init();
 
 
         // Finished!  Now tell the driver...
@@ -115,7 +115,7 @@ public class Test_TeleOp extends LinearOpMode
                         gamepad1.left_stick_x;
 
                 // Calculate the scale factor:
-                SF = robot.driveClassic.findScalor(leftFront, rightFront, leftBack, rightBack);
+                SF = robot.drive.findScalor(leftFront, rightFront, leftBack, rightBack);
                 // Set powers to each setDrivePowers motor:
                 leftFront = leftFront * SF * driveSpeed;
                 rightFront = rightFront * SF * driveSpeed;
@@ -128,7 +128,7 @@ public class Test_TeleOp extends LinearOpMode
                 rightBack = power/100.0;
             }
             // DRIVE!!!
-            robot.driveClassic.setDrivePowers(leftFront, rightFront, leftBack, rightBack);
+            robot.drive.setDrivePowers(leftFront, rightFront, leftBack, rightBack);
 
 
 
