@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -139,13 +138,13 @@ public class Test_TeleOp extends LinearOpMode
 
             // Tell us the odometry encoder ticks
             telemetry.addData("OdoTicks", "L/R/B  :%7d  :%7d  :%7d",
-                    robot.driveOdo.updatesThread.positionUpdate.returnVerticalLeftEncoderPosition(),
-                    robot.driveOdo.updatesThread.positionUpdate.returnVerticalRightEncoderPosition(),
-                    robot.driveOdo.updatesThread.positionUpdate.returnNormalEncoderPosition() );
+                    robot.drive.updatesThread.positionUpdate.returnVerticalLeftEncoderPosition(),
+                    robot.drive.updatesThread.positionUpdate.returnVerticalRightEncoderPosition(),
+                    robot.drive.updatesThread.positionUpdate.returnNormalEncoderPosition() );
             //Display Global (x, y, theta) coordinates
-            telemetry.addData("X Position", robot.driveOdo.updatesThread.positionUpdate.returnXInches());
-            telemetry.addData("Y Position", robot.driveOdo.updatesThread.positionUpdate.returnYInches());
-            telemetry.addData("Orientation (Degrees)", robot.driveOdo.updatesThread.positionUpdate.returnOrientation());
+            telemetry.addData("X Position", robot.drive.updatesThread.positionUpdate.returnXInches());
+            telemetry.addData("Y Position", robot.drive.updatesThread.positionUpdate.returnYInches());
+            telemetry.addData("Orientation (Degrees)", robot.drive.updatesThread.positionUpdate.returnOrientation());
             //telemetry.addData("intakeSensor ", robot.jaws.hasStone());
 
             telemetry.addData("Left Front Power:", "%.2f", leftFront);
@@ -156,6 +155,6 @@ public class Test_TeleOp extends LinearOpMode
         }
 
         // Stop the thread.
-        robot.driveOdo.updatesThread.stop();
+        robot.drive.updatesThread.stop();
     }
 }

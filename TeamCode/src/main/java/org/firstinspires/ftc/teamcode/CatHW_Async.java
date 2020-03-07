@@ -34,8 +34,7 @@ public class CatHW_Async
     /** Other Hardware subSystems */
     CatHW_Jaws jaws = null;
     CatHW_Claw claw = null;
-    CatHW_DriveClassic driveClassic = null;
-    CatHW_DriveOdo driveOdo = null;
+    CatHW_DriveOdo drive = null;
     CatHW_Tail tail = null;
     CatHW_Vision eyes = null;
     CatHW_Lights lights = null;
@@ -81,16 +80,10 @@ public class CatHW_Async
         lights = CatHW_Lights.getInstanceAndInit(this);
         lights.init();
 
-        if (isInitOdo) {
-            opMode.telemetry.addData("Initialize", "DriveOdo...");
-            opMode.telemetry.update();
-            driveOdo = new CatHW_DriveOdo(this);
-            driveOdo.init();
-        }
-        opMode.telemetry.addData("Initialize", "DriveClassic...");
+        opMode.telemetry.addData("Initialize", "Drive...");
         opMode.telemetry.update();
-        driveClassic = new CatHW_DriveClassic(this);
-        driveClassic.init();
+        drive = new CatHW_DriveOdo(this);
+        drive.init();
 
         opMode.telemetry.addData("Initialize", "Eyes...");
         opMode.telemetry.update();

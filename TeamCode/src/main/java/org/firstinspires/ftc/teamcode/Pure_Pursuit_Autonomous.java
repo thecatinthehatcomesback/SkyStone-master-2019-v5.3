@@ -167,9 +167,9 @@ public class Pure_Pursuit_Autonomous extends LinearOpMode
         allPoints.add(new CurvePoint(0, 96, 0, 30.0));
         allPoints.add(new CurvePoint(72, 96, 0, 30.0));
 
-        robot.driveOdo.translateDrive(allPoints, .7, 0, 3.0, 16);
-        robot.driveOdo.waitUntilDone();
+        robot.drive.translateDrive(allPoints, .7, 0, 3.0, 16);
+        robot.drive.waitUntilDone();
 
-        robot.driveOdo.updatesThread.stop();
+        robot.drive.updatesThread.stop();
     }
 }
