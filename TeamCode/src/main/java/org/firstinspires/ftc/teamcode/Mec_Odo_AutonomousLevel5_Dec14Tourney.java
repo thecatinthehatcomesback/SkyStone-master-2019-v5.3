@@ -8,7 +8,7 @@
  the position and deliver the skystone using machine vision.
 
  Mec_AutonomousLevel4_Dec14Tourney is written to add machine vision and
- skystone delivery to our autonomous route with the help intake jaws that intake  //TODO: Change this...
+ skystone delivery to our autonomous route with the help intake jaws that intake
  a stone at any orientation for a "touch it-own it" approach.  A servo and two
  motors make up TC-73/Bucky's tail a stack stones as well as our team marker.
  This autonomous is used for our first qualifier of our year (December 14, 2019).

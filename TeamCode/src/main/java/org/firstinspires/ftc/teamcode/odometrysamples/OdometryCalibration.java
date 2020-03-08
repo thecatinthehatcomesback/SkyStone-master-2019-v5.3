@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.odometry;
+package org.firstinspires.ftc.teamcode.odometrysamples;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
