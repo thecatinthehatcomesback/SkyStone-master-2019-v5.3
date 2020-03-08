@@ -63,13 +63,48 @@ public class Pure_Pursuit_Autonomous extends LinearOpMode
         ArrayList<CurvePoint> simpleDrivePath = new ArrayList<>();
 
         simpleDrivePath.add(new CurvePoint(0, 0,0, 20.0));
-        simpleDrivePath.add(new CurvePoint(0, 96, 0, 20.0));
-        //simpleDrivePath.add(new CurvePoint(60, 96, 0, 20.0));
-        //simpleDrivePath.add(new CurvePoint(60, 0, 0, 20.0));
+        //simpleDrivePath.add(new CurvePoint(0, 90, 0, 20.0));
+        simpleDrivePath.add(new CurvePoint(0, 100, 0, 20.0));
+        simpleDrivePath.add(new CurvePoint(72, 100, 90, 20.0));
+        simpleDrivePath.add(new CurvePoint(72, 10, 180, 20.0));
         //simpleDrivePath.add(new CurvePoint(0, 0, 0, 20.0));
 
         robot.drive.translateDrive(simpleDrivePath, .7, 0, 20.0, 16);
         robot.drive.waitUntilDone();
+
+
+        simpleDrivePath.clear();
+        simpleDrivePath.add(new CurvePoint(72, 10, 180, 20.0));
+        simpleDrivePath.add(new CurvePoint(0, 0,270, 20.0));
+        //simpleDrivePath.add(new CurvePoint(0, 90, 0, 20.0));
+        simpleDrivePath.add(new CurvePoint(0, 100, 360, 20.0));
+        simpleDrivePath.add(new CurvePoint(72, 100, 360 + 90, 20.0));
+
+        robot.drive.translateDrive(simpleDrivePath, .7, 0, 20.0, 16);
+        robot.drive.waitUntilDone();
+
+        simpleDrivePath.clear();
+        simpleDrivePath.add(new CurvePoint(72, 100, 360 + 90, 20.0));
+        simpleDrivePath.add(new CurvePoint(72, 10, 360 + 180, 20.0));
+        simpleDrivePath.add(new CurvePoint(0, 0,360 + 270, 20.0));
+        //simpleDrivePath.add(new CurvePoint(0, 90, 0, 20.0));
+        simpleDrivePath.add(new CurvePoint(0, 100, 720, 20.0));
+
+        robot.drive.translateDrive(simpleDrivePath, .7, 0, 20.0, 16);
+        robot.drive.waitUntilDone();
+
+        simpleDrivePath.clear();
+        simpleDrivePath.add(new CurvePoint(0, 100, 720, 20.0));
+        simpleDrivePath.add(new CurvePoint(72, 100, 720 + 90, 20.0));
+        simpleDrivePath.add(new CurvePoint(72, 10, 720 + 180, 20.0));
+        simpleDrivePath.add(new CurvePoint(20, 0,720 + 270, 20.0));
+        simpleDrivePath.add(new CurvePoint(0, 0,720 + 360, 20.0));
+        //simpleDrivePath.add(new CurvePoint(0, 90, 0, 20.0));
+
+
+        robot.drive.translateDrive(simpleDrivePath, .7, 0, 20.0, 16);
+        robot.drive.waitUntilDone();
+
 
         robot.drive.updatesThread.stop();
     }

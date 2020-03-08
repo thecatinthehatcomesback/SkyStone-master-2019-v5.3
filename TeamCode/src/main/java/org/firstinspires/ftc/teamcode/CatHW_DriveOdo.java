@@ -188,7 +188,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
         // Power update Thread:
-        //Todo: fix this do we need nonstop anymore?
         if (isNonStop) {
             //if the last drive was nonstop
             updatesThread.powerUpdate.setNonStopTarget(points, power);

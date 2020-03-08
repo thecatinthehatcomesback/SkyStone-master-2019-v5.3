@@ -289,6 +289,14 @@ public class CatOdoPowerUpdate
             e.printStackTrace();
         }
 
+        //Todo these might be able to go into the exception
+        if (distanceBetween(linePoint1,robotPos) < radius){
+            allPoints.add(linePoint1);
+        }
+        if (distanceBetween(linePoint2,robotPos) < radius){
+            allPoints.add(linePoint2);
+        }
+
         return allPoints;
     }
 
@@ -409,9 +417,9 @@ public class CatOdoPowerUpdate
         for (int i = 0; i < (simplePath.size() - 1); i++) {
 
             // If the the distanceBetween between the two points is the same as the distanceBetween: EX: A-C-----B
-            if (distanceBetween(simplePath.get(i), simplePath.get(i + 1))
-                    == distanceBetween(simplePath.get(i), pointOnLine)
-                    + distanceBetween(pointOnLine, simplePath.get(i + 1))) {
+            if (Math.abs(distanceBetween(simplePath.get(i), simplePath.get(i + 1))
+                    - (distanceBetween(simplePath.get(i), pointOnLine)
+                    + distanceBetween(pointOnLine, simplePath.get(i + 1)))) < 0.05) {
                 line = i;
             }
         }
