@@ -130,7 +130,7 @@ public class CatOdoPositionUpdate
 
         // Calculate angle:
         changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
-        robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
+        robotOrientationRadians = robotOrientationRadians + changeInRobotOrientation;
         double robotOrientationRadiansHalf = robotOrientationRadians -
                 (changeInRobotOrientation / 2);
 
@@ -144,8 +144,10 @@ public class CatOdoPositionUpdate
         double n = horizontalChange;
 
         //Calculate and update the position values
-        double robotXChangeCounts = (p*Math.sin(robotOrientationRadiansHalf) + n*Math.cos(robotOrientationRadiansHalf));
-        double robotYChangeCounts = (p*Math.cos(robotOrientationRadiansHalf) - n*Math.sin(robotOrientationRadiansHalf));
+        double robotXChangeCounts = (p*Math.sin(robotOrientationRadiansHalf) +
+                n*Math.cos(robotOrientationRadiansHalf));
+        double robotYChangeCounts = (p*Math.cos(robotOrientationRadiansHalf) -
+                n*Math.sin(robotOrientationRadiansHalf));
         robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + robotXChangeCounts;
         robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + robotYChangeCounts;
 
@@ -156,10 +158,12 @@ public class CatOdoPositionUpdate
         double velocityTimer = time.seconds();
         time.reset();
 
-        double rotVelocity = (changeInRobotOrientation *(180/Math.PI))/velocityTimer;
-        double velocity = (Math.sqrt(Math.pow(robotXChangeCounts,2) + Math.pow(robotYChangeCounts,2))/count_per_in)/velocityTimer;
+        double rotVelocity = (changeInRobotOrientation * (180/Math.PI)) / velocityTimer;
+        double velocity = (Math.sqrt(Math.pow(robotXChangeCounts,2) +
+                Math.pow(robotYChangeCounts,2))/count_per_in)/velocityTimer;
 
-        Log.d("catbot", String.format("OdoTicks L/R/B  :%7d  :%7d  :%7d   X: %5.2f  Y: %5.2f  theta: %5.2f Velocity: %5.2f RotVelocity: %5.2f",
+        Log.d("catbot", String.format("OdoTicks L/R/B  :%7d  :%7d  :%7d   X: %5.2f  Y: %5.2f" +
+                        "theta: %5.2f Velocity: %5.2f RotVelocity: %5.2f",
                 returnVerticalLeftEncoderPosition(),
                 returnVerticalRightEncoderPosition(),
                 returnNormalEncoderPosition(),
@@ -197,7 +201,6 @@ public class CatOdoPositionUpdate
         leftEncoderValue = 0;
         rightEncoderValue = 0;
         horizontalEncoderValue = 0;
-
     }
 
     /**
@@ -233,7 +236,7 @@ public class CatOdoPositionUpdate
     public void reverseLeftEncoder() {
         if (verticalLeftEncoderPositionMultiplier == 1) {
             verticalLeftEncoderPositionMultiplier = -1;
-         } else {
+        } else {
             verticalLeftEncoderPositionMultiplier = 1;
         }
     }

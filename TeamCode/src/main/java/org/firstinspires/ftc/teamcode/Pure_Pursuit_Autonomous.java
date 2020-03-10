@@ -61,30 +61,27 @@ public class Pure_Pursuit_Autonomous extends LinearOpMode
         simpleDrivePath.add(new CurvePoint(72, 100, 90));
         simpleDrivePath.add(new CurvePoint(72, 10, 180));
 
-        robot.drive.pursuitDrive(simpleDrivePath, .7, 5.0, 16);
+        robot.drive.pursuitDrive(simpleDrivePath, .7, 15.0, 16);
         robot.drive.waitUntilDone();
 
 
         simpleDrivePath.clear();
-        //simpleDrivePath.add(new CurvePoint(72, 10, 180));
         simpleDrivePath.add(new CurvePoint(0, 0,270));
         simpleDrivePath.add(new CurvePoint(0, 100, 360));
         simpleDrivePath.add(new CurvePoint(72, 100, 360 + 90));
 
-        robot.drive.pursuitDrive(simpleDrivePath, .7, 10.0, 16);
+        robot.drive.pursuitDrive(simpleDrivePath, .7, 16);
         robot.drive.waitUntilDone();
 
         simpleDrivePath.clear();
-        //simpleDrivePath.add(new CurvePoint(72, 100, 360 + 90));
         simpleDrivePath.add(new CurvePoint(72, 10, 360 + 180));
         simpleDrivePath.add(new CurvePoint(0, 0,360 + 270));
         simpleDrivePath.add(new CurvePoint(0, 100, 720));
 
-        robot.drive.pursuitDrive(simpleDrivePath, .7, 15.0, 16);
+        robot.drive.pursuitDrive(simpleDrivePath, .7, 25.0, 16);
         robot.drive.waitUntilDone();
 
-        simpleDrivePath.clear();
-        //simpleDrivePath.add(new CurvePoint(0, 100, 720));
+        /*simpleDrivePath.clear();
         simpleDrivePath.add(new CurvePoint(72, 100, 720 + 90));
         simpleDrivePath.add(new CurvePoint(72, 10, 720 + 180));
         simpleDrivePath.add(new CurvePoint(20, 0,720 + 270));
@@ -92,7 +89,7 @@ public class Pure_Pursuit_Autonomous extends LinearOpMode
 
 
         robot.drive.pursuitDrive(simpleDrivePath, .7, 16);
-        robot.drive.waitUntilDone();
+        robot.drive.waitUntilDone();*/
 
 
         robot.drive.updatesThread.stop();
