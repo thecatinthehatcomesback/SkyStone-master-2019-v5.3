@@ -60,13 +60,13 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     private double thetaMax;
     private double lastPower = 0;
     private double maxPower;
-    private double strafePower;
+    //private double strafePower;
 
     private boolean isNonStop;
 
     /** Enumerated type for the style of drive the robot will make. */
     private enum DRIVE_METHOD {
-        TRANSLATE,
+        PURE_PURSUIT,
         TURN
     }
     /** Variable to keep track of the DRIVE_METHOD that's the current style of robot's driving. */
@@ -128,7 +128,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         allUpdatesThread.start();
 
         // Sets enums to a default value: //
-        currentMethod = DRIVE_METHOD.TRANSLATE;
+        currentMethod = DRIVE_METHOD.PURE_PURSUIT;
     }
 
 
@@ -151,15 +151,14 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     }
 
     /**
-     * Calls the translateDrive() method and adds in a waitUntilDone() afterwards so that the
-     * autonomous code is cleaner without having so many waitUntilDone() methods clogging up the
-     * view.
      *TODO
-     * @param power at which robot max speed can be set to using motion profiling.
-     * @param theta is the angle at which the robot will TURN to while driving.
-     * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
-     *                 This is used/useful for stall outs.
+     * @param points
+     * @param power
+     * @param timeoutS
      */
+    public void pursuitDrive(ArrayList<CurvePoint> points, double power, double timeoutS) {
+        pursuitDrive(points, power, DEFAULT_FOLLOW_RADIUS, timeoutS);
+    }
 
     /**
      * Used to move the robot across the field.  The robot can also TURN while moving along the path
@@ -168,19 +167,17 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      *
      * TODO:
      * @param power at which robot max speed can be set to using motion profiling.
-     * @param theta is the angle at which the robot will TURN to while driving.
-     * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
+     * @param timeout is how much time needs to pass before the robot moves onto the next step.
      *                 This is used/useful for stall outs.
      */
-    public void pursuitDrive(ArrayList<CurvePoint> points, double power, double theta,
-                             double followRadius, double timeoutS){
+    public void pursuitDrive(ArrayList<CurvePoint> points, double power, double followRadius,
+                             double timeout) {
 
-        currentMethod = DRIVE_METHOD.TRANSLATE;
-        timeout = timeoutS;
+        currentMethod = DRIVE_METHOD.PURE_PURSUIT;
+        this.timeout = timeout;
         isDone = false;
         targetPoints = points;
-        strafePower = power;
-        //targetTheta = theta;
+        targetPoints.add(0, updatesThread.positionUpdate.returnRobotPointInches().toCurvePoint());
         this.followRadius = followRadius;
 
         //CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPoint(targetPoints,
@@ -223,12 +220,12 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                              double finishedXMax, double finishedYMin, double finishedYMax,
                              double finishedThetaMin, double finishedThetaMax, double timeoutS){
 
-        currentMethod = DRIVE_METHOD.TRANSLATE;
+        currentMethod = DRIVE_METHOD.PURE_PURSUIT;
         timeout = timeoutS;
         isDone = false;
         //targetX = x;
         //targetY = y;
-        strafePower = power;
+        //strafePower = power;
         //targetTheta = theta;
         xMin = finishedXMin;
         xMax = finishedXMax;
@@ -304,7 +301,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                 }
                 break;
 
-            case TRANSLATE:
+            case PURE_PURSUIT:
                 // Current robot position and orientation from odometry modules:
                 Point getRobotPos = updatesThread.positionUpdate.returnRobotPointInches();
                 double getTheta = updatesThread.positionUpdate.returnOrientation();
