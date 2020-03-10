@@ -87,9 +87,10 @@ public class CatOdoPowerUpdate
 
 
     /**
-     * TODO:  if this one is called do not resetPowerToDefaultMin the timer so it won't start the
-     *  motors slowly
+     * This method will not resetPowerToDefaultMin and the timer so it won't start the
+     * motors slowly TODO:  stuff.....
      *
+     * @param simplePathPoints
      * @param power
      */
     public void setNonStopTarget(ArrayList<CurvePoint> simplePathPoints, double power) {
@@ -221,8 +222,8 @@ public class CatOdoPowerUpdate
      * @param linePoint2 the second point of the line that will be tested to see if it intersects the circle
      * @return the points where the line and circle intersect what will be between 0 and 2 points if there are no intersections an empty arrayList will be returned
      */
-    public ArrayList<Point> findPathIntersections(Point robotPos, double radius,
-                                                  Point linePoint1, Point linePoint2) {
+    private ArrayList<Point> findPathIntersections(Point robotPos, double radius,
+                                                   Point linePoint1, Point linePoint2) {
         // Make sure we don't have a slope of 1 or 0.
         if (Math.abs(linePoint1.x - linePoint2.x) < 0.003) {
             linePoint1.x = linePoint2.x + 0.003;
@@ -231,28 +232,31 @@ public class CatOdoPowerUpdate
             linePoint1.y = linePoint2.y + 0.003;
         }
 
-        // Slope of line
+        // Slope of line.
         double m1 = (linePoint2.y - linePoint1.y) / (linePoint2.x - linePoint1.x);
-        // Zeros around the robot/circle's center (remove offset of robot)
+        // Zeros around the robot/circle's center (remove offset of robot).
         double x1 = linePoint1.x - robotPos.x;
         double y1 = linePoint1.y - robotPos.y;
 
-        // Quadratics Stuff
+        // Quadratics stuff...
         double quadraticA = 1.0 + Math.pow(m1, 2);
         double quadraticB = (2.0 * m1 * y1) - (2.0 * Math.pow(m1, 2) * x1);
         double quadraticC = (Math.pow(m1, 2) * Math.pow(x1, 2)) - (2.0*m1*x1*y1) + Math.pow(y1, 2) -
                 Math.pow(radius, 2);
+        double quadraticSquareRootTerm = Math.pow(quadraticB, 2) - (4.0 * quadraticA * quadraticC);
 
-        ArrayList<Point> allPoints = new ArrayList<>();
-
+        // Make sure robot is withing bounding box of the intersections.
         double minX = Math.min(linePoint1.x, linePoint2.x);
         double maxX = Math.max(linePoint1.x, linePoint2.x);
+
+        // List of Points that intersect with the circle.
+        ArrayList<Point> allIntersectingPoints = new ArrayList<>();
+
 
         // Try/Catch for first intersection.
         try {
             // Do math for quadratic formula:
-            double xRoot1 = (-quadraticB + (Math.sqrt(Math.pow(quadraticB, 2) -
-                    (4.0 * quadraticA * quadraticC))))  /  (2.0 * quadraticA);
+            double xRoot1 = (-quadraticB + (Math.sqrt(quadraticSquareRootTerm)))  /  (2.0 * quadraticA);
             double yRoot1 = m1 * (xRoot1 - x1) + y1;
 
             // Add back the offset of the robot/circle's center
@@ -261,19 +265,18 @@ public class CatOdoPowerUpdate
 
             // Add point if the robot is on the first set of X and Y roots.
             if (xRoot1 > minX && xRoot1 < maxX) {
-                allPoints.add(new Point(xRoot1, yRoot1));
+                allIntersectingPoints.add(new Point(xRoot1, yRoot1));
             }
         } catch (Exception e) {
-            //TODO: Better exception handling?
-            e.printStackTrace();
+            if (distanceBetween(linePoint1,robotPos) < radius) {
+                allIntersectingPoints.add(linePoint1);
+            }
         }
-
 
         // Try/Catch for second intersection.
         try {
             // Do math for other side of quadratic formula
-            double xRoot2 = (-quadraticB - (Math.sqrt(Math.pow(quadraticB, 2) -
-                    (4.0 * quadraticA * quadraticC))))  /  (2.0 * quadraticA);
+            double xRoot2 = (-quadraticB - (Math.sqrt(quadraticSquareRootTerm)))  /  (2.0 * quadraticA);
             double yRoot2 = m1 * (xRoot2 - x1) + y1;
 
             // Add back the offset to the other set of X and Y roots.
@@ -282,22 +285,15 @@ public class CatOdoPowerUpdate
 
             // Add point if the robot is on the second set of X and Y roots.
             if (xRoot2 > minX && xRoot2 < maxX) {
-                allPoints.add(new Point(xRoot2, yRoot2));
+                allIntersectingPoints.add(new Point(xRoot2, yRoot2));
             }
         } catch (Exception e) {
-            //TODO: Better exception handling?
-            e.printStackTrace();
+            if (distanceBetween(linePoint2,robotPos) < radius){
+                allIntersectingPoints.add(linePoint2);
+            }
         }
 
-        //Todo these might be able to go into the exception
-        if (distanceBetween(linePoint1,robotPos) < radius){
-            allPoints.add(linePoint1);
-        }
-        if (distanceBetween(linePoint2,robotPos) < radius){
-            allPoints.add(linePoint2);
-        }
-
-        return allPoints;
+        return allIntersectingPoints;
     }
 
 
@@ -338,43 +334,6 @@ public class CatOdoPowerUpdate
         }
         return followThisPoint;
     }
-    /*public void goToPosition(double pointX, double pointY, double preferredAngle) {
-        double distanceToPoint = Math.hypot(pointX - updatesThread.positionUpdate.returnXInches(),
-                pointY - updatesThread.positionUpdate.returnYInches());
-
-        double absAngleToPoint = Math.atan2(targetY - updatesThread.positionUpdate.returnYInches(),
-                targetX - updatesThread.positionUpdate.returnXInches());
-
-        double relativeAngleToPoint = absAngleToPoint -
-                Math.toRadians(updatesThread.positionUpdate.returnOrientation());
-
-
-
-        double relativeXToPoint = Math.cos(relativeAngleToPoint) * distanceToPoint;
-        double relativeYToPoint = Math.sin(relativeAngleToPoint) * distanceToPoint;
-
-        double movementXPower = relativeXToPoint / (Math.abs(relativeXToPoint) +
-                Math.abs(relativeYToPoint));
-        double movementYPower = relativeYToPoint / (Math.abs(relativeXToPoint) +
-                Math.abs(relativeYToPoint));
-        // Now, use all these numbers to move around (NB: They will always be limited to 1.0).
-
-
-        double relativeTurnAngle = relativeAngleToPoint + preferredAngle;
-
-        // This is mod used to limit the amount the robot turns.  The 30 is how fast it will turn...
-        double turnMod = Range.clip(relativeTurnAngle / 30, -1, 1);
-        // In the case that the target point is really close, robot won't turn
-        if (distanceToPoint < 6) {
-            turnMod = 0;
-        }
-    }*/
-
-
-
-
-
-
 
     /**
      * Just a simple distanceBetween formula so that we know how long until robot reaches
@@ -428,10 +387,6 @@ public class CatOdoPowerUpdate
         this.targetPoint = (line + 1);
         return line;
     }
-
-
-
-
 }
 
 

@@ -7,9 +7,6 @@ package org.firstinspires.ftc.teamcode;
 public class CurvePoint extends Point {
 
     // Attributes/Fields: //
-    public double followDistance;
-
-
     public double theta;
     //public double pointLength;
     //public double slowDownTurnRadians;
@@ -21,12 +18,10 @@ public class CurvePoint extends Point {
      *
      * @param x coordinate in inches.
      * @param y coordinate in inches.
-     * @param followDistance for intersection distance in inches.
      */
-    public CurvePoint(double x, double y, double thetaIn, double followDistance) {
+    public CurvePoint(double x, double y, double theta) {
         super(x, y);
-        theta = thetaIn;
-        this.followDistance = followDistance;
+        this.theta = theta;
     }
 
     /**
@@ -36,7 +31,6 @@ public class CurvePoint extends Point {
      */
     public CurvePoint(CurvePoint thisPoint) {
         super(thisPoint.x, thisPoint.y);
-        this.followDistance = thisPoint.followDistance;
     }
 
     /**
