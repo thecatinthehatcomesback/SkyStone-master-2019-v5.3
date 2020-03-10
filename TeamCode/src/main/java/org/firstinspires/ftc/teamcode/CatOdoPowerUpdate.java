@@ -51,7 +51,7 @@ public class CatOdoPowerUpdate
     /** Number to keep track of which point in the simplePath the robot is driving towards. */
     private int targetPoint = 1;
     private CurvePoint pointOnLine;
-    private ArrayList<CurvePoint> simplePath;
+    private ArrayList<CurvePoint> simplePathPoints;
 
 
     /**
@@ -87,17 +87,18 @@ public class CatOdoPowerUpdate
 
 
     /**
-     * This method will not resetPowerToDefaultMin and the timer so it won't start the
-     * motors slowly TODO:  stuff.....
      *
      * @param simplePathPoints
-     * @param power
+     * @param maxPower
+     * @param followRadius
      */
-    public void setNonStopTarget(ArrayList<CurvePoint> simplePathPoints, double power) {
+    public void setNonStopTarget(ArrayList<CurvePoint> simplePathPoints, double maxPower,
+                                 double followRadius) {
 
-        maxPower = power;
+        this.maxPower = maxPower;
         currentPower = minPower;
-        simplePath = simplePathPoints;
+        this.simplePathPoints = simplePathPoints;
+        this.followRadius = followRadius;
         pointOnLine = getFollowPoint(positionUpdate.returnRobotPointInches(), followRadius);
         distanceToFinalTargetPoint = distToPathEnd(pointOnLine) +
                 distanceBetween(positionUpdate.returnRobotPointInches(), pointOnLine);
@@ -109,9 +110,9 @@ public class CatOdoPowerUpdate
      *
      * @param power that the robot can go at most.
      */
-    public void setTarget(ArrayList<CurvePoint> pathPoints, double power) {
+    public void setTarget(ArrayList<CurvePoint> simplePathPoints, double power, double followRadius) {
         powerTime.reset();
-        setNonStopTarget(pathPoints, power);
+        setNonStopTarget(simplePathPoints, power, followRadius);
     }
 
     /**
@@ -134,6 +135,7 @@ public class CatOdoPowerUpdate
     public int getTargetPoint(){
         return targetPoint;
     }
+
 
 
     //----------------------------------------------------------------------------------------------
@@ -191,8 +193,8 @@ public class CatOdoPowerUpdate
 
         double minPowerScale;
 
-        double absAngleToTarget         = (Math.atan2(simplePath.get(targetPoint).x -
-                        positionUpdate.returnXInches(), simplePath.get(targetPoint).y -
+        double absAngleToTarget         = (Math.atan2(simplePathPoints.get(targetPoint).x -
+                        positionUpdate.returnXInches(), simplePathPoints.get(targetPoint).y -
                 positionUpdate.returnYInches()));
         double relativeAngleToTarget    = absAngleToTarget -
                 Math.toRadians(positionUpdate.returnOrientation());
@@ -217,12 +219,12 @@ public class CatOdoPowerUpdate
     /**
      *
      * @param robotPos the center of the circle should always be where the robot is
-     * @param radius the radius of the circle tested for intersection
+     * @param followRadius the followRadius of the circle tested for intersection
      * @param linePoint1 the first point of the line that will be tested to see if it intersects the circle
      * @param linePoint2 the second point of the line that will be tested to see if it intersects the circle
      * @return the points where the line and circle intersect what will be between 0 and 2 points if there are no intersections an empty arrayList will be returned
      */
-    private ArrayList<Point> findPathIntersections(Point robotPos, double radius,
+    private ArrayList<Point> findPathIntersections(Point robotPos, double followRadius,
                                                    Point linePoint1, Point linePoint2) {
         // Make sure we don't have a slope of 1 or 0.
         if (Math.abs(linePoint1.x - linePoint2.x) < 0.003) {
@@ -242,8 +244,8 @@ public class CatOdoPowerUpdate
         double quadraticA = 1.0 + Math.pow(m1, 2);
         double quadraticB = (2.0 * m1 * y1) - (2.0 * Math.pow(m1, 2) * x1);
         double quadraticC = (Math.pow(m1, 2) * Math.pow(x1, 2)) - (2.0*m1*x1*y1) + Math.pow(y1, 2) -
-                Math.pow(radius, 2);
-        double quadraticSquareRootTerm = Math.pow(quadraticB, 2) - (4.0 * quadraticA * quadraticC);
+                Math.pow(followRadius, 2);
+        double quadSqRtTerm = Math.pow(quadraticB, 2) - (4.0 * quadraticA * quadraticC);
 
         // Make sure robot is withing bounding box of the intersections.
         double minX = Math.min(linePoint1.x, linePoint2.x);
@@ -256,7 +258,7 @@ public class CatOdoPowerUpdate
         // Try/Catch for first intersection.
         try {
             // Do math for quadratic formula:
-            double xRoot1 = (-quadraticB + (Math.sqrt(quadraticSquareRootTerm)))  /  (2.0 * quadraticA);
+            double xRoot1 = (-quadraticB + (Math.sqrt(quadSqRtTerm)))  /  (2.0 * quadraticA);
             double yRoot1 = m1 * (xRoot1 - x1) + y1;
 
             // Add back the offset of the robot/circle's center
@@ -268,15 +270,13 @@ public class CatOdoPowerUpdate
                 allIntersectingPoints.add(new Point(xRoot1, yRoot1));
             }
         } catch (Exception e) {
-            if (distanceBetween(linePoint1,robotPos) < radius) {
-                allIntersectingPoints.add(linePoint1);
-            }
+            //TODO:  Better exception handling?
         }
 
         // Try/Catch for second intersection.
         try {
             // Do math for other side of quadratic formula
-            double xRoot2 = (-quadraticB - (Math.sqrt(quadraticSquareRootTerm)))  /  (2.0 * quadraticA);
+            double xRoot2 = (-quadraticB - (Math.sqrt(quadSqRtTerm)))  /  (2.0 * quadraticA);
             double yRoot2 = m1 * (xRoot2 - x1) + y1;
 
             // Add back the offset to the other set of X and Y roots.
@@ -288,9 +288,18 @@ public class CatOdoPowerUpdate
                 allIntersectingPoints.add(new Point(xRoot2, yRoot2));
             }
         } catch (Exception e) {
-            if (distanceBetween(linePoint2,robotPos) < radius){
-                allIntersectingPoints.add(linePoint2);
-            }
+            //TODO:  Better exception handling?
+        }
+
+        /*
+        Add the point from the simplePathPoints to the list of intersections if it is within the
+        distance of the followRadius.
+         */
+        if (distanceBetween(linePoint1, robotPos) < followRadius) {
+            allIntersectingPoints.add(linePoint1);
+        }
+        if (distanceBetween(linePoint2, robotPos) < followRadius){
+            allIntersectingPoints.add(linePoint2);
         }
 
         return allIntersectingPoints;
@@ -303,16 +312,16 @@ public class CatOdoPowerUpdate
      * @param followRadius
      * @return
      */
-    public CurvePoint getFollowPoint(/*ArrayList<CurvePoint> pathPoints,*/
-                                     Point robotLocation, double followRadius) {
+    private CurvePoint getFollowPoint(/*ArrayList<CurvePoint> pathPoints,*/
+            Point robotLocation, double followRadius) {
         // TODO: In case robot's follow followRadius doesn't intersect line...
         //  Improve this later...  Use a line perpendicular perhaps?
-        CurvePoint followThisPoint = new CurvePoint(simplePath.get(0));
+        CurvePoint followThisPoint = new CurvePoint(simplePathPoints.get(0));
 
         // Go through all the CurvePoints and stop one early since a line needs at least two points.
-        for (int i = 0; i < (simplePath.size() - 1); i++) {
-            CurvePoint startLine = simplePath.get(i);
-            CurvePoint endLine = simplePath.get(i + 1);
+        for (int i = 0; i < (simplePathPoints.size() - 1); i++) {
+            CurvePoint startLine = simplePathPoints.get(i);
+            CurvePoint endLine = simplePathPoints.get(i + 1);
 
 
             ArrayList<Point> intersections = findPathIntersections(robotLocation,
@@ -355,11 +364,11 @@ public class CatOdoPowerUpdate
 
         double totalDist = 0;
         //calc total dis by adding all distances
-        for (int i = (simplePath.size() - 1); i > line; i--) {
-            totalDist += distanceBetween(simplePath.get(i), simplePath.get(i-1));
+        for (int i = (simplePathPoints.size() - 1); i > line; i--) {
+            totalDist += distanceBetween(simplePathPoints.get(i), simplePathPoints.get(i-1));
 
         }
-        totalDist += distanceBetween(pointOnLine, simplePath.get(line + 1));
+        totalDist += distanceBetween(pointOnLine, simplePathPoints.get(line + 1));
 
         return totalDist;
     }
@@ -369,16 +378,16 @@ public class CatOdoPowerUpdate
      * @param pointOnLine
      * @return
      */
-    public int findLineNum(Point pointOnLine){
+    private int findLineNum(Point pointOnLine){
         // Find what line the target point is between.
         int line = 0;
 
-        for (int i = 0; i < (simplePath.size() - 1); i++) {
+        for (int i = 0; i < (simplePathPoints.size() - 1); i++) {
 
             // If the the distanceBetween between the two points is the same as the distanceBetween: EX: A-C-----B
-            if (Math.abs(distanceBetween(simplePath.get(i), simplePath.get(i + 1))
-                    - (distanceBetween(simplePath.get(i), pointOnLine)
-                    + distanceBetween(pointOnLine, simplePath.get(i + 1)))) < 0.05) {
+            if (Math.abs(distanceBetween(simplePathPoints.get(i), simplePathPoints.get(i + 1))
+                    - (distanceBetween(simplePathPoints.get(i), pointOnLine)
+                    + distanceBetween(pointOnLine, simplePathPoints.get(i + 1)))) < 0.05) {
                 line = i;
             }
         }
@@ -390,32 +399,32 @@ public class CatOdoPowerUpdate
 }
 
 
-    /*
-    THOUGHTS:
+/*
+THOUGHTS:
 
 
-    Goals and Plans:
-    1.  First check to see if within ramp down range (if so, use scale down, otherwise
-    start with the jump)
-    2.  Begin ramping up power while checking the distance left
-    3.  If ever within the distance in which we need to ramp down, ramp down.  Otherwise
-    keep performing Step 4.
-    4.  If currentPower is greater than maxPower, don't change currentPower.  Otherwise
-    keep ramping up.
+Goals and Plans:
+1.  First check to see if within ramp down range (if so, use scale down, otherwise
+start with the jump)
+2.  Begin ramping up power while checking the distance left
+3.  If ever within the distance in which we need to ramp down, ramp down.  Otherwise
+keep performing Step 4.
+4.  If currentPower is greater than maxPower, don't change currentPower.  Otherwise
+keep ramping up.
 
-    For ramp UP:
-    1.  Needs a initial jump up (to say 0.2 power) to initially get over the static friction
-    2.  Will then ramp up to max speed every time it wakes from the sleep period based
-    on the max power divided by time period left to get up to max speed to (0.5 sec e.g.)
-    3.  Store this as currentPower then compare to max power (don't change anything if
-    current power is higher than maxPower)
+For ramp UP:
+1.  Needs a initial jump up (to say 0.2 power) to initially get over the static friction
+2.  Will then ramp up to max speed every time it wakes from the sleep period based
+on the max power divided by time period left to get up to max speed to (0.5 sec e.g.)
+3.  Store this as currentPower then compare to max power (don't change anything if
+current power is higher than maxPower)
 
-    For ramp DOWN:
-    1.  Start ramping down as soon as within the distance it takes to slow down (e.g.
-    seven inches?)
-    2.  Use the minPower so that robot never stalls out until distance is reached.
+For ramp DOWN:
+1.  Start ramping down as soon as within the distance it takes to slow down (e.g.
+seven inches?)
+2.  Use the minPower so that robot never stalls out until distance is reached.
 
 
-    currentPower = currentPower * (deltaDistance * rate (which could be 1/7 or some
-    other calculation?)
-     */
+currentPower = currentPower * (deltaDistance * rate (which could be 1/7 or some
+other calculation?)
+*/

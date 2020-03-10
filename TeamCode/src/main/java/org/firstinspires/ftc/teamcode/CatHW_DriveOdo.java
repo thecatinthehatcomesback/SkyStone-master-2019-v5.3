@@ -172,8 +172,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
      *                 This is used/useful for stall outs.
      */
-    public void translateDrive(ArrayList<CurvePoint> points, double power, double theta,
-                               double followRadius, double timeoutS){
+    public void pursuitDrive(ArrayList<CurvePoint> points, double power, double theta,
+                             double followRadius, double timeoutS){
 
         currentMethod = DRIVE_METHOD.TRANSLATE;
         timeout = timeoutS;
@@ -190,10 +190,10 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         // Power update Thread:
         if (isNonStop) {
             //if the last drive was nonstop
-            updatesThread.powerUpdate.setNonStopTarget(points, power);
-        }else {
+            updatesThread.powerUpdate.setNonStopTarget(points, power, followRadius);
+        } else {
             //if the last drive was normal
-            updatesThread.powerUpdate.setTarget(points, power);
+            updatesThread.powerUpdate.setTarget(points, power, followRadius);
         }
 
         //set it so the next one will be nonstop
@@ -219,9 +219,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
      *                 This is used/useful for stall outs.
      */
-    public void translateDrive(double x, double y, double power, double theta, double finishedXMin,
-                               double finishedXMax, double finishedYMin, double finishedYMax,
-                               double finishedThetaMin, double finishedThetaMax, double timeoutS){
+    public void pursuitDrive(double x, double y, double power, double theta, double finishedXMin,
+                             double finishedXMax, double finishedYMin, double finishedYMax,
+                             double finishedThetaMin, double finishedThetaMax, double timeoutS){
 
         currentMethod = DRIVE_METHOD.TRANSLATE;
         timeout = timeoutS;
