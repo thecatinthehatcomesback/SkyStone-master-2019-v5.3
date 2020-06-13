@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode;
 /**
  * @author Team #10273, The Cat in the Hat Comes Back.
  */
-public class CurvePoint extends Point {
+public class CatType_CurvePoint extends CatType_Point {
 
     // Attributes/Fields: //
     public double theta;
@@ -19,7 +19,7 @@ public class CurvePoint extends Point {
      * @param x coordinate in inches.
      * @param y coordinate in inches.
      */
-    public CurvePoint(double x, double y, double theta) {
+    public CatType_CurvePoint(double x, double y, double theta) {
         super(x, y);
         this.theta = theta;
     }
@@ -29,7 +29,7 @@ public class CurvePoint extends Point {
      *
      * @param thisPoint to set CurvePoint to.
      */
-    public CurvePoint(CurvePoint thisPoint) {
+    public CatType_CurvePoint(CatType_CurvePoint thisPoint) {
         super(thisPoint.x, thisPoint.y);
     }
 
@@ -38,7 +38,7 @@ public class CurvePoint extends Point {
      *
      * @param point to set the values to.
      */
-    public void setPoint(Point point) {
+    public void setPoint(CatType_Point point) {
         this.x = point.x;
         this.y = point.y;
     }

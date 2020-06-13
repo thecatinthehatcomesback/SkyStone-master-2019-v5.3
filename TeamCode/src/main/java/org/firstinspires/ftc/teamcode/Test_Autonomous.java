@@ -105,7 +105,7 @@ public class Test_Autonomous extends LinearOpMode
 
         /* Go! */
 
-        ArrayList<CurvePoint> allPoints = new ArrayList<>();
+        ArrayList<CatType_CurvePoint> allPoints = new ArrayList<>();
 
         /*allPoints.add(new CurvePoint(0, 0, 3.0, 1.0, Math.toRadians(0), 1.0));
         allPoints.add(new CurvePoint(0, 96, 3.0, 1.0, Math.toRadians(0), 1.0));

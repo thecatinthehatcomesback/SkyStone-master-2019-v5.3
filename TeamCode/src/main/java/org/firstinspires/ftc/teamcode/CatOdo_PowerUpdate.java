@@ -50,8 +50,8 @@ public class CatOdo_PowerUpdate
     private double distanceToFinalTargetPoint;
     /** Number to keep track of which point in the simplePath the robot is driving towards. */
     private int targetPoint = 1;
-    private CurvePoint pointOnLine;
-    private ArrayList<CurvePoint> simplePathPoints;
+    private CatType_CurvePoint pointOnLine;
+    private ArrayList<CatType_CurvePoint> simplePathPoints;
 
 
     /**
@@ -92,7 +92,7 @@ public class CatOdo_PowerUpdate
      * @param maxPower
      * @param followRadius
      */
-    public void setNonStopTarget(ArrayList<CurvePoint> simplePathPoints, double maxPower,
+    public void setNonStopTarget(ArrayList<CatType_CurvePoint> simplePathPoints, double maxPower,
                                  double followRadius) {
 
         this.maxPower = maxPower;
@@ -110,7 +110,7 @@ public class CatOdo_PowerUpdate
      *
      * @param power that the robot can go at most.
      */
-    public void setTarget(ArrayList<CurvePoint> simplePathPoints, double power, double followRadius) {
+    public void setTarget(ArrayList<CatType_CurvePoint> simplePathPoints, double power, double followRadius) {
         powerTime.reset();
         setNonStopTarget(simplePathPoints, power, followRadius);
     }
@@ -125,7 +125,7 @@ public class CatOdo_PowerUpdate
     /**
      * @return the point on the line that the robot should be targeting
      */
-    public CurvePoint getPointOnLine(){
+    public CatType_CurvePoint getPointOnLine(){
         return pointOnLine;
     }
 
@@ -150,7 +150,7 @@ public class CatOdo_PowerUpdate
     public double updatePower() {
 
         // Update the current position:
-        Point currentPos   = positionUpdate.returnRobotPointInches();
+        CatType_Point currentPos   = positionUpdate.returnRobotPointInches();
         //update time that is used in calculations for the ramp up only
         double currentTime = powerTime.milliseconds();
 
@@ -224,8 +224,8 @@ public class CatOdo_PowerUpdate
      * @param linePoint2 the second point of the line that will be tested to see if it intersects the circle
      * @return the points where the line and circle intersect what will be between 0 and 2 points if there are no intersections an empty arrayList will be returned
      */
-    private ArrayList<Point> findPathIntersections(Point robotPos, double followRadius,
-                                                   Point linePoint1, Point linePoint2) {
+    private ArrayList<CatType_Point> findPathIntersections(CatType_Point robotPos, double followRadius,
+                                                           CatType_Point linePoint1, CatType_Point linePoint2) {
         // Make sure we don't have a slope of 1 or 0.
         if (Math.abs(linePoint1.x - linePoint2.x) < 0.003) {
             linePoint1.x = linePoint2.x + 0.003;
@@ -252,7 +252,7 @@ public class CatOdo_PowerUpdate
         double maxX = Math.max(linePoint1.x, linePoint2.x);
 
         // List of Points that intersect with the circle.
-        ArrayList<Point> allIntersectingPoints = new ArrayList<>();
+        ArrayList<CatType_Point> allIntersectingPoints = new ArrayList<>();
 
 
         // Try/Catch for first intersection.
@@ -267,7 +267,7 @@ public class CatOdo_PowerUpdate
 
             // Add point if the robot is on the first set of X and Y roots.
             if (xRoot1 > minX && xRoot1 < maxX) {
-                allIntersectingPoints.add(new Point(xRoot1, yRoot1));
+                allIntersectingPoints.add(new CatType_Point(xRoot1, yRoot1));
             }
         } catch (Exception e) {
             //TODO:  Better exception handling?
@@ -285,7 +285,7 @@ public class CatOdo_PowerUpdate
 
             // Add point if the robot is on the second set of X and Y roots.
             if (xRoot2 > minX && xRoot2 < maxX) {
-                allIntersectingPoints.add(new Point(xRoot2, yRoot2));
+                allIntersectingPoints.add(new CatType_Point(xRoot2, yRoot2));
             }
         } catch (Exception e) {
             //TODO:  Better exception handling?
@@ -312,19 +312,19 @@ public class CatOdo_PowerUpdate
      * @param followRadius
      * @return
      */
-    private CurvePoint getFollowPoint(/*ArrayList<CurvePoint> pathPoints,*/
-            Point robotLocation, double followRadius) {
+    private CatType_CurvePoint getFollowPoint(/*ArrayList<CurvePoint> pathPoints,*/
+            CatType_Point robotLocation, double followRadius) {
         // TODO: In case robot's follow followRadius doesn't intersect line...
         //  Improve this later...  Use a line perpendicular perhaps?
-        CurvePoint followThisPoint = new CurvePoint(simplePathPoints.get(0));
+        CatType_CurvePoint followThisPoint = new CatType_CurvePoint(simplePathPoints.get(0));
 
         // Go through all the CurvePoints and stop one early since a line needs at least two points.
         for (int i = 0; i < (simplePathPoints.size() - 1); i++) {
-            CurvePoint startLine = simplePathPoints.get(i);
-            CurvePoint endLine = simplePathPoints.get(i + 1);
+            CatType_CurvePoint startLine = simplePathPoints.get(i);
+            CatType_CurvePoint endLine = simplePathPoints.get(i + 1);
 
 
-            ArrayList<Point> intersections = findPathIntersections(robotLocation,
+            ArrayList<CatType_Point> intersections = findPathIntersections(robotLocation,
                     followRadius, startLine, endLine);
 
             // Choose point that the robot is facing.
@@ -349,7 +349,7 @@ public class CatOdo_PowerUpdate
      * the target with motion profiling.
      * @return distanceBetween
      */
-    private double distanceBetween(Point point1, Point point2) {
+    private double distanceBetween(CatType_Point point1, CatType_Point point2) {
         return Math.hypot((point2.x - point1.x), (point2.y - point1.y));
     }
 
@@ -358,7 +358,7 @@ public class CatOdo_PowerUpdate
      * @param pointOnLine
      * @return
      */
-    private double distToPathEnd(Point pointOnLine) {
+    private double distToPathEnd(CatType_Point pointOnLine) {
 
         int line = findLineNum(pointOnLine);
 
@@ -378,7 +378,7 @@ public class CatOdo_PowerUpdate
      * @param pointOnLine
      * @return
      */
-    private int findLineNum(Point pointOnLine){
+    private int findLineNum(CatType_Point pointOnLine){
         // Find what line the target point is between.
         int line = 0;
 

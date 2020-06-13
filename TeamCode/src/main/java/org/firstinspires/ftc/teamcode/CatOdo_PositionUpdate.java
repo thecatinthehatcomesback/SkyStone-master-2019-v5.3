@@ -181,8 +181,8 @@ public class CatOdo_PositionUpdate
 
     public double returnYInches() { return robotGlobalYCoordinatePosition/count_per_in; }
 
-    public Point returnRobotPointInches() {
-        return new Point (robotGlobalXCoordinatePosition/count_per_in,
+    public CatType_Point returnRobotPointInches() {
+        return new CatType_Point(robotGlobalXCoordinatePosition/count_per_in,
                 robotGlobalYCoordinatePosition/count_per_in);
     }
 

@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode;
 /**
  * @author Team #10273, The Cat in the Hat Comes Back.
  */
-public class Point {
+public class CatType_Point {
 
     // Attributes/Fields: //
     public double x;
@@ -16,7 +16,7 @@ public class Point {
      * @param x X-point on a cartesian coordinate plane.
      * @param y Y-point on a cartesian coordinate plane.
      */
-    Point(double x, double y) {
+    CatType_Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -26,7 +26,7 @@ public class Point {
      *
      * @return a CurvePoint version of the Point.
      */
-    public CurvePoint toCurvePoint() {
-        return new CurvePoint(this.x, this.y, 0);
+    public CatType_CurvePoint toCurvePoint() {
+        return new CatType_CurvePoint(this.x, this.y, 0);
     }
 }

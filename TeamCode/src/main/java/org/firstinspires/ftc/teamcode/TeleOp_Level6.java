@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * @author FTC Team #10273, The Cat in the Hat Comes Back
  */
 @TeleOp(name = "State TeleOp", group = "CatTeleOp")
-public class TeleOpLevel6 extends LinearOpMode
+public class TeleOp_Level6 extends LinearOpMode
 {
     /* Declare OpMode members. */
     private ElapsedTime elapsedGameTime = new ElapsedTime();
@@ -27,7 +27,7 @@ public class TeleOpLevel6 extends LinearOpMode
 
 
     /* Constructor */
-    public TeleOpLevel6() {
+    public TeleOp_Level6() {
         robot = new CatHW_Async();
     }
 

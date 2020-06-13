@@ -72,7 +72,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     /** Variable to keep track of the DRIVE_METHOD that's the current style of robot's driving. */
     private DRIVE_METHOD currentMethod;
 
-    private ArrayList<CurvePoint> targetPoints;
+    private ArrayList<CatType_CurvePoint> targetPoints;
     private double followRadius = DEFAULT_FOLLOW_RADIUS;
 
 
@@ -156,7 +156,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * @param power
      * @param timeoutS
      */
-    public void pursuitDrive(ArrayList<CurvePoint> points, double power, double timeoutS) {
+    public void pursuitDrive(ArrayList<CatType_CurvePoint> points, double power, double timeoutS) {
         pursuitDrive(points, power, DEFAULT_FOLLOW_RADIUS, timeoutS);
     }
 
@@ -170,7 +170,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * @param timeout is how much time needs to pass before the robot moves onto the next step.
      *                 This is used/useful for stall outs.
      */
-    public void pursuitDrive(ArrayList<CurvePoint> points, double power, double followRadius,
+    public void pursuitDrive(ArrayList<CatType_CurvePoint> points, double power, double followRadius,
                              double timeout) {
 
         currentMethod = DRIVE_METHOD.PURE_PURSUIT;
@@ -303,12 +303,12 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
             case PURE_PURSUIT:
                 // Current robot position and orientation from odometry modules:
-                Point getRobotPos = updatesThread.positionUpdate.returnRobotPointInches();
+                CatType_Point getRobotPos = updatesThread.positionUpdate.returnRobotPointInches();
                 double getTheta = updatesThread.positionUpdate.returnOrientation();
                 double getPower = updatesThread.powerUpdate.updatePower();
 
                 // Assign the point to follow
-                CurvePoint targetPointOnLine = updatesThread.powerUpdate.getPointOnLine();
+                CatType_CurvePoint targetPointOnLine = updatesThread.powerUpdate.getPointOnLine();
                 double totalDistRemaining = updatesThread.powerUpdate.getDistanceToFinalTargetPoint();
                 int targetPointIndex = updatesThread.powerUpdate.getTargetPoint();
 

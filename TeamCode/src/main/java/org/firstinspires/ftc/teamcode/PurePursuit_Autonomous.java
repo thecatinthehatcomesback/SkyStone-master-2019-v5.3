@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author FTC Team #10273, The Cat in the Hat Comes Back.
  */
 @Autonomous(name="Pure Pursuit Autonomous", group="CatAuto")
-public class Pure_Pursuit_Autonomous extends LinearOpMode
+public class PurePursuit_Autonomous extends LinearOpMode
 {
     /* Declare OpMode members. */
     private CatHW_Async robot  = new CatHW_Async();    // All the hardware classes init here.
@@ -54,29 +54,29 @@ public class Pure_Pursuit_Autonomous extends LinearOpMode
 
 
         /* Go! */
-        ArrayList<CurvePoint> simpleDrivePath = new ArrayList<>();
+        ArrayList<CatType_CurvePoint> simpleDrivePath = new ArrayList<>();
 
         //simpleDrivePath.add(new CurvePoint(0, 0,0));
-        simpleDrivePath.add(new CurvePoint(0, 100, 0));
-        simpleDrivePath.add(new CurvePoint(72, 100, 90));
-        simpleDrivePath.add(new CurvePoint(72, 10, 180));
+        simpleDrivePath.add(new CatType_CurvePoint(0, 100, 0));
+        simpleDrivePath.add(new CatType_CurvePoint(72, 100, 90));
+        simpleDrivePath.add(new CatType_CurvePoint(72, 10, 180));
 
         robot.drive.pursuitDrive(simpleDrivePath, .7, 15.0, 16);
         robot.drive.waitUntilDone();
 
 
         simpleDrivePath.clear();
-        simpleDrivePath.add(new CurvePoint(0, 0,270));
-        simpleDrivePath.add(new CurvePoint(0, 100, 360));
-        simpleDrivePath.add(new CurvePoint(72, 100, 360 + 90));
+        simpleDrivePath.add(new CatType_CurvePoint(0, 0,270));
+        simpleDrivePath.add(new CatType_CurvePoint(0, 100, 360));
+        simpleDrivePath.add(new CatType_CurvePoint(72, 100, 360 + 90));
 
         robot.drive.pursuitDrive(simpleDrivePath, .7, 16);
         robot.drive.waitUntilDone();
 
         simpleDrivePath.clear();
-        simpleDrivePath.add(new CurvePoint(72, 10, 360 + 180));
-        simpleDrivePath.add(new CurvePoint(0, 0,360 + 270));
-        simpleDrivePath.add(new CurvePoint(0, 100, 720));
+        simpleDrivePath.add(new CatType_CurvePoint(72, 10, 360 + 180));
+        simpleDrivePath.add(new CatType_CurvePoint(0, 0,360 + 270));
+        simpleDrivePath.add(new CatType_CurvePoint(0, 100, 720));
 
         robot.drive.pursuitDrive(simpleDrivePath, .7, 25.0, 16);
         robot.drive.waitUntilDone();

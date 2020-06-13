@@ -22,11 +22,11 @@ public class CatHW_Lights implements Runnable
     // Thread run conditions: //
     private boolean isRunning   = true;
     private int     sleepTime   = 25;
-    private LightPattern defaultPattern = new LightPattern(sleepTime,
+    private CatType_LightPattern defaultPattern = new CatType_LightPattern(sleepTime,
             RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
 
     // The list of patterns:
-    private ArrayList<LightPattern> patternList = new ArrayList<>();
+    private ArrayList<CatType_LightPattern> patternList = new ArrayList<>();
 
     // Blinkin objects:
     private RevBlinkinLedDriver lights = null;
@@ -59,7 +59,7 @@ public class CatHW_Lights implements Runnable
         lights           = hwMap.get(RevBlinkinLedDriver.class, "blinky");
         pattern          = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
 
-        defaultPattern = new LightPattern(sleepTime,
+        defaultPattern = new CatType_LightPattern(sleepTime,
                 RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
         isRunning = true;
 
@@ -84,8 +84,8 @@ public class CatHW_Lights implements Runnable
      */
     public void blink (int num, RevBlinkinLedDriver.BlinkinPattern color, int timePerBlinkMS) {
         for (int i = 0; i < num; i++){
-            addQueue(new LightPattern(timePerBlinkMS,color));
-            addQueue(new LightPattern(timePerBlinkMS, RevBlinkinLedDriver.BlinkinPattern.BLACK));
+            addQueue(new CatType_LightPattern(timePerBlinkMS,color));
+            addQueue(new CatType_LightPattern(timePerBlinkMS, RevBlinkinLedDriver.BlinkinPattern.BLACK));
         }
     }
 
@@ -103,7 +103,7 @@ public class CatHW_Lights implements Runnable
      *
      * @param lp is the light pattern.
      */
-    public void addQueue(LightPattern lp) {
+    public void addQueue(CatType_LightPattern lp) {
         synchronized (this) {
             patternList.add(lp);
         }
@@ -112,7 +112,7 @@ public class CatHW_Lights implements Runnable
     /**
      * @return the light pattern's pattern and delay.
      */
-    public LightPattern readQueue() {
+    public CatType_LightPattern readQueue() {
         synchronized (this) {
             // Gets the light pattern's pattern and delay.
             if (patternList.size() > 0) {
@@ -136,7 +136,7 @@ public class CatHW_Lights implements Runnable
     public void run() {
         while(isRunning) {
 
-            LightPattern current = readQueue();
+            CatType_LightPattern current = readQueue();
 
             // Do stuff:
             if (current.getPattern() != pattern){

@@ -11,7 +11,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
  *
  * @author FTC Team #10273, The Cat in the Hat Comes Back
  */
-public class LightPattern
+public class CatType_LightPattern
 {
     /** Time to delay between blinks (measured in milliseconds). */
     private int delayMs;
@@ -19,7 +19,7 @@ public class LightPattern
     private RevBlinkinLedDriver.BlinkinPattern pattern;
 
     /* Constructor */
-    public LightPattern(int delayMsIn, RevBlinkinLedDriver.BlinkinPattern patternIn){
+    public CatType_LightPattern(int delayMsIn, RevBlinkinLedDriver.BlinkinPattern patternIn){
         delayMs = delayMsIn;
         pattern = patternIn;
     }
