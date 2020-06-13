@@ -9,34 +9,33 @@ import org.openftc.revextensions2.ExpansionHubEx;
 import java.util.ArrayList;
 
 /**
- * A "hardware" class containing common code accessing hardware specific to the movement and
- * rotation of the drive train using odometry modules as position givers.  This file is used by the
- * new autonomous OpModes to run multiple operations at once with odometry.
- *
- * This is NOT an OpMode.  This class is used in tandem with all the other hardware classes.
- * This hardware class assumes the device names have been configured on the robot.
+ * A "hardware" class containing common code accessing hardware specific to the movement and rotation of the drive train
+ * using odometry modules as position givers.  This file is used by the new autonomous OpModes to run multiple
+ * operations at once with odometry.
+ * <p>
+ * This is NOT an OpMode.  This class is used in tandem with all the other hardware classes. This hardware class assumes
+ * the device names have been configured on the robot.
+ * <p>
  * NOTE: All names are lower case and have underscores between words.
- *
  *
  * @author FTC Team #10273, The Cat in the Hat Comes Back
  */
-public class CatHW_DriveOdo extends CatHW_DriveBase
-{
-    //----------------------------------------------------------------------------------------------
-    // Odometry Module Constants and Class Attributes:          TODO: Are these constants updated???
-    //----------------------------------------------------------------------------------------------
+public class CatHW_DriveOdo extends CatHW_DriveBase {
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Odometry Module Constants and Class Attributes:                              TODO: Are these constants updated???
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
-     * The number of encoder ticks per one revolution of the odometry wheel.
-     * 8192 ticks for a REV encoder from REV Robotics.
+     * The number of encoder ticks per one revolution of the odometry wheel. 8192 ticks for a REV encoder from REV
+     * Robotics.
      */
     private static final double ODO_COUNTS_PER_REVOLUTION = 8192;
     /** The measurement of the odometry wheel diameter for use in calculating circumference. */
     private static final double ODO_WHEEL_DIAMETER_INCHES = 2.0;
     /**
-     * The amount of odometry encoder ticks equal to movement of 1 inch.  Used for conversion in the
-     * robot's positioning algorithms so that when a user inputs (X,Y) coordinates in inches, those
-     * can be converted into encoder ticks.
+     * The amount of odometry encoder ticks equal to movement of 1 inch.  Used for conversion in the robot's positioning
+     * algorithms so that when a user inputs (X,Y) coordinates in inches, those can be converted into encoder ticks.
      */
     public static final double ODO_COUNTS_PER_INCH = ODO_COUNTS_PER_REVOLUTION /
             (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
@@ -56,8 +55,8 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     //private double strafePower;
 
     /**
-     * Attribute that determines whether the robot will continue through its target point if true
-     * and stop at that point if false.
+     * Attribute that determines whether the robot will continue through its target point if true and stop at that point
+     * if false.
      */
     private boolean isNonStop;
 
@@ -90,18 +89,18 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
 
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     // Setup Methods:
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Constructor method that calls the constructor method (using the keyword 'super') of this
-     * class' parent class.
+     * Constructor method that calls the constructor method (using the keyword 'super') of this class' parent class.
      *
      * @param mainHardware needs to be the owner hardware class (AKA the CatHW_Async class).
-     */    public CatHW_DriveOdo(CatHW_Async mainHardware){
-        super(mainHardware);
+     */
+    public CatHW_DriveOdo(CatHW_Async mainHardware) {
 
+        super(mainHardware);
     }
 
     /**
@@ -110,7 +109,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * @throws InterruptedException in case of error.
      */
     public void init() throws InterruptedException  {
-
         // Calls DriveBase's init:
         super.init();
 
@@ -141,9 +139,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
 
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     // Driving Chassis Methods:
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
      * Sets all odometry wheels to STOP_AND_RESET_ENCODER and then to RUN_WITHOUT_ENCODER.
@@ -185,8 +183,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * @param timeout is how much time needs to pass before the robot moves onto the next step. This is
      *         used/useful for stall outs.
      */
-    public void pursuitDrive(ArrayList<CatType_CurvePoint> points, double power, double followRadius,
-            double timeout) {
+    public void pursuitDrive(ArrayList<CatType_CurvePoint> points, double power, double followRadius, double timeout) {
 
         currentMethod = DRIVE_METHOD.PURE_PURSUIT;
         this.timeout = timeout;
@@ -274,9 +271,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
 
 
 
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     // isDone Method:
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     @Override
     public boolean isDone() {
 
@@ -428,8 +425,9 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
                                 "   CurrentX/Y/Θ: %.2f %.2f %.1f;  Power: %.2f",
                         leftFrontMotor.getPower(), rightFrontMotor.getPower(),
                         leftRearMotor.getPower(), rightRearMotor.getPower(),
-                        targetPoints.get(targetPointIndex).x, targetPoints.get(targetPointIndex).y, targetPoints.get(targetPointIndex).theta,
-                        targetPointOnLine.x,targetPointOnLine.y,targetPointOnLine.theta,
+                        targetPoints.get(targetPointIndex).x, targetPoints.get(targetPointIndex).y,
+                        targetPoints.get(targetPointIndex).theta,
+                        targetPointOnLine.x, targetPointOnLine.y, targetPointOnLine.theta,
                         getRobotPos.x, getRobotPos.y, getTheta, getPower));
                 break;
         }

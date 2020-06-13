@@ -5,27 +5,24 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * A "hardware" class that acts as the master in which all the other "hardware" classes will run
- * through.  When this class is created, it creates versions of all the other hardware classes used
- * to run the robot.
- *
+ * A "hardware" class that acts as the master in which all the other "hardware" classes will run through.  When this
+ * class is created, it creates versions of all the other hardware classes used to run the robot.
+ * <p>
  * This is NOT an OpMode.  This class is used to define all the other hardware classes.
- *
  *
  * @author FTC Team #10273, The Cat in the Hat Comes Back.
  */
-public class CatHW_Async
-{
-    //----------------------------------------------------------------------------------------------
+public class CatHW_Async {
+
+    //------------------------------------------------------------------------------------------------------------------
     // Attributes:
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Attribute that is used to tell the robot through all the other classes whether it is on the
-     * red or blue alliance.
+     * Attribute that is used to tell the robot through all the other classes whether it is on the red or blue
+     * alliance.
      */
     public static boolean isRedAlliance = true;
-
 
     /*
     Default / Package-Private OpMode members (since no visibility was inputted, any class in this
@@ -33,7 +30,6 @@ public class CatHW_Async
      */
     HardwareMap hwMap = null;
     LinearOpMode opMode = null;
-
 
     /*
     The hardware subsystems that this class "owns" a copy of:
@@ -47,19 +43,18 @@ public class CatHW_Async
 
 
 
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     // Setup Methods:
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Initialize all the standard Hardware interfaces as well as all the subsystem hardware
-     * classes.
+     * Initialize all the standard Hardware interfaces as well as all the subsystem hardware classes.
      *
      * @param ahwMap is for saving a reference to / remembering the robot's hardware map.
      * @param theOpMode is for saving a reference to / remembering the Linear OpMode usage.
      * @throws InterruptedException in case of any errors.
      */
-    public void init(HardwareMap ahwMap, LinearOpMode theOpMode)  throws InterruptedException {
+    public void init(HardwareMap ahwMap, LinearOpMode theOpMode) throws InterruptedException {
 
         // Save a reference to hardware map and opMode:
         hwMap = ahwMap;
@@ -106,14 +101,13 @@ public class CatHW_Async
 
 
 
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     // Common Methods:
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Method which will pause the robot's action for a set amount of seconds.  Used in between
-     * actions that could either take time or when some part of the robot just needs to be put on
-     * hold.
+     * Method which will pause the robot's action for a set amount of seconds.  Used in between actions that could
+     * either take time or when some part of the robot just needs to be put on hold.
      *
      * @param seconds that the robot's systems will be delayed.
      */

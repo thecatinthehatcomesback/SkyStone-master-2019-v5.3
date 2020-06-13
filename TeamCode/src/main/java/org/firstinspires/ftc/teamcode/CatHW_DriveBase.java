@@ -14,23 +14,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 /**
- * A "hardware" class containing common code accessing hardware specific to the movement and
- * rotation of the drive train from both the odometry and standard drive motor encoders.  This has
- * been modified and/or stripped down from the CatSingleOverallHW to be the base of all the drive
- * train classes.  This file is used by the autonomous OpModes to run multiple operations at once.
- *
- * This is NOT an OpMode.  This class is used in tandem with all the other hardware classes.
- * This hardware class assumes the device names have been configured on the robot.
+ * A "hardware" class containing common code accessing hardware specific to the movement and rotation of the drive train
+ * from both the odometry and standard drive motor encoders.  This has been modified and/or stripped down from the
+ * CatSingleOverallHW to be the base of all the drive train classes.  This file is used by the autonomous OpModes to run
+ * multiple operations at once.
+ * <p>
+ * This is NOT an OpMode.  This class is used in tandem with all the other hardware classes. This hardware class assumes
+ * the device names have been configured on the robot.
+ * <p>
  * NOTE: All names are lower case and have underscores between words.
- *
  *
  * @author FTC Team #10273, The Cat in the Hat Comes Back
  */
-public class CatHW_DriveBase extends CatHW_Subsystem
-{
-    //----------------------------------------------------------------------------------------------
+public class CatHW_DriveBase extends CatHW_Subsystem {
+
+    //------------------------------------------------------------------------------------------------------------------
     // Attributes and Constants:
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
     /*
     Wheel measurement constants:
@@ -41,8 +41,8 @@ public class CatHW_DriveBase extends CatHW_Subsystem
 
 
     /*
-    Default / Package-Private OpMode members (since no visibility was inputted, any class in this
-    package--AKA the teamcode package--can see these members):
+    Default / Package-Private OpMode members (since no visibility was inputted, any class in this package--AKA the
+    teamcode package--can see these members):
     */
 
     // Autonomous Drive Speed constants:
@@ -81,17 +81,17 @@ public class CatHW_DriveBase extends CatHW_Subsystem
 
 
 
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     // Setup Methods:
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Constructor method that calls the constructor method (using the keyword 'super') of this
-     * class' parent class.
+     * Constructor method that calls the constructor method (using the keyword 'super') of this class' parent class.
      *
      * @param mainHardware needs to be the owner hardware class (AKA the CatHW_Async class).
      */
     public CatHW_DriveBase(CatHW_Async mainHardware) {
+
         super(mainHardware);
     }
 
@@ -101,7 +101,6 @@ public class CatHW_DriveBase extends CatHW_Subsystem
      * @throws InterruptedException in case of error.
      */
     public void init() throws InterruptedException {
-
         // Define and Initialize Motors:
         leftFrontMotor = hwMap.dcMotor.get("left_front_motor");
         rightFrontMotor = hwMap.dcMotor.get("right_front_motor");
@@ -146,6 +145,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
      * @param rightBack motor's power.
      */
     public void setDrivePowers(double leftFront, double rightFront, double leftBack, double rightBack) {
+
         leftFrontMotor.setPower(leftFront);
         rightFrontMotor.setPower(rightFront);
         leftRearMotor.setPower(leftBack);
@@ -160,6 +160,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
      * Set drive train motors to BRAKE.
      */
     public void setDriveToBrake() {
+
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -170,6 +171,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
      * Set drive train motors to FLOAT (coast).
      */
     public void setDriveToCoast() {
+
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -190,6 +192,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
      * Set drive train motors to RUN_USING_ENCODER.
      */
     public void setDriveRunUsingEncoders() {
+
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRearMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -200,6 +203,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
      * Set drive train motors to RUN_WITHOUT_ENCODER.
      */
     public void setDriveRunWithoutEncoders() {
+
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -210,6 +214,7 @@ public class CatHW_DriveBase extends CatHW_Subsystem
      * Set drive train motors to RUN_TO_POSITION.
      */
     public void setDriveRunToPosition() {
+
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftRearMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -261,20 +266,19 @@ public class CatHW_DriveBase extends CatHW_Subsystem
     //----------------------------------------------------------------------------------------------
 
     /**
-     * Will scale down our calculated power numbers if they are greater than 1.0.  If the values
-     * were greater than 1.0, the motors would spin at their max powers.  This would limit precise
-     * paths the robot could take, thus we created this method to "scale down" all the values by
-     * creating a scale factor so that there is a proportional difference in all the motor powers,
-     * giving the robot better mobility, especially with mecanum wheels.
+     * Will scale down our calculated power numbers if they are greater than 1.0.  If the values were greater than 1.0,
+     * the motors would spin at their max powers.  This would limit precise paths the robot could take, thus we created
+     * this method to "scale down" all the values by creating a scale factor so that there is a proportional difference
+     * in all the motor powers, giving the robot better mobility, especially with mecanum wheels.
      *
-     * @param leftFrontValue  Prospective value for motor power that may be scaled down.
+     * @param leftFrontValue Prospective value for motor power that may be scaled down.
      * @param rightFrontValue Prospective value for motor power that may be scaled down.
-     * @param leftBackValue   Prospective value for motor power that may be scaled down.
-     * @param rightBackValue  Prospective value for motor power that may be scaled down.
+     * @param leftBackValue Prospective value for motor power that may be scaled down.
+     * @param rightBackValue Prospective value for motor power that may be scaled down.
      * @return what should be multiplied with all the other motor powers to get a good proportion.
      */
     public double findScalor(double leftFrontValue, double rightFrontValue,
-                             double leftBackValue, double rightBackValue) {
+            double leftBackValue, double rightBackValue) {
         /*
         PLANS:
 
