@@ -3,32 +3,41 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * CatHW_Claw.java
+ * A "hardware" class containing all common code for accessing hardware specific to the movement and
+ * extension of the foundation claws.  This file is used by the asynchronous autonomous OpModes to
+ * run multiple robot operations at once.
  *
- *
- * A "hardware" class containing common code accessing hardware specific to the movement and
- * extension of the foundation claws.  This file is used by the new autonomous OpModes to run
- * multiple operations at once.
- *
- * This is NOT an OpMode.  This class is used to define all the other hardware classes.
- * This hardware class assumes the following device names have been configured on the robot.
+ * This is NOT an OpMode.  This class is used in tandem with all the other hardware classes.
+ * This hardware class assumes the device names have been configured on the robot.
  *
  *
  * @author FTC Team #10273, The Cat in the Hat Comes Back
  */
-public class CatHW_Claw  extends CatHW_Subsystem
+public class CatHW_Claw extends CatHW_Subsystem
 {
-    /* Public OpMode members. */
-    public Servo rightFoundationClaw = null;
-    public Servo leftFoundationClaw  = null;
-    public Servo capstoneClaw        = null;
+    //----------------------------------------------------------------------------------------------
+    // Attributes:
+    //----------------------------------------------------------------------------------------------
+
+    private Servo rightFoundationClaw = null;
+    private Servo leftFoundationClaw  = null;
+    private Servo capstoneClaw        = null;
 
 
-    /* Constructor */
+
+    //----------------------------------------------------------------------------------------------
+    // Setup Methods:
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Constructor method that calls the constructor method (using the keyword 'super') of this
+     * class' parent class.
+     *
+     * @param mainHardware needs to be the owner hardware class (AKA the CatHW_Async class).
+     */
     public CatHW_Claw(CatHW_Async mainHardware) {
         super(mainHardware);
     }
-
 
     /**
      * Initialize standard Hardware interfaces for the Claw subsystem.
@@ -44,6 +53,7 @@ public class CatHW_Claw  extends CatHW_Subsystem
     }
 
 
+
     //----------------------------------------------------------------------------------------------
     // Claw Methods:
     //----------------------------------------------------------------------------------------------
@@ -52,7 +62,9 @@ public class CatHW_Claw  extends CatHW_Subsystem
      * Bring the foundation claws down and latch onto the foundation.
      */
     public void extendClaws() {
+        // Right starts at 1 and moves to .40 for a total movement of .57
         rightFoundationClaw.setPosition(0.43);
+        // Left starts at 0 and moves to .18 for a total movement of .18
         leftFoundationClaw.setPosition(.18);
     }
 
@@ -74,7 +86,7 @@ public class CatHW_Claw  extends CatHW_Subsystem
     }
 
     /**
-     * Locks onto the capstone.
+     * Lowers the servo to lock onto the capstone.
      */
     public void grabCapstone(){
         capstoneClaw.setPosition(0.7);

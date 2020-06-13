@@ -5,9 +5,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * CatHW_Async.java
- *
- *
  * A "hardware" class that acts as the master in which all the other "hardware" classes will run
  * through.  When this class is created, it creates versions of all the other hardware classes used
  * to run the robot.
@@ -51,7 +48,7 @@ public class CatHW_Async
 
 
     //----------------------------------------------------------------------------------------------
-    // Common Methods:
+    // Setup Methods:
     //----------------------------------------------------------------------------------------------
 
     /**
@@ -106,6 +103,12 @@ public class CatHW_Async
         opMode.telemetry.addData("Initialize", "All Done...  BOOM!");
         opMode.telemetry.update();
     }
+
+
+
+    //----------------------------------------------------------------------------------------------
+    // Common Methods:
+    //----------------------------------------------------------------------------------------------
 
     /**
      * Method which will pause the robot's action for a set amount of seconds.  Used in between
