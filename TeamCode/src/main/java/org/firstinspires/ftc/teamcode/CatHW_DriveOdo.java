@@ -9,17 +9,12 @@ import org.openftc.revextensions2.ExpansionHubEx;
 import java.util.ArrayList;
 
 /**
- * CatHW_DriveOdo.java
- *
- *
  * A "hardware" class containing common code accessing hardware specific to the movement and
  * rotation of the drive train using odometry modules as position givers.  This file is used by the
  * new autonomous OpModes to run multiple operations at once with odometry.
  *
- *
- * This is NOT an OpMode.  This class is used to define all the other hardware classes.
- * This hardware class assumes the following device names have been configured on the robot.
- *
+ * This is NOT an OpMode.  This class is used in tandem with all the other hardware classes.
+ * This hardware class assumes the device names have been configured on the robot.
  * NOTE: All names are lower case and have underscores between words.
  *
  *
@@ -28,7 +23,7 @@ import java.util.ArrayList;
 public class CatHW_DriveOdo extends CatHW_DriveBase
 {
     //----------------------------------------------------------------------------------------------
-    // Odometry Module Constants:                               TODO: Are these constants updated???
+    // Odometry Module Constants and Class Attributes:          TODO: Are these constants updated???
     //----------------------------------------------------------------------------------------------
 
     /**
@@ -43,12 +38,10 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * robot's positioning algorithms so that when a user inputs (X,Y) coordinates in inches, those
      * can be converted into encoder ticks.
      */
-    static final double ODO_COUNTS_PER_INCH     = ODO_COUNTS_PER_REVOLUTION /
+    public static final double ODO_COUNTS_PER_INCH = ODO_COUNTS_PER_REVOLUTION /
             (ODO_WHEEL_DIAMETER_INCHES * Math.PI);
 
-    private final double DEFAULT_FOLLOW_RADIUS = 20.0;
-
-    //TODO: Other attributes/field should get some Javadoc sometime...
+    //TODO: Other attributes/fields should get their own Javadoc at some point...
     //private double targetX;
     //private double targetY;
     //private double targetTheta;
@@ -62,6 +55,10 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     private double maxPower;
     //private double strafePower;
 
+    /**
+     * Attribute that determines whether the robot will continue through its target point if true
+     * and stop at that point if false.
+     */
     private boolean isNonStop;
 
     /** Enumerated type for the style of drive the robot will make. */
@@ -72,26 +69,37 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     /** Variable to keep track of the DRIVE_METHOD that's the current style of robot's driving. */
     private DRIVE_METHOD currentMethod;
 
+    /** ArrayList of Points that the robot will drive towards. */
     private ArrayList<CatType_CurvePoint> targetPoints;
+
+    /** A default follow radius for our Pure Pursuit Algorithms. */
+    private final double DEFAULT_FOLLOW_RADIUS = 20.0;
+    /** The following distance between the robot and any point on the line paths. */
     private double followRadius = DEFAULT_FOLLOW_RADIUS;
 
 
-
-    //----------------------------------------------------------------------------------------------
-    // Public OpMode Members
-    //----------------------------------------------------------------------------------------------
-
-    // Motors
-    public DcMotor  leftOdometry    = null;
-    public DcMotor  rightOdometry   = null;
-    public DcMotor  backOdometry    = null;
+    // Motors:
+    public DcMotor leftOdometry    = null;
+    public DcMotor rightOdometry   = null;
+    public DcMotor backOdometry    = null;
+    // REV Hub:
     public ExpansionHubEx expansionHub = null;
 
-    // Access to Update Thread
-    CatOdo_AllUpdates updatesThread;
+    // Access to Update Thread:
+    private CatOdo_AllUpdates updatesThread;
 
-    /* Constructor */
-    public CatHW_DriveOdo(CatHW_Async mainHardware){
+
+
+    //----------------------------------------------------------------------------------------------
+    // Setup Methods:
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Constructor method that calls the constructor method (using the keyword 'super') of this
+     * class' parent class.
+     *
+     * @param mainHardware needs to be the owner hardware class (AKA the CatHW_Async class).
+     */    public CatHW_DriveOdo(CatHW_Async mainHardware){
         super(mainHardware);
 
     }
@@ -101,33 +109,33 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      *
      * @throws InterruptedException in case of error.
      */
-    public void init()  throws InterruptedException  {
+    public void init() throws InterruptedException  {
 
-        // Calls DriveBase's init: //
+        // Calls DriveBase's init:
         super.init();
 
-        // Define and Initialize Motors and Expansion Hub: //
+        // Define and Initialize Motors and Expansion Hub:
         leftOdometry     = hwMap.dcMotor.get("left_rear_motor");
         rightOdometry    = hwMap.dcMotor.get("tail_lift2");
         backOdometry     = hwMap.dcMotor.get("right_jaw_motor");
         expansionHub     = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
 
-        // Set odometry directions: //
-        //leftOdometry.setDirection(DcMotor.Direction.REVERSE);
+        // Set odometry directions:
+        leftOdometry.setDirection(DcMotor.Direction.FORWARD);
         rightOdometry.setDirection(DcMotor.Direction.FORWARD);
         backOdometry.setDirection(DcMotor.Direction.REVERSE);
 
-        // Set odometry modes: //
+        // Set odometry modes:
         resetOdometryEncoders();
 
-        // Odometry Setup: //
+        // Odometry Setup:
         updatesThread = updatesThread.getInstanceAndInit(expansionHub, leftOdometry, rightOdometry,
                 backOdometry, ODO_COUNTS_PER_INCH);
         Thread allUpdatesThread = new Thread(updatesThread);
         updatesThread.resetThreads();
         allUpdatesThread.start();
 
-        // Sets enums to a default value: //
+        // Sets enums to a default value:
         currentMethod = DRIVE_METHOD.PURE_PURSUIT;
     }
 
@@ -138,40 +146,47 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     //----------------------------------------------------------------------------------------------
 
     /**
-     * Set the odometry wheels to STOP_AND_RESET_ENCODER.
+     * Sets all odometry wheels to STOP_AND_RESET_ENCODER and then to RUN_WITHOUT_ENCODER.
      */
     public void resetOdometryEncoders() {
+
         leftOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backOdometry.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         leftOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backOdometry.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
     }
 
     /**
-     *TODO
-     * @param points
-     * @param power
-     * @param timeoutS
+     * Overloaded method (fancy way of saying same method header with different parameter list) that calls the other
+     * pursuitDrive() method, but automatically sets the followRadius to the DEFAULT_FOLLOW_RADIUS constant.
+     *
+     * @param points is an ArrayList of Points that make up the user-defined path the robot will follow.
+     * @param power at which the robot's max speed will be set to using motion profiling.
+     * @param timeoutS is how much time needs to pass before the robot moves onto the next step. This is
+     *         used/useful for stall outs.
      */
     public void pursuitDrive(ArrayList<CatType_CurvePoint> points, double power, double timeoutS) {
+
         pursuitDrive(points, power, DEFAULT_FOLLOW_RADIUS, timeoutS);
     }
 
     /**
-     * Used to move the robot across the field.  The robot can also TURN while moving along the path
-     * in order for it to face a certain by the end of its path.  This method assumes the robot has
-     * odometry modules which give an absolute position of the robot on the field.
+     * Used to move the robot across the field.  The robot can also TURN while moving along the path in order for it to
+     * face a certain by the end of its path.  This method assumes the robot has odometry modules which give an absolute
+     * position of the robot on the field.
      *
-     * TODO:
-     * @param power at which robot max speed can be set to using motion profiling.
-     * @param timeout is how much time needs to pass before the robot moves onto the next step.
-     *                 This is used/useful for stall outs.
+     * @param points is an ArrayList of Points that make up the user-defined path the robot will follow.
+     * @param power at which the robot's max speed will be set to using motion profiling.
+     * @param followRadius is the distance between the robot and the point ahead of it on the path that it will
+     *         choose to follow.
+     * @param timeout is how much time needs to pass before the robot moves onto the next step. This is
+     *         used/useful for stall outs.
      */
     public void pursuitDrive(ArrayList<CatType_CurvePoint> points, double power, double followRadius,
-                             double timeout) {
+            double timeout) {
 
         currentMethod = DRIVE_METHOD.PURE_PURSUIT;
         this.timeout = timeout;
@@ -180,23 +195,23 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         targetPoints.add(0, updatesThread.positionUpdate.returnRobotPointInches().toCurvePoint());
         this.followRadius = followRadius;
 
-        //CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPoint(targetPoints,
+        //CatType_CurvePoint targetPoint = updatesThread.powerUpdate.getFollowPoint(targetPoints,
         //        updatesThread.positionUpdate.returnRobotPointInches(), followRadius);
 
 
         // Power update Thread:
         if (isNonStop) {
-            //if the last drive was nonstop
+            // If the last drive method call was nonstop:
             updatesThread.powerUpdate.setNonStopTarget(points, power, followRadius);
         } else {
-            //if the last drive was normal
+            // If the last drive method call was normal:
             updatesThread.powerUpdate.setTarget(points, power, followRadius);
         }
 
-        //set it so the next one will be nonstop
+        // Set it so the next one will be nonstop.
         isNonStop = false;
 
-        // Reset timer once called
+        // Reset timer once called.
         runTime.reset();
     }
 
@@ -207,18 +222,18 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
      * @param y is the new Y coordinate the robot drives to.
      * @param power at which robot max speed can be set to using motion profiling.
      * @param theta is the angle at which the robot will TURN to while driving.
-     * @param finishedXMin the smallest X value that the drive will consider done at
-     * @param finishedXMax the largest X value that the drive will consider done at
-     * @param finishedYMin the smallest Y value that the drive will consider done at
-     * @param finishedYMax the largest Y value that the drive will consider done at
-     * @param finishedThetaMin the smallest Theta value that the drive will consider done at
-     * @param finishedThetaMax the largest Theta value that the drive will consider done at
-     * @param timeoutS is how much time needs to pass before the robot moves onto the next step.
-     *                 This is used/useful for stall outs.
+     * @param finishedXMin the smallest X value that the drive will consider done at.
+     * @param finishedXMax the largest X value that the drive will consider done at.
+     * @param finishedYMin the smallest Y value that the drive will consider done at.
+     * @param finishedYMax the largest Y value that the drive will consider done at.
+     * @param finishedThetaMin the smallest Theta value that the drive will consider done at.
+     * @param finishedThetaMax the largest Theta value that the drive will consider done at.
+     * @param timeoutS is how much time needs to pass before the robot moves onto the next step. This is
+     *         used/useful for stall outs.
      */
-    public void pursuitDrive(double x, double y, double power, double theta, double finishedXMin,
-                             double finishedXMax, double finishedYMin, double finishedYMax,
-                             double finishedThetaMin, double finishedThetaMax, double timeoutS){
+    public void pursuitDrive(double x, double y, double power, double theta,
+            double finishedXMin, double finishedXMax, double finishedYMin, double finishedYMax,
+            double finishedThetaMin, double finishedThetaMax, double timeoutS) {
 
         currentMethod = DRIVE_METHOD.PURE_PURSUIT;
         timeout = timeoutS;
@@ -242,10 +257,6 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
         // Reset timer once called
         runTime.reset();
     }
-
-
-
-
 
     /*public void followCurve(ArrayList<CurvePoint> allPoints, double maxPower, double followAngle,
                             double turnSpeed) {
