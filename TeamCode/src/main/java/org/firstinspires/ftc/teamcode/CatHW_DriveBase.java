@@ -26,7 +26,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  *
  * @author FTC Team #10273, The Cat in the Hat Comes Back
  */
-public class CatHW_DriveBase  extends CatHW_Subsystem
+public class CatHW_DriveBase extends CatHW_Subsystem
 {
     //----------------------------------------------------------------------------------------------
     // Attributes and Constants:
