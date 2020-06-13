@@ -24,7 +24,7 @@ import java.io.File;
  * @author Original created by Sarthak (of Wizards.exe) on 6/1/2019.
  * @author Modified by Team #10273, The Cat in the Hat Comes Back.
  */
-public class CatOdoPositionUpdate
+public class CatOdo_PositionUpdate
 {
     // Odometry wheels:
     private DcMotor verticalEncoderLeft;
@@ -74,9 +74,9 @@ public class CatOdoPositionUpdate
      * @param horizontalEncoder horizontal odometry encoder, perpendicular to the other two odometry
      *                          encoder wheels
      */
-    public CatOdoPositionUpdate(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft,
-                                DcMotor verticalEncoderRight, DcMotor horizontalEncoder,
-                                double COUNTS_PER_INCH) {
+    public CatOdo_PositionUpdate(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft,
+                                 DcMotor verticalEncoderRight, DcMotor horizontalEncoder,
+                                 double COUNTS_PER_INCH) {
         count_per_in = COUNTS_PER_INCH;
         expansionHub = inExpansionHub;
         this.verticalEncoderLeft = verticalEncoderLeft;
@@ -88,10 +88,10 @@ public class CatOdoPositionUpdate
         time.reset();
     }
 
-    public CatOdoPositionUpdate(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft,
-                                DcMotor verticalEncoderRight, DcMotor horizontalEncoder,
-                                double COUNTS_PER_INCH, double startingX, double startingY,
-                                double startingOrientation) {
+    public CatOdo_PositionUpdate(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft,
+                                 DcMotor verticalEncoderRight, DcMotor horizontalEncoder,
+                                 double COUNTS_PER_INCH, double startingX, double startingY,
+                                 double startingOrientation) {
         count_per_in = COUNTS_PER_INCH;
         expansionHub = inExpansionHub;
         this.verticalEncoderLeft = verticalEncoderLeft;

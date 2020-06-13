@@ -20,12 +20,12 @@ import java.util.ArrayList;
  *
  * @author FTC Team #10273, The Cat in the Hat Comes Back
  */
-public class CatOdoPowerUpdate
+public class CatOdo_PowerUpdate
 {
     //----------------------------------------------------------------------------------------------
     // Attributes/Fields:
     //----------------------------------------------------------------------------------------------
-    private CatOdoPositionUpdate positionUpdate;
+    private CatOdo_PositionUpdate positionUpdate;
 
     private ElapsedTime powerTime = new ElapsedTime();
 
@@ -59,7 +59,7 @@ public class CatOdoPowerUpdate
      *
      * @param inPositionUpdate Create an instance of the CatOdoPositionUpdate
      */
-    CatOdoPowerUpdate(CatOdoPositionUpdate inPositionUpdate) {
+    CatOdo_PowerUpdate(CatOdo_PositionUpdate inPositionUpdate) {
         positionUpdate = inPositionUpdate;
     }
 

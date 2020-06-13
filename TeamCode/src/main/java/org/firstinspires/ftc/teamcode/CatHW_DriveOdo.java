@@ -88,7 +88,7 @@ public class CatHW_DriveOdo extends CatHW_DriveBase
     public ExpansionHubEx expansionHub = null;
 
     // Access to Update Thread
-    CatOdoAllUpdates updatesThread;
+    CatOdo_AllUpdates updatesThread;
 
     /* Constructor */
     public CatHW_DriveOdo(CatHW_Async mainHardware){

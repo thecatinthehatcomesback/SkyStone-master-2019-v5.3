@@ -18,10 +18,10 @@ import org.openftc.revextensions2.ExpansionHubEx;
  *
  * @author FTC Team #10273, The Cat in the Hat Comes Back
  */
-public class CatOdoAllUpdates implements Runnable
+public class CatOdo_AllUpdates implements Runnable
 {
     /** static variable singleInstance of type Singleton. */
-    private static CatOdoAllUpdates singleInstance = null;
+    private static CatOdo_AllUpdates singleInstance = null;
 
     /** Thread run condition. */
     private boolean isRunning = true;
@@ -29,8 +29,8 @@ public class CatOdoAllUpdates implements Runnable
     private int sleepTime = 25;
 
     /* Classes that will run off this thread. */
-    CatOdoPositionUpdate positionUpdate;
-    CatOdoPowerUpdate powerUpdate;
+    CatOdo_PositionUpdate positionUpdate;
+    CatOdo_PowerUpdate powerUpdate;
 
     /**
      * Stops the position update thread.
@@ -38,9 +38,9 @@ public class CatOdoAllUpdates implements Runnable
     public void stop(){ isRunning = false; }
 
     /* Constructor */
-    public CatOdoAllUpdates(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH) {
-        positionUpdate = new CatOdoPositionUpdate(inExpansionHub, verticalEncoderLeft, verticalEncoderRight, horizontalEncoder, COUNTS_PER_INCH);
-        powerUpdate = new CatOdoPowerUpdate(positionUpdate);
+    public CatOdo_AllUpdates(ExpansionHubEx inExpansionHub, DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH) {
+        positionUpdate = new CatOdo_PositionUpdate(inExpansionHub, verticalEncoderLeft, verticalEncoderRight, horizontalEncoder, COUNTS_PER_INCH);
+        powerUpdate = new CatOdo_PowerUpdate(positionUpdate);
         //positionUpdate.reverseLeftEncoder();
     }
 
@@ -54,13 +54,13 @@ public class CatOdoAllUpdates implements Runnable
      * @param COUNTS_PER_INCHIn
      * @return
      */
-    public static CatOdoAllUpdates getInstanceAndInit(ExpansionHubEx inExpansionHubIn,
-                                                      DcMotor verticalEncoderLeftIn,
-                                                      DcMotor verticalEncoderRightIn,
-                                                      DcMotor horizontalEncoderIn,
-                                                      double COUNTS_PER_INCHIn) {
+    public static CatOdo_AllUpdates getInstanceAndInit(ExpansionHubEx inExpansionHubIn,
+                                                       DcMotor verticalEncoderLeftIn,
+                                                       DcMotor verticalEncoderRightIn,
+                                                       DcMotor horizontalEncoderIn,
+                                                       double COUNTS_PER_INCHIn) {
         if (singleInstance == null) {
-            singleInstance = new CatOdoAllUpdates(inExpansionHubIn, verticalEncoderLeftIn,
+            singleInstance = new CatOdo_AllUpdates(inExpansionHubIn, verticalEncoderLeftIn,
                     verticalEncoderRightIn,horizontalEncoderIn,COUNTS_PER_INCHIn);
         }
 

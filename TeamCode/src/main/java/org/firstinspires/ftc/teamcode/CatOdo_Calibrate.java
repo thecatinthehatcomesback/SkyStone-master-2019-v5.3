@@ -21,7 +21,7 @@ import java.io.File;
  * @author Modified by Team #10273, The Cat in the Hat Comes Back.
  */
 @TeleOp(name = "Cat Odometry Calibrate", group = "Calibration")
-public class CatOdoCalibrate extends LinearOpMode
+public class CatOdo_Calibrate extends LinearOpMode
 {
     /* Declare OpMode members. */
     CatHW_Async robot = new CatHW_Async();  // Use our mecanum Asynchronous hardware
