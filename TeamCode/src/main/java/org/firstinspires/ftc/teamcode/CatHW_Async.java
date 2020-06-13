@@ -28,8 +28,8 @@ public class CatHW_Async
 
 
     /*
-    Default / Package-Private OpMode members.  (Since no visibility was inputted, any class in this
-    package--AKA the teamcode package--can see these members.)
+    Default / Package-Private OpMode members (since no visibility was inputted, any class in this
+    package--AKA the teamcode package--can see these members):
      */
     HardwareMap hwMap = null;
     LinearOpMode opMode = null;

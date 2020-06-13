@@ -14,18 +14,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 /**
- * CatHW_DriveBase.java
- *
- *
  * A "hardware" class containing common code accessing hardware specific to the movement and
  * rotation of the drive train from both the odometry and standard drive motor encoders.  This has
  * been modified and/or stripped down from the CatSingleOverallHW to be the base of all the drive
  * train classes.  This file is used by the autonomous OpModes to run multiple operations at once.
  *
- *
- * This is NOT an OpMode.  This class is used to define all the other hardware classes.
- * This hardware class assumes the following device names have been configured on the robot.
- *
+ * This is NOT an OpMode.  This class is used in tandem with all the other hardware classes.
+ * This hardware class assumes the device names have been configured on the robot.
  * NOTE: All names are lower case and have underscores between words.
  *
  *
@@ -33,13 +28,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  */
 public class CatHW_DriveBase  extends CatHW_Subsystem
 {
-    // Wheel measurement constants:
+    //----------------------------------------------------------------------------------------------
+    // Attributes and Constants:
+    //----------------------------------------------------------------------------------------------
+
+    /*
+    Wheel measurement constants:
+     */
     private static final double COUNTS_PER_REVOLUTION = 537.6; // Accurate for NeveRest Orbital 20
     private static final double WHEEL_DIAMETER_INCHES = 4.0;   // For calculating circumference
     static final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION / (WHEEL_DIAMETER_INCHES * Math.PI);
 
 
-    /* Public OpMode members. */
+    /*
+    Default / Package-Private OpMode members (since no visibility was inputted, any class in this
+    package--AKA the teamcode package--can see these members):
+    */
+
     // Autonomous Drive Speed constants:
     static final double HYPER_SPEED = 0.95;
     static final double DRIVE_SPEED = 0.7;
@@ -75,43 +80,52 @@ public class CatHW_DriveBase  extends CatHW_Subsystem
     public DcMotor rightRearMotor = null;
 
 
-    /* Constructor: */
+
+    //----------------------------------------------------------------------------------------------
+    // Setup Methods:
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Constructor method that calls the constructor method (using the keyword 'super') of this
+     * class' parent class.
+     *
+     * @param mainHardware needs to be the owner hardware class (AKA the CatHW_Async class).
+     */
     public CatHW_DriveBase(CatHW_Async mainHardware) {
         super(mainHardware);
     }
 
-
     /**
-     * Initialize standard Hardware interfaces for all drive trains.
+     * Initialize standard Hardware interfaces for the drive train.
      *
      * @throws InterruptedException in case of error.
      */
     public void init() throws InterruptedException {
 
-        // Define and Initialize Motors: //
+        // Define and Initialize Motors:
         leftFrontMotor = hwMap.dcMotor.get("left_front_motor");
         rightFrontMotor = hwMap.dcMotor.get("right_front_motor");
         leftRearMotor = hwMap.dcMotor.get("left_rear_motor");
         rightRearMotor = hwMap.dcMotor.get("right_rear_motor");
 
-        // Define motor directions: //
+        // Define motor directions:
         leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
         rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        // Define motor zero power behavior: //
+        // Define motor zero power behavior:
         setDriveToBrake();
 
-        // Set motor modes: //
+        // Set motor modes:
         resetDriveEncoders();
         setDriveRunWithoutEncoders();
 
-        // Set all motors to run at no power so that the robot doesn't move during init: //
+        // Set all motors to run at no power so that the robot doesn't move during init:
         setDrivePowers(0, 0, 0, 0);
 
 
-        // Blinkin LED stuff: //
+        // Blinkin LED stuff:
         lights = hwMap.get(RevBlinkinLedDriver.class, "blinky");
         pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
         lights.setPattern(pattern);
@@ -124,12 +138,12 @@ public class CatHW_DriveBase  extends CatHW_Subsystem
     //----------------------------------------------------------------------------------------------
 
     /**
-     * Sets powers to the four drive train motors.
+     * Sets powers to the four drive train motors with this one method.
      *
-     * @param leftFront  motor's power.
+     * @param leftFront motor's power.
      * @param rightFront motor's power.
-     * @param leftBack   motor's power.
-     * @param rightBack  motor's power.
+     * @param leftBack motor's power.
+     * @param rightBack motor's power.
      */
     public void setDrivePowers(double leftFront, double rightFront, double leftBack, double rightBack) {
         leftFrontMotor.setPower(leftFront);
@@ -138,7 +152,8 @@ public class CatHW_DriveBase  extends CatHW_Subsystem
         rightRearMotor.setPower(rightBack);
 
         // Log message:
-        //Log.d("catbot", String.format("Drive Power  LF: %.2f, RF: %.2f, LB: %.2f, RB: %.2f", leftFront, rightFront, leftBack, rightBack));
+        //Log.d("catbot", String.format("Drive Power  LF: %.2f, RF: %.2f, LB: %.2f, RB: %.2f",
+        //        leftFront, rightFront, leftBack, rightBack));
     }
 
     /**
@@ -217,7 +232,7 @@ public class CatHW_DriveBase  extends CatHW_Subsystem
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opMode
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";  // See calibration sample
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
@@ -226,7 +241,7 @@ public class CatHW_DriveBase  extends CatHW_Subsystem
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
-        //the initialize method is taking a whole second
+        // The initialize method is taking a whole second?
         imu.initialize(parameters);
         imu.startAccelerationIntegration(new Position(), new Velocity(), 250);
     }
@@ -242,7 +257,7 @@ public class CatHW_DriveBase  extends CatHW_Subsystem
 
 
     //----------------------------------------------------------------------------------------------
-    // Mathematical operations:
+    // Common Mathematical Operations:
     //----------------------------------------------------------------------------------------------
 
     /**
@@ -272,8 +287,7 @@ public class CatHW_DriveBase  extends CatHW_Subsystem
         double scalor = 0;
         double scaleFactor;
 
-        double[] values;
-        values = new double[4];
+        double[] values = new double[4];
         values[0] = Math.abs(leftFrontValue);
         values[1] = Math.abs(rightFrontValue);
         values[2] = Math.abs(leftBackValue);
